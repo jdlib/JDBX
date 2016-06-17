@@ -12,7 +12,7 @@ Perform a SQL select, create a Bean from every result row, return all beans in a
 
 *using JDBC:*
         
-	public List<City> queryCities(Connection con) throws SQLException {
+	public List<City> queryCitiesWithJdbc(Connection con) throws SQLException {
 		try (Statement stmt = con.createStatement()) {
 			List<City> list = new ArrayList<>();
 			ResultSet result = stmt.executeQuery("SELECT * FROM Cities ORDER BY name");
@@ -24,13 +24,13 @@ Perform a SQL select, create a Bean from every result row, return all beans in a
 	
 *using JDBX:*
 
-	public List<City> queryCitiesWithJdbx(Connection con) throws JdbException {
+	public List<City> queryCitiesWithJdbx(Connection con) {
 		return Jdbx.createQuery(con, "SELECT * FROM Cities ORDER BY name").rows().value(City::read);
 	}
 
 
 **Example 2:**
-Perform a parameterized insert, return the auto generated primary key, convert SQLException to a runtime exception.
+Perform a parameterized insert, return the auto generated primary key, convert any SQLException to a runtime exception.
 
 *using JDBC:*
 
@@ -67,7 +67,8 @@ Perform a parameterized insert, return the auto generated primary key, convert S
 	
 ## Similar Libraries
 
-There are many libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which wrap plain JDBC to make database access easier. JDBX falls into this category - and it also does not only simplify code but also retains 100% of JDBC functionality.
+There are many libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which wrap plain JDBC to make database access easier. 
+JDBX falls into this category - and it also does not only simplify code but also retains 100% of JDBC functionality.
 
 ## Download
 
