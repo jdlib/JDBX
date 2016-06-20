@@ -117,13 +117,16 @@ JDBX applies the builder pattern and functional programming to avoid most of the
     PrepStmt stmt = new PrepStmt(con);
     String name = pstmt.init(sql).params("fr").createQuery().row().value().getString();
 
-**The Query object**:
+#### The Query object
 
 `StaticStmt.createQuery(String)` and `PrepStmt.createQuery()` return a `Query` object
 which provides a builder API to define the query and extract values from the result set:
 
      Query q = stmt.createQuery(sql);
      Query q = pstmt.createQuery();
+     
+Because of its builder API you will rarely need to store it in a variable but rather chain
+method calls until you receive the result of the query.     
      
 #### Reading a single result row     
      
@@ -144,12 +147,12 @@ Use `Query.row()` if you want to get values from the first result row:
 If the result is empty, all the examples above will return a null value.
 If you want exclude this case use `.row().required().`
 
-      // will throw an exception if result has no rows
+     // will throw an exception if result has no rows
      q.row().required().col().getString()` 
      
-You also want detect the case when the result contains more than one row:
+You may also want detect the case when the result contains more than one row:
      
-      // will throw an exception if result has more than one row
+     // will throw an exception if result has more than one row
      q.row().unique().col().getString()` 
 
 #### Reading all result rows
@@ -175,13 +178,13 @@ You may also limit the number of rows, if this is not done within the SQL query 
     
 #### Skipping rows
 
-Optionally you may also skip a number of rows before you call `Query.row()`, `rows()` or `rows(int)`:
+Optionally you may also skip a number of rows before you extract values by calling `Query.row()`, `rows()` or `rows(int)`:
 
     q.skip(1).rows()...   // all rows except the first
       
 #### Accessing the ResultSet  
 
-You still can obtain the ResultSet directly, if you want to process it manually:
+You still can obtain the `ResultSet` directly, if you want to process it manually:
  
     ResultSet resultSet = pstmt.createQuery().getResultSet();
     while (resultSet.next())
@@ -189,7 +192,7 @@ You still can obtain the ResultSet directly, if you want to process it manually:
     
 #### Turning a ResultSet into a Query
     
-In the opposite if you have obtained a `ResultSet` you can turn it into a query object for easy value extraction:
+If you have obtained a `ResultSet` you can also turn it into a query object for easy value extraction:
 
     ResultSet resultSet = ...
     List<String> names  = Query.of(resultSet).rows().col("name").getString();
