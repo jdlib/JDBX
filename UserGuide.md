@@ -3,13 +3,13 @@
 1. [Installation](#installation)
 2. [Statement classes](#statement-classes)
 3. [Creating and closing statements](#creating-and-closing)
-4. [Running SQL queries](#running-queries)
+4. [Running SQL queries](#queries)
 
 ## <a name="installation"></a>1. Installation
 
 JBCX requires Java version 8+.<br> 
 Download the [latest version](https://github.com/jdlib/jdbx/releases/latest)
-and put the `jdbx.jar` into the classpath.
+and put `jdbx.jar` into the classpath.
 
 
 ## <a name="statement-classes"></a>2. Statement classes
@@ -40,7 +40,7 @@ JDBX - as JDBC - differentiates between
     int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe');
     
 `PrepStmt` uses precompiled, parameterized SQL commands. After it is initialized it can
-be executed multiple times, using the current parameters Example:
+be executed multiple times, using the current parameters. Example:
 
     PrepStmt pstmt = ...
     pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?");
@@ -48,7 +48,7 @@ be executed multiple times, using the current parameters Example:
     int count = pstmt.update();
      
 `CallStmt` is used to call stored procedures. After it is initialized it can
-be executed multiple times, using the current parameters Example:
+be executed multiple times, using the current parameters. Example:
 
     CallStmt cstmt = ...
     cstmt.init("{call CreateUser(?,?)}");
@@ -60,8 +60,8 @@ be executed multiple times, using the current parameters Example:
 
 In order to create a JDBX statement you need a `java.sql.Connection` or `javax.sql.DataSource`:
 
-     Connection con = ...
-     DataSource ds  = ...
+     Connection con        = ...
+     DataSource ds         = ...
      StaticStmt staticStmt = new StaticStmt(con); // or new StaticStmt(ds) 
      PrepStmt prepStmt     = new PrepStmt(con);   // or new PrepStmt(ds)
      CallStmt callStmt     = new CallStmt(con);   // or new CallStmt(ds)
@@ -70,15 +70,15 @@ Statement objects should be actively closed once they are no longer used.<br>
 All statement classes implement `java.io.AutoCloseable` so the typical pattern is to create and use them within a Java try-with-resources statement:
 
      Connection con = ...
-     try (StaticStmt pstmt = new StaticStmt(con) {
+     try (StaticStmt stmt = new StaticStmt(con) {
           ... // use the statement
      }   
 
 
-## <a href="running-queries"></a>4. Running SQL queries
+## <a name="queries"></a>4. Running SQL queries
 
-In JDBC executing a query returns a ResultSet. The most common task is to loop over the result set and extract 
-values from the result rows and return them in appropriate form.
+In JDBC executing a query returns a result set. Given a result set you will loop over its rows, extract 
+values from the rows and return the values in appropriate form.
 
 JDBX applies the builder pattern and functional programming to avoid most of the boilerplate code needed in JDBC.
 
@@ -117,8 +117,10 @@ JDBX applies the builder pattern and functional programming to avoid most of the
     PrepStmt stmt = new PrepStmt(con);
     String name = pstmt.init(sql).params("fr").createQuery().row().value().getString();
 
+**The Query object**:
+
 `StaticStmt.createQuery(String)` and `PrepStmt.createQuery()` return a `Query` object
-which provides builder like methods to extract values from the underlying result set:
+which provides a builder API to define the query and extract values from the result set:
 
      Query q = stmt.createQuery(sql);
      Query q = pstmt.createQuery();
