@@ -1,31 +1,24 @@
 # JDBX User Guide
 
-1. [Installation](#installation)
-2. [Statement Classes](#classes)
+1. [Statement Classes](#classes)
    * [StaticStmt](#classes-static)
    * [PrepStmt](#classes-prep)
    * [CallStmt](#classes-call)
-3. [Creating and Closing Statements](#creating-and-closing)
-4. [Running SQL Queries](#queries)
+2. [Creating and Closing Statements](#creating-and-closing)
+3. [Running SQL Queries](#queries)
    * [Intro](#queries-intro)
-   * [Query class](#queries-class)
+   * [Query class](#queries-queryclass)
    * [Reading a Single Result Row](#queries-singlerow)
    * [Reading all Result Rows](#queries-allrows)
    * [Skipping Rows](#queries-skipping)
    * [Accessing the Query ResultSet](#queries-resultset)
    * [Turning a ResultSet into a Query](#queries-resultoquery)
-   * [Accessing the ResultSet as QueryResult](#queries-queryresult)
-5. [Running DML or DDL Updates](#updates)
-6. [Running a Single Command](#single-cmd)
-
-## <a name="installation"></a>1. Installation
-
-JDBX requires Java version 8+.<br> 
-Download the [latest version](https://github.com/jdlib/jdbx/releases/latest)
-and put `jdbx.jar` into the classpath.
+   * [QueryResult Class](#queries-queryresultclass)
+4. [Running DML or DDL Updates](#updates)
+5. [Running a Single Command](#single-cmd)
 
 
-## <a name="classes"></a>2. Statement Classes
+## <a name="classes"></a>1. Statement Classes
 
 JDBX provides three alternative statement classes to replace the corresponding JDBC classes:
 
@@ -72,7 +65,7 @@ be executed multiple times, using the current parameters. Example:
     cstmt.update();
 
 
-## <a name="creating-and-closing"></a>3. Creating and Closing Statements
+## <a name="creating-and-closing"></a>2. Creating and Closing Statements
 
 In order to create a JDBX statement you need a `java.sql.Connection` or `javax.sql.DataSource`:
 
@@ -91,7 +84,7 @@ the typical pattern is to create and use statement objects within a Java try-wit
      }   
 
 
-## <a name="queries"></a>4. Running SQL Queries
+## <a name="queries"></a>3. Running SQL Queries
 
 ### <a name="queries-intro"></a>Intro        
 In JDBC executing a query returns a result set. Given a result set you will loop over its rows, extract 
@@ -135,7 +128,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
     String name = pstmt.init(sql).params("fr").createQuery().row().value().getString();
 
 
-### <a name="queries-class">Query Class
+### <a name="queries-queryclass">Query Class
 
 `StaticStmt.createQuery(String)` and `PrepStmt.createQuery()` return a `org.jdbx.Query` object
 which provides a builder API to run the query and extract values from the result set:
@@ -222,10 +215,11 @@ The other way round, if you have a `java.sql.ResultSet` reference you can also t
     List<String> names  = Query.of(resultSet).rows().col("name").getString();
     
      
-### <a name="queries-queryresult"></a>Accessing the ResultSet as QueryResult
+### <a name="queries-queryresultclass"></a>QueryResult Class
 
-`org.jdbx.QueryResult` is a wrapper around `java.sql.ResultSet` which wants to improve the `ResultSet` API similar
-to the effort of the JDBX statement classes with respect to its JDBC counterparts.
+The builder API of `Query` allows easy extraction of values from a forward only result set. For scrollable
+result sets and its operations JDBX provides `org.jdbx.QueryResult`: It is a wrapper around `java.sql.ResultSet` 
+which wants to improve the `ResultSet` API similar to the effort of the JDBX statement classes with respect to its JDBC counterparts.
 
 You can obtain a `QueryResult` from a `Query`:
 
@@ -242,7 +236,7 @@ Looping over the result is done via the `.next()` method:
          ...       
      }
      
-Like `Query.row()` you can easily extract values from the current result row:
+Like `Query.row()` you can easily extract values from the current result row using `QueryResult.row()`:
 
     qr.col()...                  // first column as String
     qr.col().getString();        // first column as String
@@ -260,7 +254,7 @@ or perform operations on the current row. Instead of cluttering the `QueryResult
 with these methods they are available in service objects returned by `QueryResult.position()`,
 `.move()` and `.row()`
 
-    qr.position.isBeforeFirst() 
+    qr.position().isBeforeFirst() 
     // also: .isAfterLast(), .isLast()  
 
     qr.move().first() 
@@ -273,13 +267,13 @@ with these methods they are available in service objects returned by `QueryResul
     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
   
 
-## <a href="updates"></a>5. Running DML or DDL Updates
+## <a href="updates"></a>4. Running DML or DDL Updates
 
 Like in JDBC the term "update" includes DML UPDATE, INSERT, DELETE and DDL commands.
 TODO   
 
 
-## <a name="classes-abbr"></a>6. Running a Single Command
+## <a name="classes-abbr"></a>5. Running a Single Command
         
 If you only want to run a single SQL query or DML update you can use the static helper methods in class `org.jdbx.JDBX` 
 to avoid explicit creation and closing of a `StaticStmt` or `PrepStmt` object:

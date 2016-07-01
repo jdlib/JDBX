@@ -1,9 +1,16 @@
 # JDBX
 
-JDBX is a small library which wraps the Java JDBC Statement and ResultSet classes. It allows to write less code while at the same time still provides 100% of the original functionality. 
-It has no external dependencies and is published under the Apache 2.0 license.
+JDBX is a library which wraps the Java JDBC Statement and ResultSet classes. It allows to write less code while at the same time still provides 100% of the original functionality. 
+It requires Java 8+, has no external dependencies and is published under the Apache 2.0 license.
 
-## Example Code
+* [Example Code](#example)
+* [Similar Libraries](#similar)
+* [Download and Installation](#download)
+* [Documentation](#docs)
+* [License](#license)
+
+
+## <a name="example"></a>Example Code
 
 Shows two examples of typical JDBC code and the JDBX rewrite:
 
@@ -65,22 +72,28 @@ Perform a parameterized insert, return the auto generated primary key, convert a
 		}
 	}
 	
-## Similar Libraries
+	
+## <a name="similar"></a>Similar Libraries
 
 There are many libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which wrap plain JDBC to make database access easier. 
 JDBX too falls into this category - but it does not only simplify code but also retains 100% of JDBC functionality.
 
-## Download
+
+## <a name="download"></a>Download and Installation 
+
+JDBX requires Java version 8+.<br>
 
 * [Latest Release](https://github.com/jdlib/JDBX/releases/latest)
+* Installation: Put the JDBX jar file into the classpath.
 
 
-## Documentation
+## <a name="docs"></a>Documentation
 
 * [User Guide](https://github.com/jdlib/JDBX/blob/master/UserGuide.md): This guide contains examples on how to use JDBX.
 * [Design](https://github.com/jdlib/JDBX/blob/master/Design.md): Discusses the design of JDBX and the refactorings applied to JDBC. 
 
-## License
+
+## <a name="license"></a>License
 
 JDBX is released under the Apache 2.0 license.
 	    
