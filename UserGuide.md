@@ -4,6 +4,7 @@
 2. [Statement classes](#statement-classes)
 3. [Creating and closing statements](#creating-and-closing)
 4. [Running SQL queries](#queries)
+5. [Running SQL updates](#running-updates)
 
 ## <a name="installation"></a>1. Installation
 
@@ -14,8 +15,7 @@ and put `jdbx.jar` into the classpath.
 
 ## <a name="statement-classes"></a>2. Statement classes
 
-JDBX provides three alternative statement classes to replace the corresponding JDBC classes
-while providing 100% of the original functionality:
+JDBX provides three alternative statement classes to replace the corresponding JDBC classes:
 
 JDBC|JDBX|Used to 
 ----|----|-------
@@ -34,20 +34,21 @@ JDBX - as JDBC - differentiates between
 5. Calling stored procedures
 
 `StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4).  
-`StaticStmt` uses static, non-parameterized SQL commands. Example:
+
+**`StaticStmt`** uses static (i.e. non-parameterized) SQL commands. Example:
 
     StaticStmt stmt = ...
-    int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe');
+    int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
     
-`PrepStmt` uses precompiled, parameterized SQL commands. After it is initialized it can
+**`PrepStmt`** uses precompiled, parameterized SQL commands. After it is initialized it can
 be executed multiple times, using the current parameters. Example:
 
     PrepStmt pstmt = ...
-    pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?");
+    pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
     pstmt.params("John", "Doe");
     int count = pstmt.update();
      
-`CallStmt` is used to call stored procedures. After it is initialized it can
+**`CallStmt`** is used to call stored procedures. After it is initialized it can
 be executed multiple times, using the current parameters. Example:
 
     CallStmt cstmt = ...
@@ -67,7 +68,7 @@ In order to create a JDBX statement you need a `java.sql.Connection` or `javax.s
      CallStmt callStmt     = new CallStmt(con);   // or new CallStmt(ds)
       
 Statement objects should be actively closed once they are no longer used.<br>
-All statement classes implement `java.io.AutoCloseable` so the typical pattern is to create and use them within a Java try-with-resources statement:
+All statement classes implement `java.io.AutoCloseable` so the typical pattern is to create and use statement objects within a Java try-with-resources statement:
 
      Connection con = ...
      try (StaticStmt stmt = new StaticStmt(con) {
@@ -80,7 +81,7 @@ All statement classes implement `java.io.AutoCloseable` so the typical pattern i
 In JDBC executing a query returns a result set. Given a result set you will loop over its rows, extract 
 values from the rows and return the values in appropriate form.
 
-JDBX applies the builder pattern and functional programming to avoid most of the boilerplate code needed in JDBC.
+JDBX uses the builder pattern and functional programming to avoid most of the boilerplate code needed in JDBC.
 
 **Example 1:** Extract a list of beans from a result set
 
@@ -245,3 +246,8 @@ with these methods they are available in service objects returned by `QueryResul
      result.row().refresh()
      // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
   
+
+### <a href="running-updates"></a>Running SQL or DDL Updates
+
+Like in JDBC the term "update" includes SQL UPDATE, INSERT, DELETE and DDL commands.
+To inserft, up   

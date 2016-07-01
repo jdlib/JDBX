@@ -5,10 +5,10 @@ It has no external dependencies and is published under the Apache 2.0 license.
 
 ## Example Code
 
-Shows two examples of typical JDBC code and the JDBX rewrites:
+Shows two examples of typical JDBC code and the JDBX rewrite:
 
 **Example 1:** 
-Perform a SQL select, create a Bean from every result row, return all beans in a list.
+Perform a SQL select, create a bean object for every result row, return all beans in a list.
 
 *using JDBC:*
         
@@ -58,7 +58,7 @@ Perform a parameterized insert, return the auto generated primary key, convert a
 *using JDBX:*
 
 	public Integer createUserWithJdbx(Connection con, String firstName, String lastName) {
-		try (ParamStmt pstmt = new ParamStmt(con)) {
+		try (PrepStmt pstmt = new PrepStmt(con)) {
 			pstmt.init().reportAutoKeys("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
 			pstmt.params(firstName, lastName);
 			return pstmt.createUpdate().runGetAutoKey(Integer.class).checkCount(1).checkHasValue();
@@ -68,7 +68,7 @@ Perform a parameterized insert, return the auto generated primary key, convert a
 ## Similar Libraries
 
 There are many libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which wrap plain JDBC to make database access easier. 
-JDBX falls into this category - and it also does not only simplify code but also retains 100% of JDBC functionality.
+JDBX too falls into this category - but it does not only simplify code but also retains 100% of JDBC functionality.
 
 ## Download
 
