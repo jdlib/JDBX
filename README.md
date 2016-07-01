@@ -1,18 +1,22 @@
 # JDBX
 
-JDBX is a library which wraps the Java JDBC Statement and ResultSet classes. It allows to write less code while at the same time still provides 100% of the original functionality. 
-It requires Java 8+, has no external dependencies and is published under the Apache 2.0 license.
+JDBX is a library which provides alternatives to the JDBC Statement and ResultSet classes.
+It allows you to write more compact and elegant database code compared to the verbose and complicated JDBC.
 
-* [Example Code](#example)
-* [Similar Libraries](#similar)
+It shares this intent with libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which all wrap plain JDBC to make database access easier.
+But unlike these libraries it does not only simplify coding but also retains 100% of the original JDBC functionality.
+    
+JDBX requires Java 8+, has no external dependencies and is released under the Apache 2.0 license.
+
+* [Motivation](#motivation)
 * [Download and Installation](#download)
 * [Documentation](#docs)
 * [License](#license)
 
 
-## <a name="example"></a>Example Code
+## <a name="motivation"></a>Motivation
 
-Shows two examples of typical JDBC code and the JDBX rewrite:
+The following snippets show two examples of typical JDBC code and the JDBX rewrite:
 
 **Example 1:** 
 Perform a SQL select, create a bean object for every result row, return all beans in a list.
@@ -73,23 +77,15 @@ Perform a parameterized insert, return the auto generated primary key, convert a
 	}
 	
 	
-## <a name="similar"></a>Similar Libraries
-
-There are many libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which wrap plain JDBC to make database access easier. 
-JDBX too falls into this category - but it does not only simplify code but also retains 100% of JDBC functionality.
-
-
 ## <a name="download"></a>Download and Installation 
 
-JDBX requires Java version 8+.<br>
-
-* [Latest Release](https://github.com/jdlib/JDBX/releases/latest)
-* Installation: Put the JDBX jar file into the classpath.
+* Download the [Latest Release](https://github.com/jdlib/JDBX/releases/latest)
+* and put the JDBX jar file into the classpath.
 
 
 ## <a name="docs"></a>Documentation
 
-* [User Guide](https://github.com/jdlib/JDBX/blob/master/UserGuide.md): This guide contains examples on how to use JDBX.
+* [User Guide](https://github.com/jdlib/JDBX/blob/master/UserGuide.md): explains how to use JDBX.
 * [Design](https://github.com/jdlib/JDBX/blob/master/Design.md): Discusses the design of JDBX and the refactorings applied to JDBC. 
 
 
