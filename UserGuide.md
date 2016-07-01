@@ -12,6 +12,9 @@
    * [Reading a Single Result Row](#queries-singlerow)
    * [Reading all Result Rows](#queries-allrows)
    * [Skipping Rows](#queries-skipping)
+   * [Accessing the Query ResultSet](#queries-resultset)
+   * [Turning a ResultSet into a Query](#queries-resultoquery)
+   * [Accessing the ResultSet as QueryResult](#queries-queryresult)
 5. [Running DML or DDL Updates](#updates)
 6. [Running a Single Command](#single-cmd)
 
@@ -156,24 +159,24 @@ Use `Query.row()` if you want to get values from the first result row:
     q.row().col(3).getInteger();  // third colum, as Integer
     q.row().col("sort")...;       // column by name 
     q.row().col("sort").getInt(); // "sort" colum, as int
-    q.row().cols();               // all columns, as `Object[]`
-    q.row().cols(1,3,7);          // columns 1,3,7, as `Object[]` 
-    q.row().map();                // a `Map<String,Object> mapping col name to value
+    q.row().cols();               // all columns, as Object[]
+    q.row().cols(1,3,7);          // columns 1,3,7, as Object[] 
+    q.row().map();                // a Map<String,Object> mapping column name to value
     q.row().value(City::read);    // the value returned by the reader function 	 
 
-If the result is empty, all the examples above will return a null value.
-If you want exclude this case use `.row().required().`
+If the result is empty, all the examples above will return a null value (or a default value for primitive terminals like `getInt()`).
+If you want rule out this case use `.row().required().`
 
-     // will throw an exception if result has no rows
+     // will throw an exception if the result contains no rows
      q.row().required().col().getString()` 
      
 You may also want detect the case when the result contains more than one row:
      
-     // will throw an exception if result has more than one row
+     // will throw an exception if the result contains more than one row
      q.row().unique().col().getString()` 
 
 
-### <a name="queries-allrows">Reading all Result Rows
+### <a name="queries-allrows"></a>Reading all Result Rows
 
 Use `Query.rows()` if you want to get values from all rows as a `List`:
 
@@ -184,10 +187,10 @@ Use `Query.rows()` if you want to get values from all rows as a `List`:
     q.rows().col(3).getDouble();       // third columns, as List<Double>
     q.rows().col("sort")...;           // columns by name 
     q.rows().col("sort").getInteger(); // "sort" columns, as List<Integer>
-    q.rows().cols();                   // all columns, as `List<Object[]>`
-    q.rows().cols(1,3,7);              // columns 1,3,7, as `List<Object[]>` 
-    q.rows().map();                    // returns a `List<Map<String,Object>>
-    q.rows().value(City::read);        // returns `List<City>`
+    q.rows().cols();                   // all columns, as List<Object[]>
+    q.rows().cols(1,3,7);              // columns 1,3,7, as List<Object[]> 
+    q.rows().map();                    // returns a List<Map<String,Object>>
+    q.rows().value(City::read);        // returns List<City>
     q.rows().read(...callback...)		// invokes the callback for every result row 
      
 You may also limit the number of rows, if this is not done within the SQL query itself:
@@ -195,74 +198,79 @@ You may also limit the number of rows, if this is not done within the SQL query 
     q.rows(5)...
     
 
-### <a name="queries-skipping">Skipping Rows
+### <a name="queries-skipping"></a>Skipping Rows
 
-Optionally you may also skip a number of rows before you extract values by calling `Query.row()`, `rows()` or `rows(int)`:
+Call `Query.skip(int)` if you want to skip a number of rows before you extract values 
+by calling `Query.row()`, `rows()` or `rows(int)`:
 
-    q.skip(1).rows()...   // all rows except the first
+    q.skip(3).rows()...   // all rows after the first three rows
+
+
+### <a name="queries-resultset"></a>Accessing the Query ResultSet  
       
-#### Accessing the ResultSet  
-
-You still can obtain the `ResultSet` directly, if you want to process it manually:
+You still can obtain the `java.sql.ResultSet` of a query if you want to process it by yourself:
  
-    ResultSet resultSet = pstmt.createQuery().getResultSet();
+    ResultSet resultSet = q.getResultSet();
     while (resultSet.next())
         ... 
     
-#### Turning a ResultSet into a Query
+### <a name="queries-resultoquery"></a>Turning a ResultSet into a Query
     
-If you have obtained a `ResultSet` you can also turn it into a query object for easy value extraction:
+The other way round, if you have a `java.sql.ResultSet` reference you can also turn it into a query object for easy value extraction:
 
     ResultSet resultSet = ...
     List<String> names  = Query.of(resultSet).rows().col("name").getString();
+    
      
-#### Accessing the ResultSet as `org.jdbx.QueryResult`
+### <a name="queries-queryresult"></a>Accessing the ResultSet as QueryResult
 
-`QueryResult` is a wrapper around a `ResultSet` which wants to improve the `ResultSet` API:
-You can obtain it from a `Query`:
+`org.jdbx.QueryResult` is a wrapper around `java.sql.ResultSet` which wants to improve the `ResultSet` API similar
+to the effort of the JDBX statement classes with respect to its JDBC counterparts.
 
-     QueryResult result = pstmt.createQuery().getResult();
+You can obtain a `QueryResult` from a `Query`:
+
+     QueryResult qr = q.getResult();
      
 or from a `ResultSet` object:
       
      ResultSet resultSet = ...
-     QueryResult result = QueryResult.of(resultSet);
+     QueryResult qr = QueryResult.of(resultSet);
      
 Looping over the result is done via the `.next()` method:
      
-     while (result.next()) {
+     while (qr.next()) {
          ...       
      }
      
 Like `Query.row()` you can easily extract values from the current result row:
 
-    result.col()...                  // first column as String
-    result.col().getString();        // first column as String
-    result.col(3)...                 // column by index
-    result.col(3).getDouble();       // third column, as Double
-    result.col("sort")...;           // column by name 
-    result.col("sort").getInteger(); // "sort" column, as Integer
-    result.cols();                   // all columns, as Object[]
-    result.cols(1,3,7);              // columns 1,3,7, as Object[] 
-    result.map();                    // returns a Map<String,Object>
-    result.value(City::read);        // returns a City object
+    qr.col()...                  // first column as String
+    qr.col().getString();        // first column as String
+    qr.col(3)...                 // column by index
+    qr.col(3).getDouble();       // third column, as Double
+    qr.col("sort")...;           // column by name 
+    qr.col("sort").getInteger(); // "sort" column, as Integer
+    qr.cols();                   // all columns, as Object[]
+    qr.cols(1,3,7);              // columns 1,3,7, as Object[] 
+    qr.map();                    // returns a Map<String,Object>
+    qr.value(City::read);        // invokes a reader method
     
 If your result set is scrollable and/or updatable, you can ask for the position, move the cursor 
 or perform operations on the current row. Instead of cluttering the `QueryResult` interface
-with these methods they are available in service objects returned by `QueryResult.position()`
+with these methods they are available in service objects returned by `QueryResult.position()`,
 `.move()` and `.row()`
 
-     result.position.isBeforeFirst() 
-     // also: .isAfterLast(), .isLast()  
+    qr.position.isBeforeFirst() 
+    // also: .isAfterLast(), .isLast()  
 
-     result.move().first() 
-     result.move().absolute(5) 
-     result.move().toInsertRow()
-     // also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
+    qr.move().first() 
+    qr.move().absolute(5) 
+    qr.move().toInsertRow()
+    // also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
      
-     result.row().updated()
-     result.row().refresh()
-     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
+    qr.row().updated()
+    qr.row().refresh()
+    // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
   
 
 ## <a href="updates"></a>5. Running DML or DDL Updates
