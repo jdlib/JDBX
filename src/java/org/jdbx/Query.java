@@ -62,9 +62,9 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and returns a QueryResult.
 	 * @return the result
 	 */
-	public QueryResult getResult() throws JdbException
+	public QueryResult result() throws JdbException
 	{
-		return new QueryResult(getResultSet());
+		return new QueryResult(resultSet());
 	}
 
 
@@ -72,7 +72,7 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and returns a ResultSet.
 	 * @return the result
 	 */
-	public ResultSet getResultSet() throws JdbException
+	public ResultSet resultSet() throws JdbException
 	{
 		return CheckedSupplier.unchecked(this::runQuery);
 	}

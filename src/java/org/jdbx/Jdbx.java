@@ -139,7 +139,7 @@ public class Jdbx
 		}
 
 
-		@Override public ResultSet getResultSet() throws JdbException
+		@Override public ResultSet resultSet() throws JdbException
 		{
 			throw JdbException.illegalState("fast query cannot return results");
 		}

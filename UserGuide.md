@@ -1,4 +1,4 @@
-# JDBX User Guide
+JDBX User Guide
 
 1. [Statement Classes](#classes)
    * [StaticStmt](#classes-static)
@@ -11,7 +11,7 @@
    * [Reading a Single Result Row](#queries-singlerow)
    * [Reading all Result Rows](#queries-allrows)
    * [Skipping Rows](#queries-skipping)
-   * [Accessing the Query ResultSet](#queries-resultset)
+   * [Accessing the ResultSet](#queries-resultset)
    * [Turning a ResultSet into a Query](#queries-resultoquery)
    * [QueryResult Class](#queries-queryresultclass)
 4. [Running DML or DDL Updates](#updates)
@@ -20,15 +20,13 @@
 
 ## <a name="classes"></a>1. Statement Classes
 
-JDBX provides three alternative statement classes to replace the corresponding JDBC classes:
+JDBX provides three alternative statement classes to replace the corresponding JDBC statements:
 
 JDBC|JDBX|Used to 
 ----|----|-------
 `java.sql.Statement`|`org.jdbx.StaticStmt`|execute static, non-parameterized SQL commands
 `java.sql.PreparedStatement`|`org.jdbx.PrepStmt`|execute precompiled, parameterized SQL commands
 `java.sql.CallableStatement`|`org.jdbx.CallStmt`|call stored procedures
-
-The JDBX classes are all derived from `org.jdbx.Stmt` which defines operations supported by all its implementations.
 
 JDBX - as JDBC - differentiates between
 
@@ -38,7 +36,7 @@ JDBX - as JDBC - differentiates between
 4. Running SQL commands in a batch
 5. Calling stored procedures
 
-`StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4). `CallStmt` can call stored procedures (5).
+`StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4), `CallStmt` can call stored procedures (5).
 
 ### <a name="classes-static"></a>StaticStmt
 uses static (i.e. non-parameterized) SQL commands. Example:
@@ -48,12 +46,14 @@ uses static (i.e. non-parameterized) SQL commands. Example:
     
 ### <a name="classes-prep"></a>PrepStmt    
 uses precompiled, parameterized SQL commands. After it is initialized it can
-be executed multiple times, using the current parameters. Example:
+be executed multiple times, using the current parameters. Contrary to `PreparedStatement` you can also re-initialize the command. Example:
 
     PrepStmt pstmt = ...
     pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
     pstmt.params("John", "Doe");
     int count = pstmt.update();
+    pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
+    ...
      
 ### <a name="classes-call"></a>CallStmt        
 is used to call stored procedures. After it is initialized it can
@@ -79,7 +79,7 @@ Statement objects should be actively closed once they are no longer used. Since 
 the typical pattern is to create and use statement objects within a Java try-with-resources statement:
 
      Connection con = ...
-     try (StaticStmt stmt = new StaticStmt(con) {
+     try (StaticStmt stmt = new StaticStmt(con)) {
           ... // use the statement
      }   
 
@@ -163,7 +163,7 @@ If you want rule out this case use `.row().required().`
      // will throw an exception if the result contains no rows
      q.row().required().col().getString()` 
      
-You may also want detect the case when the result contains more than one row:
+You may also want detect the case when the result contains more than one row, using `.row().unique()`:
      
      // will throw an exception if the result contains more than one row
      q.row().unique().col().getString()` 
@@ -184,7 +184,7 @@ Use `Query.rows()` if you want to get values from all rows as a `List`:
     q.rows().cols(1,3,7);              // columns 1,3,7, as List<Object[]> 
     q.rows().map();                    // returns a List<Map<String,Object>>
     q.rows().value(City::read);        // returns List<City>
-    q.rows().read(...callback...)		// invokes the callback for every result row 
+    q.rows().read(...callback...)      // invokes the callback for every result row 
      
 You may also limit the number of rows, if this is not done within the SQL query itself:
 
@@ -199,11 +199,11 @@ by calling `Query.row()`, `rows()` or `rows(int)`:
     q.skip(3).rows()...   // all rows after the first three rows
 
 
-### <a name="queries-resultset"></a>Accessing the Query ResultSet  
+### <a name="queries-resultset"></a>Accessing the ResultSet  
       
 You still can obtain the `java.sql.ResultSet` of a query if you want to process it by yourself:
  
-    ResultSet resultSet = q.getResultSet();
+    ResultSet resultSet = q.resultSet();
     while (resultSet.next())
         ... 
     
@@ -217,13 +217,13 @@ The other way round, if you have a `java.sql.ResultSet` reference you can also t
      
 ### <a name="queries-queryresultclass"></a>QueryResult Class
 
-The builder API of `Query` allows easy extraction of values from a forward only result set. For scrollable
+The builder API of `Query` allows easy extraction of values from a result set in forward only manner. For scrollable
 result sets and its operations JDBX provides `org.jdbx.QueryResult`: It is a wrapper around `java.sql.ResultSet` 
 which wants to improve the `ResultSet` API similar to the effort of the JDBX statement classes with respect to its JDBC counterparts.
 
 You can obtain a `QueryResult` from a `Query`:
 
-     QueryResult qr = q.getResult();
+     QueryResult qr = q.result();
      
 or from a `ResultSet` object:
       
@@ -251,8 +251,8 @@ Like `Query.row()` you can easily extract values from the current result row usi
     
 If your result set is scrollable and/or updatable, you can ask for the position, move the cursor 
 or perform operations on the current row. Instead of cluttering the `QueryResult` interface
-with these methods they are available in service objects returned by `QueryResult.position()`,
-`.move()` and `.row()`
+with these methods (like done in `java.sql.ResultSet`) they are available in service objects returned by `QueryResult.position()`,
+`.move()` and `.row()`:
 
     qr.position().isBeforeFirst() 
     // also: .isAfterLast(), .isLast()  
@@ -267,7 +267,7 @@ with these methods they are available in service objects returned by `QueryResul
     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
   
 
-## <a href="updates"></a>4. Running DML or DDL Updates
+## <a name="updates"></a>4. Running DML or DDL Updates
 
 Like in JDBC the term "update" includes DML UPDATE, INSERT, DELETE and DDL commands.
 TODO   

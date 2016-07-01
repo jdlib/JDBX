@@ -1,10 +1,10 @@
 # JDBX
 
 JDBX is a library which provides alternatives to the JDBC Statement and ResultSet classes.
-It allows you to write more compact and elegant database code compared to the verbose and complicated JDBC.
+It allows you to write more compact and elegant database code compared to verbose and complicated JDBC code.
 
 It shares this intent with libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which all wrap plain JDBC to make database access easier.
-But unlike these libraries it does not only simplify coding but also retains 100% of the original JDBC functionality.
+But unlike these libraries it does not only simplify coding but still provides an API which retains 100% of the original JDBC functionality.
     
 JDBX requires Java 8+, has no external dependencies and is released under the Apache 2.0 license.
 
@@ -79,7 +79,7 @@ Perform a parameterized insert, return the auto generated primary key, convert a
 	
 ## <a name="download"></a>Download and Installation 
 
-* Download the [Latest Release](https://github.com/jdlib/JDBX/releases/latest)
+* Download the [latest Release](https://github.com/jdlib/JDBX/releases/latest)
 * and put the JDBX jar file into the classpath.
 
 
