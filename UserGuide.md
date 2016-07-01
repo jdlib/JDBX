@@ -1,19 +1,28 @@
 # JDBX User Guide
 
 1. [Installation](#installation)
-2. [Statement classes](#statement-classes)
+2. [Statement classes](#classes)
+   * [StaticStmt](#classes-static)
+   * [PrepStmt](#classes-prep)
+   * [CallStmt](#classes-call)
 3. [Creating and closing statements](#creating-and-closing)
 4. [Running SQL queries](#queries)
-5. [Running SQL updates](#running-updates)
+   * [Intro](#queries-intro)
+   * [The Query object](#queries-theobject)
+   * [Reading a single result row](#queries-singlerow)
+   * [Reading all result rows](#queries-allrows)
+   * [Skipping rows](#queries-skipping)
+5. [Running DML or DDL updates](#updates)
+6. [Running a single command](#single-cmd)
 
 ## <a name="installation"></a>1. Installation
 
-JBCX requires Java version 8+.<br> 
+JDBX requires Java version 8+.<br> 
 Download the [latest version](https://github.com/jdlib/jdbx/releases/latest)
 and put `jdbx.jar` into the classpath.
 
 
-## <a name="statement-classes"></a>2. Statement classes
+## <a name="classes"></a>2. Statement classes
 
 JDBX provides three alternative statement classes to replace the corresponding JDBC classes:
 
@@ -35,12 +44,14 @@ JDBX - as JDBC - differentiates between
 
 `StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4).  
 
-**`StaticStmt`** uses static (i.e. non-parameterized) SQL commands. Example:
+### <a name="classes-static"></a>StaticStmt
+...uses static (i.e. non-parameterized) SQL commands. Example:
 
     StaticStmt stmt = ...
     int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
     
-**`PrepStmt`** uses precompiled, parameterized SQL commands. After it is initialized it can
+### <a name="classes-prep"></a>PrepStmt    
+...uses precompiled, parameterized SQL commands. After it is initialized it can
 be executed multiple times, using the current parameters. Example:
 
     PrepStmt pstmt = ...
@@ -48,7 +59,8 @@ be executed multiple times, using the current parameters. Example:
     pstmt.params("John", "Doe");
     int count = pstmt.update();
      
-**`CallStmt`** is used to call stored procedures. After it is initialized it can
+### <a name="classes-call"></a>CallStmt        
+...is used to call stored procedures. After it is initialized it can
 be executed multiple times, using the current parameters. Example:
 
     CallStmt cstmt = ...
@@ -57,7 +69,7 @@ be executed multiple times, using the current parameters. Example:
     cstmt.update();
 
 
-### <a name="creating-and-closing"></a>3. Creating and closing statements
+## <a name="creating-and-closing"></a>3. Creating and closing statements
 
 In order to create a JDBX statement you need a `java.sql.Connection` or `javax.sql.DataSource`:
 
@@ -67,8 +79,8 @@ In order to create a JDBX statement you need a `java.sql.Connection` or `javax.s
      PrepStmt prepStmt     = new PrepStmt(con);   // or new PrepStmt(ds)
      CallStmt callStmt     = new CallStmt(con);   // or new CallStmt(ds)
       
-Statement objects should be actively closed once they are no longer used.<br>
-All statement classes implement `java.io.AutoCloseable` so the typical pattern is to create and use statement objects within a Java try-with-resources statement:
+Statement objects should be actively closed once they are no longer used. Since all statement classes implement `java.io.AutoCloseable` 
+the typical pattern is to create and use statement objects within a Java try-with-resources statement:
 
      Connection con = ...
      try (StaticStmt stmt = new StaticStmt(con) {
@@ -78,6 +90,7 @@ All statement classes implement `java.io.AutoCloseable` so the typical pattern i
 
 ## <a name="queries"></a>4. Running SQL queries
 
+### <a name="queries-intro"></a>Intro        
 In JDBC executing a query returns a result set. Given a result set you will loop over its rows, extract 
 values from the rows and return the values in appropriate form.
 
@@ -118,7 +131,8 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
     PrepStmt stmt = new PrepStmt(con);
     String name = pstmt.init(sql).params("fr").createQuery().row().value().getString();
 
-#### The Query object
+
+### <a name="queries-theobject">The Query object
 
 `StaticStmt.createQuery(String)` and `PrepStmt.createQuery()` return a `Query` object
 which provides a builder API to define the query and extract values from the result set:
@@ -129,8 +143,9 @@ which provides a builder API to define the query and extract values from the res
 Because of its builder API you will rarely need to store it in a variable but rather chain
 method calls until you receive the result of the query.     
      
-#### Reading a single result row     
-     
+
+### <a name="queries-singlerow">Reading a single result row
+
 Use `Query.row()` if you want to get values from the first result row:     
      
     q.row()...     
@@ -156,7 +171,8 @@ You may also want detect the case when the result contains more than one row:
      // will throw an exception if result has more than one row
      q.row().unique().col().getString()` 
 
-#### Reading all result rows
+
+### <a name="queries-allrows">Reading all result rows
 
 Use `Query.rows()` if you want to get values from all rows as a `List`:
 
@@ -177,7 +193,8 @@ You may also limit the number of rows, if this is not done within the SQL query 
 
     q.rows(5)...
     
-#### Skipping rows
+
+### <a name="queries-skipping">Skipping rows
 
 Optionally you may also skip a number of rows before you extract values by calling `Query.row()`, `rows()` or `rows(int)`:
 
@@ -247,7 +264,16 @@ with these methods they are available in service objects returned by `QueryResul
      // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
   
 
-### <a href="running-updates"></a>Running SQL or DDL Updates
+## <a href="updates"></a>Running DML or DDL Updates
 
-Like in JDBC the term "update" includes SQL UPDATE, INSERT, DELETE and DDL commands.
-To inserft, up   
+Like in JDBC the term "update" includes DML UPDATE, INSERT, DELETE and DDL commands.
+TODO   
+
+
+## <a name="classes-abbr"></a>6. Running a single command
+        
+If you only want to run a single SQL query or DML update you can use the static helper methods in class `org.jdbx.JDBX` 
+to avoid explicit creation and closing of a `StaticStmt` or `PrepStmt` object:
+TODO 
+ 
+
