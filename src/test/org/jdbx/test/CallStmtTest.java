@@ -35,7 +35,7 @@ public class CallStmtTest extends JdbxTest
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
-			stmt.update("CREATE TABLE CallUser (id INT IDENTITY PRIMARY KEY, firstName VARCHAR(50), lastName VARCHAR(50))");
+			stmt.update("CREATE TABLE CallUser (id INT IDENTITY PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50))");
 
 			id_ = stmt.createUpdate("INSERT INTO CallUser VALUES (DEFAULT, 'Paul', 'Smith')")
 				.reportAutoKeys()
@@ -54,7 +54,7 @@ public class CallStmtTest extends JdbxTest
 				"CREATE PROCEDURE GetUserName(IN theId INT, OUT firstname VARCHAR(50), OUT lastname VARCHAR(50))" +
 			    "  READS SQL DATA " +
 			    "  BEGIN ATOMIC" +
-			    "     SELECT firstName, lastName INTO firstName, lastName FROM CallUser WHERE id = theId;" +
+			    "     SELECT firstName, lastName INTO firstname, lastname FROM CallUser WHERE id = theId;" +
 			    "  END");
 
 			stmt.update(
@@ -100,11 +100,11 @@ public class CallStmtTest extends JdbxTest
 	 * Calls a stored procedure which returns an update count and a generated key.
 	 * The result set is accessed via {@link CallStmt#createUpdate()}.
 	 */
-	@Test public void testExecuteReturnGenKey() throws JdbException
+	@Test public void testExecuteReturnGenKey() throws Exception
 	{
 		stmt_.init("call CreateUser(?,?)");
-		stmt_.param("firstName").set("Alpha");
-		stmt_.param("lastName").set("Beta");
+		stmt_.param("firstname").set("Alpha");
+		stmt_.param("lastname").set("Beta");
 		stmt_.createExecute().run(r -> {
 			assertTrue(r.next());
 			assertTrue(r.isUpdateCount());
@@ -142,7 +142,7 @@ public class CallStmtTest extends JdbxTest
 		stmt_.param(1).set(id_);
 		stmt_.execute();
 		assertEquals("Paul", stmt_.param(2).getString());
-		assertEquals("Smith", stmt_.param("lastName").getString());
+		assertEquals("Smith", stmt_.param(3).getString());
 	}
 
 
