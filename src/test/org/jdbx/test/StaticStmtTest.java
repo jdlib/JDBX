@@ -17,11 +17,13 @@
 package org.jdbx.test;
 
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 import org.jdbx.JdbException;
 import org.jdbx.Jdbx;
 import org.jdbx.ResultConcurrency;
+import org.jdbx.ResultIterator;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
 import org.junit.After;
@@ -91,9 +93,9 @@ public class StaticStmtTest extends JdbxTest
 		assertTrue(array[0] instanceof Integer);
 		assertEquals("D", array[1]);
 
-		List<PlainUser> users = stmt_.createQuery(sql).rows().value(PlainUser::read);
+		List<Dao> users = stmt_.createQuery(sql).rows().value(Dao::read);
 		assertEquals(4, users.size());
-		PlainUser userD = users.get(0);
+		Dao userD = users.get(0);
 		assertNotNull(userD.id);
 		assertEquals(userD.name, "D");
 	}
@@ -154,5 +156,22 @@ public class StaticStmtTest extends JdbxTest
 	}
 
 
+	public static class Dao
+	{
+		public static Dao read(ResultSet result) throws JdbException
+		{
+			ResultIterator it	= ResultIterator.of(result);
+			Dao user		= new Dao();
+			user.id				= it.getInteger();
+			user.name			= it.getString();
+			return user;
+		}
+
+
+		public Integer id;
+		public String name;
+	}
+
+	
 	private StaticStmt stmt_;
 }

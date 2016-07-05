@@ -32,62 +32,55 @@ public class PrepStmtTest extends JdbxTest
 {
 	@BeforeClass public static void beforeClass() throws JdbException
 	{
-		Jdbx.update(con(), "CREATE TABLE PTests (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30), type INTEGER NOT NULL)");
+		Jdbx.update(con(), "CREATE TABLE PTests(id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30), type INTEGER NOT NULL)");
 	}
 
 
 	@Before public void before() throws JdbException
 	{
 		Jdbx.update(con(), "DELETE FROM PTests");
-		stmt_ = new PrepStmt(con());
+		pstmt_ = new PrepStmt(con());
 	}
 
 
 	@After public void after() throws JdbException
 	{
-		stmt_.close();
+		pstmt_.close();
 	}
 
 
 	@SuppressWarnings("boxing")
 	@Test public void test() throws JdbException
 	{
-		String sql;
+		assertFalse(pstmt_.isInitialized());
 
-		// insert a single record and remember it
-		sql = "INSERT INTO PTests VALUES (DEFAULT, ?, ?)";
-		
-		assertFalse(stmt_.isInitialized());
-		
-		stmt_.init().returnCols(1).cmd(sql);
-		assertTrue(stmt_.isInitialized());
-		
-		Integer idA = stmt_.params("a", 1).createUpdate().runGetAutoKey(Integer.class)
+		// insert a single record and remember the generated id
+		pstmt_.init().returnCols(1).cmd("INSERT INTO PTests VALUES (DEFAULT, ?, ?)");
+		assertTrue(pstmt_.isInitialized());
+		pstmt_.params("a", 1);
+		Integer idA = pstmt_.createUpdate().runGetAutoKey(Integer.class)
 			.checkCount(1)
 			.checkHasValue();
 
-		// insert a single record and remember it
-		sql = "INSERT INTO PTests VALUES (DEFAULT, :name, :type)";
-		stmt_.init().named().cmd(sql);
-		stmt_.param("name").set("");
-		stmt_.param("type").setInt(15);
-		assertEquals(1, stmt_.update());
-
+		// insert a single record and remember it: use named parameters
+		pstmt_.init().named().cmd("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
+		pstmt_.param("name").set("b");
+		pstmt_.param("type").setInt(15);
+		assertEquals(1, pstmt_.update());
 		
 		// insert two records using a batch
-		stmt_.param(1, "c").param(2, 2).batch().add();
-		stmt_.param(1).set("d");
-		stmt_.param(2).setInt(3);
-		stmt_.batch().add();
-		int updateCounts[] = stmt_.batch().run();
+		pstmt_.param(1, "c").param(2, 2).batch().add();
+		pstmt_.param(1).set("d");
+		pstmt_.param(2).setInt(3);
+		pstmt_.batch().add();
+		int updateCounts[] = pstmt_.batch().run();
 		assertEquals(2, updateCounts.length);
 		assertEquals(1, updateCounts[0]);
 		assertEquals(1, updateCounts[1]);
 
-
 		// read a row by id
-		stmt_.init("SELECT * FROM PTests WHERE id = ?");
-		Dao dao = stmt_.params(idA).createQuery().row().value(Dao::read);
+		pstmt_.init("SELECT * FROM PTests WHERE id = ?");
+		Dao dao = pstmt_.params(idA).createQuery().row().value(Dao::read);
 		assertNotNull(dao);
 		assertEquals(idA, 	dao.id);
 		assertEquals("a", 	dao.name);
@@ -114,5 +107,5 @@ public class PrepStmtTest extends JdbxTest
 	}
 
 
-	private PrepStmt stmt_;
+	private PrepStmt pstmt_;
 }
