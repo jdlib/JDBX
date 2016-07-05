@@ -63,7 +63,7 @@ public class PrepStmtTest extends JdbxTest
 			.checkHasValue();
 
 		// insert a single record and remember it: use named parameters
-		pstmt_.init().named().cmd("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
+		pstmt_.init().namedParams().cmd("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
 		pstmt_.param("name").set("b");
 		pstmt_.param("type").setInt(15);
 		assertEquals(1, pstmt_.update());

@@ -152,9 +152,9 @@ public class PrepStmt extends Stmt
 		 * instead of positional parameters.
 		 * @return this
 		 */
-		public Init named()
+		public Init namedParams()
 		{
-			named_ = true;
+			namedParams_ = true;
 			return this;
 		}
 
@@ -167,7 +167,7 @@ public class PrepStmt extends Stmt
 		public PrepStmt cmd(NamedParamCmd cmd) throws JdbException
 		{
 			Check.notNull(cmd, "cmd");
-			named_ = false;
+			namedParams_ = false;
 			cmd(cmd.getConverted());
 			paramMap_ = cmd.getParamMap();
 			return PrepStmt.this;
@@ -197,7 +197,7 @@ public class PrepStmt extends Stmt
 				if (optionsChanged_)
 					updateOptions(options());
 
-				if (named_)
+				if (namedParams_)
 				{
 					NamedParamCmd npc = new NamedParamCmd(sql);
 					paramMap_ = npc.getParamMap();
@@ -248,7 +248,7 @@ public class PrepStmt extends Stmt
 
 
 		private ReturnCols returnCols_;
-		private boolean named_;
+		private boolean namedParams_;
 	}
 
 
