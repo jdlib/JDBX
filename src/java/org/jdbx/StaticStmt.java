@@ -266,10 +266,10 @@ public class StaticStmt extends Stmt
 			Statement jdbcStmt = getJdbcStmt();
 			if (returnCols_ == null)
 				return jdbcStmt.executeUpdate(sql_);
-			else if (returnCols_.getColNames() != null)
-				return jdbcStmt.executeUpdate(sql_, returnCols_.getColNames());
-			else if (returnCols_.getColIndexes() != null)
-				return jdbcStmt.executeUpdate(sql_, returnCols_.getColIndexes());
+			else if (returnCols_.getNames() != null)
+				return jdbcStmt.executeUpdate(sql_, returnCols_.getNames());
+			else if (returnCols_.getIndexes() != null)
+				return jdbcStmt.executeUpdate(sql_, returnCols_.getIndexes());
 			else
 				return jdbcStmt.executeUpdate(sql_, Statement.RETURN_GENERATED_KEYS);
 		}
@@ -280,10 +280,10 @@ public class StaticStmt extends Stmt
 			Statement jdbcStmt = getJdbcStmt();
 			if (returnCols_ == null)
 				return jdbcStmt.executeLargeUpdate(sql_);
-			else if (returnCols_.getColNames() != null)
-				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getColNames());
-			else if (returnCols_.getColIndexes() != null)
-				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getColIndexes());
+			else if (returnCols_.getNames() != null)
+				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getNames());
+			else if (returnCols_.getIndexes() != null)
+				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getIndexes());
 			else
 				return jdbcStmt.executeLargeUpdate(sql_, Statement.RETURN_GENERATED_KEYS);
 		}
@@ -347,10 +347,10 @@ public class StaticStmt extends Stmt
 				boolean hasResultSet;
 				if (autoKeys_ == null)
 					hasResultSet = stmt.execute(sql_);
-				else if (autoKeys_.getColNames() != null)
-					hasResultSet = stmt.execute(sql_, autoKeys_.getColNames());
-				else if (autoKeys_.getColIndexes() != null)
-					hasResultSet = stmt.execute(sql_, autoKeys_.getColIndexes());
+				else if (autoKeys_.getNames() != null)
+					hasResultSet = stmt.execute(sql_, autoKeys_.getNames());
+				else if (autoKeys_.getIndexes() != null)
+					hasResultSet = stmt.execute(sql_, autoKeys_.getIndexes());
 				else
 					hasResultSet = stmt.execute(sql_, Statement.RETURN_GENERATED_KEYS);
 				return new ExecuteResult(stmt, hasResultSet);

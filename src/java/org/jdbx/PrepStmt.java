@@ -226,10 +226,10 @@ public class PrepStmt extends Stmt
 						options_.getResultConcurrency().getCode(),
 						options_.getResultHoldability().getCode());
 			}
-			else if (returnCols_.getColNames() != null)
-				return con_.prepareStatement(sql, returnCols_.getColNames());
-			else if (returnCols_.getColIndexes() != null)
-				return con_.prepareStatement(sql, returnCols_.getColIndexes());
+			else if (returnCols_.getNames() != null)
+				return con_.prepareStatement(sql, returnCols_.getNames());
+			else if (returnCols_.getIndexes() != null)
+				return con_.prepareStatement(sql, returnCols_.getIndexes());
 			else
 				return con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		}

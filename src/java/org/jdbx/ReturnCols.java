@@ -80,23 +80,23 @@ public class ReturnCols
 
 	/**
 	 * Creates a new ReturnCols object.
-	 * @param colIndexes the indexes of the columns which should be returned
+	 * @param indexes the indexes of the columns which should be returned
 	 */
-	public ReturnCols(int[] colIndexes)
+	public ReturnCols(int[] indexes)
 	{
-		Check.notNull(colIndexes, "colIndexes");
-		colIndexes_ = colIndexes;
+		Check.notNull(indexes, "indexes");
+		indexes_ = indexes;
 	}
 
 
 	/**
 	 * Creates a new ReturnCols object.
-	 * @param colNames the names of the columns which should be returned
+	 * @param names the names of the columns which should be returned
 	 */
-	public ReturnCols(String[] colNames)
+	public ReturnCols(String[] names)
 	{
-		Check.notNull(colNames, "colNames");
-		colNames_ = colNames;
+		Check.notNull(names, "names");
+		names_ = names;
 	}
 
 
@@ -104,9 +104,9 @@ public class ReturnCols
 	 * Returns the indexes of the columns which should be returned.
 	 * @return the indexes or null if this ReturnCols object is not index based
 	 */
-	public int[] getColIndexes()
+	public int[] getIndexes()
 	{
-		return colIndexes_;
+		return indexes_;
 	}
 
 
@@ -114,12 +114,12 @@ public class ReturnCols
 	 * Returns the names of the columns which should be returned.
 	 * @return the named or null if this ReturnCols object is not name based
 	 */
-	public String[] getColNames()
+	public String[] getNames()
 	{
-		return colNames_;
+		return names_;
 	}
 
 
-	private int[] colIndexes_;
-	private String[] colNames_;
+	private int[] indexes_;
+	private String[] names_;
 }
