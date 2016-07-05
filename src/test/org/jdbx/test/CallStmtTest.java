@@ -38,7 +38,7 @@ public class CallStmtTest extends JdbxTest
 			stmt.update("CREATE TABLE CallUser (id INT IDENTITY PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50))");
 
 			id_ = stmt.createUpdate("INSERT INTO CallUser VALUES (DEFAULT, 'Paul', 'Smith')")
-				.reportAutoKeys()
+				.returnGenCols()
 				.runGetAutoKey(Integer.class)
 				.checkCount(1)
 				.checkHasValue();

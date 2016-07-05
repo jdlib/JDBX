@@ -49,7 +49,7 @@ public abstract class Update extends StmtRunnable
 
 
 	/**
-	 * Runs the command.
+	 * Runs the update command.
 	 * @return the number of affected records
 	 * @see Statement#executeUpdate(String)
 	 * @see PreparedStatement#executeUpdate()

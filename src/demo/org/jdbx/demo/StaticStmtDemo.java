@@ -76,7 +76,7 @@ public class StaticStmtDemo
 	    // updating, and returning generated keys
 		Integer newUserId = stmt
 			.createUpdate("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')")	// the cmd
-			.reportAutoKeys("id") // contains the auto generated key
+			.returnCols("id") // contains the auto generated key
 			.runGetAutoKey(Integer.class) // and we want it as integer
 			.checkCount(1) // assert that 1 one record was inserted
 			.checkHasValue(); // assert that an id was generated and return the value

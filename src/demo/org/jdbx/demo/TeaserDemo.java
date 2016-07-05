@@ -72,7 +72,7 @@ public class TeaserDemo
 	{
 		try (PrepStmt pstmt = new PrepStmt(con))
 		{
-			pstmt.init().reportAutoKeys("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+			pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
 			pstmt.params(firstName, lastName);
 			return pstmt.createUpdate().runGetAutoKey(Integer.class).checkCount(1).checkHasValue();
 		}

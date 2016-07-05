@@ -29,24 +29,24 @@ import org.jdbx.PrepStmt;
 
 
 /**
- * Demonstrates {@link PrepStmt}.
+ * Demonstrates how to use {@link PrepStmt}.
  */
 @SuppressWarnings("unused")
 public class PrepStmtDemo
 {
 	/**
-	 * How to create a StaticStmt.
+	 * How to create a PrepStmt.
 	 */
 	public void create(Connection con, DataSource ds)
 	{
-		// create a StaticStmt from a connection
+		// create a PrepStmt from a connection
 		try (PrepStmt stmt = new PrepStmt(con))
 		{
 			// do stuff
 		}
 
 
-		// create a StaticStmt from a datasource
+		// create a PrepStmt from a datasource
 		// - obtains a connection and automatically closes the connection
 		try (PrepStmt stmt = new PrepStmt(ds))
 		{
@@ -59,7 +59,7 @@ public class PrepStmtDemo
 
 
 	/**
-	 * How to run an updating SQL or DDL command.
+	 * How to run update commands.
 	 * For more update demos, see {@link UpdateDemo}
 	 */
 	private void update(PrepStmt pstmt)
@@ -71,9 +71,9 @@ public class PrepStmtDemo
 		int updated = pstmt.params("red").update();
 
 
-		// 2. initialize and instruct the statement to return generated keysSQL command string is passed to StaticStmt.init()
+		// 2. initialize and instruct the statement to return generated keys.
 
-		pstmt.init().reportAutoKeys("id").cmd("INSERT INTO User VALUES (DEFAULT, ?, ?)");
+		pstmt.init().returnCols("id").cmd("INSERT INTO User VALUES (DEFAULT, ?, ?)");
 
 	    // updating, and returning generated keys
 		Integer newUserId = pstmt
@@ -113,7 +113,7 @@ public class PrepStmtDemo
 		List<Integer> ids = new ArrayList<>();
 		try (PrepStmt pstmt = new PrepStmt(con))
 		{
-			pstmt.init().reportAutoKeys("id").cmd("INSERT INTO Cities (name) VALUES (?)");
+			pstmt.init().returnCols("id").cmd("INSERT INTO Cities (name) VALUES (?)");
 			for (String name : names)
 				ids.add(pstmt.param(1, name).createUpdate().runGetAutoKey(Integer.class).checkCount(1).checkHasValue());
 		}

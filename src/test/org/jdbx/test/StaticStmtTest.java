@@ -106,7 +106,7 @@ public class StaticStmtTest extends JdbxTest
 
 		sql = "INSERT INTO PlainUser (name) VALUES ('A'), ('B')";
 		UpdateResult<List<Integer>> result = stmt_.createUpdate(sql)
-			.reportAutoKeys("ID")
+			.returnCols("ID")
 			.runGetAutoKeys(Integer.class);
 		assertEquals(2, result.count);
 		assertEquals(2, result.value.size());
@@ -122,7 +122,7 @@ public class StaticStmtTest extends JdbxTest
 
 	@Test public void testExecute() throws JdbException
 	{
-		stmt_.createExecute("INSERT INTO PlainUser (name) VALUES ('A')").reportAutoKeys().run(r -> {
+		stmt_.createExecute("INSERT INTO PlainUser (name) VALUES ('A')").returnGenCols().run(r -> {
 			assertTrue(r.next());
 			assertTrue(r.isUpdateCount());
 			assertEquals(1, r.getUpdateCount());

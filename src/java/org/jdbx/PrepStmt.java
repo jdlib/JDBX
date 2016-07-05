@@ -126,6 +126,7 @@ public class PrepStmt extends Stmt
 
 	/**
 	 * Initializes the statement to use the following SQL command.
+	 * This is the same as {@link #init() init()}{@link Init#cmd(String) .cmd(String)}.
 	 * @param sql a SQL command
 	 * @return this
 	 */
@@ -136,9 +137,9 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * Allows initialize the statement.
+	 * Allows to initialize the statement.
 	 */
-	public class Init extends InitBase<Init> implements AutoKeys.Builder<Init>
+	public class Init extends InitBase<Init> implements ReturnCols.Builder<Init>
 	{
 		private Init()
 		{
@@ -215,7 +216,7 @@ public class PrepStmt extends Stmt
 
 		private PreparedStatement createJdbcStmt(String sql) throws SQLException
 		{
-			if (autoKeys_ == null)
+			if (returnCols_ == null)
 			{
 				if (options_ == null)
 					return con_.prepareStatement(sql);
@@ -225,28 +226,28 @@ public class PrepStmt extends Stmt
 						options_.getResultConcurrency().getCode(),
 						options_.getResultHoldability().getCode());
 			}
-			else if (autoKeys_.getColNames() != null)
-				return con_.prepareStatement(sql, autoKeys_.getColNames());
-			else if (autoKeys_.getColIndexes() != null)
-				return con_.prepareStatement(sql, autoKeys_.getColIndexes());
+			else if (returnCols_.getColNames() != null)
+				return con_.prepareStatement(sql, returnCols_.getColNames());
+			else if (returnCols_.getColIndexes() != null)
+				return con_.prepareStatement(sql, returnCols_.getColIndexes());
 			else
 				return con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		}
 
 
 		/**
-		 * Sets the AutoKeys object which should be used.
-		 * @param autoKeys the autoKeys or null if no auto generated keys should be returned
+		 * Defines which columns should be returned for INSERTs.
+		 * @param cols the columns or null if no columns should be returned
 		 * @return this
 		 */
-		@Override public Init reportAutoKeys(AutoKeys autoKeys)
+		@Override public Init returnCols(ReturnCols cols)
 		{
-			autoKeys_ = autoKeys;
+			returnCols_ = cols;
 			return this;
 		}
 
 
-		private AutoKeys autoKeys_;
+		private ReturnCols returnCols_;
 		private boolean named_;
 	}
 

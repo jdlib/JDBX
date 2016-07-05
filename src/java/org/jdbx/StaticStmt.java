@@ -235,7 +235,7 @@ public class StaticStmt extends Stmt
 	/**
 	 * An Update implementation for StaticStmt.
 	 */
-	public class StaticUpdate extends Update implements AutoKeys.Builder<StaticUpdate>
+	public class StaticUpdate extends Update implements ReturnCols.Builder<StaticUpdate>
 	{
 		private StaticUpdate(String sql)
 		{
@@ -244,13 +244,13 @@ public class StaticStmt extends Stmt
 
 
 		/**
-		 * Sets the AutoKeys object which should be used.
-		 * @param autoKeys the autoKeys or null if no auto generated keys should be returned
+		 * Defines which columns should be returned for INSERTs.
+		 * @param cols the columns or null if no columns should be returned
 		 * @return this
 		 */
-		@Override public StaticUpdate reportAutoKeys(AutoKeys autoKeys)
+		@Override public StaticUpdate returnCols(ReturnCols cols)
 		{
-			autoKeys_ = autoKeys;
+			returnCols_ = cols;
 			return this;
 		}
 
@@ -264,12 +264,12 @@ public class StaticStmt extends Stmt
 		private int runNormalUpdate() throws Exception
 		{
 			Statement jdbcStmt = getJdbcStmt();
-			if (autoKeys_ == null)
+			if (returnCols_ == null)
 				return jdbcStmt.executeUpdate(sql_);
-			else if (autoKeys_.getColNames() != null)
-				return jdbcStmt.executeUpdate(sql_, autoKeys_.getColNames());
-			else if (autoKeys_.getColIndexes() != null)
-				return jdbcStmt.executeUpdate(sql_, autoKeys_.getColIndexes());
+			else if (returnCols_.getColNames() != null)
+				return jdbcStmt.executeUpdate(sql_, returnCols_.getColNames());
+			else if (returnCols_.getColIndexes() != null)
+				return jdbcStmt.executeUpdate(sql_, returnCols_.getColIndexes());
 			else
 				return jdbcStmt.executeUpdate(sql_, Statement.RETURN_GENERATED_KEYS);
 		}
@@ -278,12 +278,12 @@ public class StaticStmt extends Stmt
 		private long runLargeUpdate() throws Exception
 		{
 			Statement jdbcStmt = getJdbcStmt();
-			if (autoKeys_ == null)
+			if (returnCols_ == null)
 				return jdbcStmt.executeLargeUpdate(sql_);
-			else if (autoKeys_.getColNames() != null)
-				return jdbcStmt.executeLargeUpdate(sql_, autoKeys_.getColNames());
-			else if (autoKeys_.getColIndexes() != null)
-				return jdbcStmt.executeLargeUpdate(sql_, autoKeys_.getColIndexes());
+			else if (returnCols_.getColNames() != null)
+				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getColNames());
+			else if (returnCols_.getColIndexes() != null)
+				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getColIndexes());
 			else
 				return jdbcStmt.executeLargeUpdate(sql_, Statement.RETURN_GENERATED_KEYS);
 		}
@@ -307,7 +307,7 @@ public class StaticStmt extends Stmt
 
 
 		private String sql_;
-		private AutoKeys autoKeys_;
+		private ReturnCols returnCols_;
 	}
 
 
@@ -319,7 +319,7 @@ public class StaticStmt extends Stmt
 	/**
 	 * An Execute implementation for StaticStmt.
 	 */
-	public class StaticExecute extends Execute implements AutoKeys.Builder<StaticExecute>
+	public class StaticExecute extends Execute implements ReturnCols.Builder<StaticExecute>
 	{
 		private StaticExecute(String sql)
 		{
@@ -328,11 +328,11 @@ public class StaticStmt extends Stmt
 
 
 		/**
-		 * Sets the AutoKeys object which should be used.
-		 * @param autoKeys the autoKeys or null if no auto generated keys should be returned
+		 * Defines which columns should be returned for INSERTs.
+		 * @param cols the columns or null if no columns should be returned
 		 * @return this
 		 */
-		@Override public StaticExecute reportAutoKeys(AutoKeys autoKeys)
+		@Override public StaticExecute returnCols(ReturnCols autoKeys)
 		{
 			autoKeys_ = autoKeys;
 			return this;
@@ -369,7 +369,7 @@ public class StaticStmt extends Stmt
 
 
 		private String sql_;
-		private AutoKeys autoKeys_;
+		private ReturnCols autoKeys_;
 	}
 
 

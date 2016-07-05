@@ -19,8 +19,8 @@ package org.jdbx;
 
 /**
  * UpdateResult is returned by various {@link Update} methods.
- * It stores the update count and information
- * about automatically generated keys.
+ * It stores the update count and the value of 
+ * automatically generated keys.
  * @param <V> the type of the result value.
  */
 public class UpdateResult<V>

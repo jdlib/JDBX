@@ -7,14 +7,15 @@ JDBX User Guide
 2. [Creating and Closing Statements](#creating-and-closing)
 3. [Running SQL Queries](#queries)
    * [Intro](#queries-intro)
-   * [Query class](#queries-queryclass)
+   * [Query Class](#queries-queryclass)
    * [Reading a Single Result Row](#queries-singlerow)
    * [Reading all Result Rows](#queries-allrows)
    * [Skipping Rows](#queries-skipping)
    * [Accessing the ResultSet](#queries-resultset)
-   * [Turning a ResultSet into a Query](#queries-resultoquery)
+   * [Turning a ResultSet into a Query](#queries-result-toquery)
    * [QueryResult Class](#queries-queryresultclass)
 4. [Running DML or DDL Updates](#updates)
+   * [Update Class](#updates-updateclass)
 5. [Running a Single Command](#single-cmd)
 
 
@@ -207,7 +208,7 @@ You still can obtain the `java.sql.ResultSet` of a query if you want to process 
     while (resultSet.next())
         ... 
     
-### <a name="queries-resultoquery"></a>Turning a ResultSet into a Query
+### <a name="queries-result-toquery"></a>Turning a ResultSet into a Query
     
 The other way round, if you have a `java.sql.ResultSet` reference you can also turn it into a query object for easy value extraction:
 
@@ -269,8 +270,25 @@ with these methods (like done in `java.sql.ResultSet`) they are available in ser
 
 ## <a name="updates"></a>4. Running DML or DDL Updates
 
-Like in JDBC the term "update" includes DML UPDATE, INSERT, DELETE and DDL commands.
-TODO   
+Like in JDBC the term *update* covers UPDATE, INSERT, DELETE (DML) and DDL commands.
+Running a DML command can return the number of affected records and the auto-generated values of primary key columns.
+
+Updates can be executed by either calling a `StaticStmt` or a `PrepStmt`:
+
+
+### <a name="updates-updateclass">Update Class
+
+`StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` return a `org.jdbx.Update` object
+which provides a builder API to run the update:
+
+     Update u = stmt.createQuery(sql);
+     Update u = pstmt.createQuery();
+     
+Because of its builder API you will rarely need to store it in a variable but rather chain
+method calls. In the following variable `u` represents
+an Update object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`     
+     
+
 
 
 ## <a name="classes-abbr"></a>5. Running a Single Command
