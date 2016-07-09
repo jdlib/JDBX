@@ -47,7 +47,7 @@ public class PrepStmtDemo
 
 
 		// create a PrepStmt from a datasource
-		// - obtains a connection and automatically closes the connection
+		// obtains a connection from the datasource and automatically closes the connection once done
 		try (PrepStmt stmt = new PrepStmt(ds))
 		{
 			// do stuff
