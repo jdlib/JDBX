@@ -1,32 +1,28 @@
 JDBX User Guide
 
-1. [Statement](#stmts)
-   * [Intro](#stmts-intro)
-   * [Creating and Closing Statements](#stmts-creating)
+1. [Statements](#stmts)
+   * [Creating and closing statements](#stmts-creating)
    * [StaticStmt](#stmts-static)
    * [PrepStmt](#stmts-prep)
    * [CallStmt](#stmts-call)
-2. [Running SQL Queries](#queries)
-   * [Intro](#queries-intro)
-   * [Query Class](#queries-queryclass)
-   * [Reading a Single Result Row](#queries-singlerow)
-   * [Reading all Result Rows](#queries-allrows)
-   * [Skipping Rows](#queries-skipping)
+2. [Running SQL queries](#queries)
+   * [Query class](#queries-queryclass)
+   * [Reading a single result row](#queries-singlerow)
+   * [Reading all result rows](#queries-allrows)
+   * [Skipping rows](#queries-skipping)
    * [Accessing the ResultSet](#queries-resultset)
    * [Turning a ResultSet into a Query](#queries-result-toquery)
-   * [QueryResult Class](#queries-queryresultclass)
-3. [Running DML or DDL Updates](#updates)
-   * [Update Class](#updates-updateclass)
-   * [Run Updates](#updates-running)
-   * [Run Updates and Read Auto-generated Primary Key Values](#updates-autogen)
-4. [Running a Single Command](#single-cmd)
+   * [QueryResult class](#queries-queryresultclass)
+3. [Running DML or DDL updates](#updates)
+   * [Update class](#updates-updateclass)
+   * [Run the update](#updates-run)
+   * [Run updates and read auto-generated primary key values](#updates-autogen)
+4. [Running a single command](#single-cmd)
 
 
 ## <a name="stmts"></a>1. Statements
 
-### <a name="stmts-intro"></a>Intro
-        
-JDBX provides three alternative statement classes to replace the corresponding JDBC statements:
+JDBX provides three alternative statement classes to replace the corresponding JDBC statements classes:
 
 JDBC|JDBX|Used to 
 ----|----|-------
@@ -45,7 +41,7 @@ JDBX - as JDBC - differentiates between
 `StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4), `CallStmt` can call stored procedures (5).
 
 
-### <a name="stmts-creating"></a>Creating and Closing Statements
+### <a name="stmts-creating"></a>Creating and closing statements
 
 In order to create a JDBX statement you need a `java.sql.Connection` or `javax.sql.DataSource`:
 
@@ -56,7 +52,7 @@ In order to create a JDBX statement you need a `java.sql.Connection` or `javax.s
      CallStmt   cstmt = new CallStmt(con);   // or new CallStmt(ds)
       
 Statement objects should be actively closed once they are no longer used. Since all statement classes implement `java.io.AutoCloseable` 
-the typical pattern is to create and use statement objects within a Java try-with-resources statement:
+the typical pattern is to create and use statement objects within a Java try-with-resources block:
 
      Connection con = ...
      try (StaticStmt stmt = new StaticStmt(con)) {
@@ -67,7 +63,7 @@ Statements created from a `DataSource` will use a connection obtained from the `
 connection will also be closed automatically.
 
 
-### <a name="stmts-static"></a>`StaticStmt`
+### <a name="stmts-static"></a>StaticStmt
 
 `org.jdbx.StaticStmt` can execute static, i.e. non-parameterized, SQL commands. Example:
 
@@ -75,7 +71,7 @@ connection will also be closed automatically.
     int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
     
 
-### <a name="stmts-prep"></a>`PrepStmt`
+### <a name="stmts-prep"></a>PrepStmt
 
 `org.jdbx.PrepStmt` can execute precompiled, parameterized SQL commands. After it is initialized it can
 be executed multiple times, using different parameter values. 
@@ -89,7 +85,7 @@ Contrary to `java.sql.PreparedStatement` you can also re-initialize the command.
     ...
      
 
-### <a name="stmts-call"></a>`CallStmt`
+### <a name="stmts-call"></a>CallStmt
 
 `org.jdbx.CallStmt` can call stored procedures. After it is initialized it can
 be executed multiple times, using different parameter values. Example:
@@ -100,10 +96,9 @@ be executed multiple times, using different parameter values. Example:
     cstmt.update();
 
 
-## <a name="queries"></a>2. Running SQL Queries
+## <a name="queries"></a>2. Running SQL queries
 
-### <a name="queries-intro"></a>Intro        
-In JDBC executing a query returns a `java.sql.ResultSet`. Given the result-set you will loop over its rows, extract 
+In JDBC executing a query returns a `java.sql.ResultSet`. Given the `ResultSet` you will loop over its rows, extract 
 values from the rows and return the values in appropriate form.
 
 JDBX uses the builder pattern and functional programming to avoid most of the boilerplate code needed in JDBC.
@@ -144,7 +139,9 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
     String name = pstmt.init(sql).params("fr").createQuery().row().col().getString();
 
 
-### <a name="queries-queryclass">Query Class
+### <a name="queries-queryclass">Query class
+
+In order to execute a SQL query you need a `StaticStmt` or `PrepStmt`. 
 
 `StaticStmt.createQuery(String)` and `PrepStmt.createQuery()` return a `org.jdbx.Query` object
 which provides a builder API to run the query and extract values from the result set:
@@ -152,12 +149,12 @@ which provides a builder API to run the query and extract values from the result
      Query q = stmt.createQuery(sql);
      Query q = pstmt.createQuery();
      
-Because of its builder API you will rarely need to store a `Query` object in a variable but rather chain
+Because of the builder API you rarely will need to store a `Query` object in a variable but rather chain
 method calls until you receive the result of the query. In the following variable `q` represents
 a query object obtained via `StaticStmt.createQuery(String)` or `PrepStmt.createQuery()`     
      
 
-### <a name="queries-singlerow">Reading a Single Result Row
+### <a name="queries-singlerow">Reading a single result row
 
 Call `Query.row()` to retrieve a builder to read values from the first result row:     
      
@@ -185,20 +182,20 @@ You may also want detect the case when the result contains more than one row, us
      q.row().unique().col().getString()` 
 
 
-### <a name="queries-allrows"></a>Reading all Result Rows
+### <a name="queries-allrows"></a>Reading all result rows
 
-Use `Query.rows()` if you want to get values from all rows as a `List`:
+Call `Query.rows()` to retrieve a builder to read values from all rows and pack into a `List`:
 
     q.rows()...
-    q.rows().col()...                  // values of first column
-    q.rows().col().getString();        // values of first column as List<String>
-    q.rows().col(3)...                 // values of column by index
-    q.rows().col(3).getDouble();       // values of third column, as List<Double>
-    q.rows().col("sort")...;           // values of column by name 
-    q.rows().col("sort").getInteger(); // values of "sort" column, as List<Integer>
-    q.rows().cols();                   // values of all columns, as List<Object[]>
-    q.rows().cols(1,3,7);              // values of columns 1,3,7, as List<Object[]> 
-    q.rows().map();                    // a List<Map<String,Object>>
+    q.rows().col()...                  // return values of first column
+    q.rows().col().getString();        // return values of first column as List<String>
+    q.rows().col(3)...                 // return values of column by index
+    q.rows().col(3).getDouble();       // return values of third column, as List<Double>
+    q.rows().col("sort")...;           // return values of column by name 
+    q.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
+    q.rows().cols();                   // return values of all columns, as List<Object[]>
+    q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
+    q.rows().map();                    // return a List<Map<String,Object>>
     q.rows().value(City::read);        // returns List<City>
     q.rows().read(...callback...)      // invokes the callback for every result row 
      
@@ -207,7 +204,7 @@ You may also limit the number of processed rows, if this is not done within the 
     q.rows(5)...
     
 
-### <a name="queries-skipping"></a>Skipping Rows
+### <a name="queries-skipping"></a>Skipping rows
 
 Call `Query.skip(int)` if you want to skip a number of rows before you extract values 
 by calling `Query.row()`, `rows()` or `rows(int)`:
@@ -231,7 +228,7 @@ The other way round, if you have a `java.sql.ResultSet` you can also turn it int
     List<String> names  = Query.of(resultSet).rows().col("name").getString();
     
      
-### <a name="queries-queryresultclass"></a>QueryResult Class
+### <a name="queries-queryresultclass"></a>QueryResult class
 
 The builder API of `Query` allows easy extraction of values from a result set in forward only manner. For scrollable
 result sets and its operations JDBX provides `org.jdbx.QueryResult`: It is a wrapper around `java.sql.ResultSet` 
@@ -239,6 +236,7 @@ which improves the `ResultSet` API similar to the effort of the JDBX statement c
 
 You can obtain a `QueryResult` from a `Query`:
 
+     Query q = ...     
      QueryResult qr = q.result();
      
 or from a `ResultSet` object:
@@ -246,18 +244,18 @@ or from a `ResultSet` object:
      ResultSet resultSet = ...
      QueryResult qr = QueryResult.of(resultSet);
      
-Use the `.next()` method to loop over the result rows: 
+and then use the `.next()` method to loop over the result rows: 
      
      while (qr.next()) {
          ...       
      }
      
-`QueryResult` offers similar methods like the builder returned by `Query.row()` to extract values from the current result:
+`QueryResult` offers similar methods like the builder returned by `Query.row()` to extract values from the current result row:
 
-    qr.col()...                  // first column as String
+    qr.col()...                  // first column
     qr.col().getString();        // first column as String
     qr.col(3)...                 // column by index
-    qr.col(3).getDouble();       // third column, as Double
+    qr.col(3).getDouble();       // third column as double
     qr.col("sort")...;           // column by name 
     qr.col("sort").getInteger(); // "sort" column, as Integer
     qr.cols();                   // all columns, as Object[]
@@ -282,12 +280,12 @@ with these methods (as done in `java.sql.ResultSet`) they are available in servi
     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
   
 
-## <a name="updates"></a>3. Running DML or DDL Updates
+## <a name="updates"></a>3. Running DML or DDL updates
 
 JDBX - as JDBC - uses the term *Update* for DML (i.e. UPDATE, INSERT, DELETE) and DDL commands.
 Running a DML command can return the number of affected records and the auto-generated values of primary key columns.
 
-### <a name="updates-updateclass">Update Class
+### <a name="updates-updateclass">Update class
 
 Updates can be executed by either using a `StaticStmt` or a `PrepStmt`:
 
@@ -302,16 +300,16 @@ method calls. In the following the variable `u` represents
 an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`     
      
 
-### <a name="updates-running">Run an Update
+### <a name="updates-run">Run the update
 
 If you just want to run an update command and are not interested in auto-generated values you simply call
-`Update.run()` or `Update.runLarge()` which return the number of affected records as `ìnt` or `long` value.
+`Update.run()` or `Update.runLarge()` which will return the number of affected records as `ìnt` or `long` value.
 
 	int updateCount = u.run();
 	// or: long largeUpdateCount = u.runLarge();
 
 
-### <a name="updates-autogen">Run an Update and Read Auto-generated Primary Key Values
+### <a name="updates-autogen">Run an Update and read auto-generated primary key values
 
 TODO
 
@@ -319,7 +317,7 @@ TODO
 TODO Execute
 	
 
-## <a name="classes-abbr"></a>4. Running a Single Command
+## <a name="classes-abbr"></a>4. Running a single command
         
 If you only want to run a single SQL query or DML update you can use the static helper methods in class `org.jdbx.JDBX` 
 to avoid explicit creation and closing of a `StaticStmt` or `PrepStmt` object:
