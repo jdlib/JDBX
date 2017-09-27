@@ -2,9 +2,9 @@ JDBX User Guide
 
 1. [Statement Classes](#classes)
 2. [Creating and Closing Statements](#creating-and-closing)
-3. [`StaticStmt`](#staticstmt)
-4. [`PrepStmt`](#prepstmt)
-5. [`CallStmt`](#callstmt)
+3. [StaticStmt](#staticstmt)
+4. [PrepStmt](#prepstmt)
+5. [CallStmt](#callstmt)
 6. [Running SQL Queries](#queries)
    * [Intro](#queries-intro)
    * [Query Class](#queries-queryclass)
@@ -16,6 +16,8 @@ JDBX User Guide
    * [QueryResult Class](#queries-queryresultclass)
 7. [Running DML or DDL Updates](#updates)
    * [Update Class](#updates-updateclass)
+   * [Run Updates](#updates-running)
+   * [Run Updates and Read Auto-generated Primary Key Values](#updates-autogen)
 8. [Running a Single Command](#single-cmd)
 
 
@@ -59,17 +61,18 @@ the typical pattern is to create and use statement objects within a Java try-wit
      }   
 
 Statements created from a `DataSource` will use a connection obtained from the `DataSource`. When the statement is closed the 
-connection will also be closed automaticall.y
+connection will also be closed automatically.
 
 
 ## <a name="staticstmt"></a>3. `StaticStmt`
-`org.jdbx.StaticStmt` can execute static (i.e. non-parameterized) SQL commands. Example:
+
+`org.jdbx.StaticStmt` can execute static, i.e. non-parameterized, SQL commands. Example:
 
     StaticStmt stmt = ...
     int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
     
 
-## <a name="prepstmt"></a>4. `PrepStmt`
+## <a name="prepstmt"></a>4. PrepStmt
 
 `org.jdbx.StaticStmt` can execute precompiled, parameterized SQL commands. After it is initialized it can
 be executed multiple times, using the current parameters. 
@@ -77,13 +80,13 @@ Contrary to `PreparedStatement` you can also re-initialize the command. Example:
 
     PrepStmt pstmt = ...
     pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-    pstmt.params("John", "Doe");
-    int count = pstmt.update();
+    int count1 = pstmt.params("John", "Doe").update();
+    int count2 = pstmt.params("Mary", "Jane").update();
     pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
     ...
      
 
-## <a name="callstmt"></a>5. `CallStmt`
+## <a name="callstmt"></a>5. CallStmt
 
 `org.jdbx.CallStmt` can call stored procedures. After it is initialized it can
 be executed multiple times, using the current parameters. Example:
@@ -146,25 +149,25 @@ which provides a builder API to run the query and extract values from the result
      Query q = stmt.createQuery(sql);
      Query q = pstmt.createQuery();
      
-Because of the builder API you will rarely need to store it in a variable but rather chain
+Because of its builder API you will rarely need to store a `Query` object in a variable but rather chain
 method calls until you receive the result of the query. In the following variable `q` represents
 a query object obtained via `StaticStmt.createQuery(String)` or `PrepStmt.createQuery()`     
      
 
 ### <a name="queries-singlerow">Reading a Single Result Row
 
-Use `Query.row()` if you want to get values from the first result row:     
+Call `Query.row()` if you want to get values from the first result row:     
      
     q.row()...     
-    q.row().col()...              // first column
-    q.row().col().getString();    // first column, as string
-    q.row().col(3)...             // column by index
-    q.row().col(3).getInteger();  // third colum, as Integer
-    q.row().col("sort")...;       // column by name 
-    q.row().col("sort").getInt(); // "sort" colum, as int
-    q.row().cols();               // all columns, as Object[]
-    q.row().cols(1,3,7);          // columns 1,3,7, as Object[] 
-    q.row().map();                // a Map<String,Object> mapping column name to value
+    q.row().col()...              // value of first column
+    q.row().col().getString();    // value of first column, as string
+    q.row().col(3)...             // value of column by index
+    q.row().col(3).getInteger();  // value of third colum, as Integer
+    q.row().col("sort")...;       // value of column by name 
+    q.row().col("sort").getInt(); // value of "sort" colum, as int
+    q.row().cols();               // value of all columns, as Object[]
+    q.row().cols(1,3,7);          // value of columns 1,3,7, as Object[] 
+    q.row().map();                // returns a Map<String,Object> mapping column name to value
     q.row().value(City::read);    // the value returned by the reader function 	 
 
 If the result is empty, all the examples above will return a null value (or a default value for primitive terminals like `getInt()`).
@@ -184,19 +187,19 @@ You may also want detect the case when the result contains more than one row, us
 Use `Query.rows()` if you want to get values from all rows as a `List`:
 
     q.rows()...
-    q.rows().col()...                  // first columns
-    q.rows().col().getString();        // first columns as List<String>
-    q.rows().col(3)...                 // columns by index
-    q.rows().col(3).getDouble();       // third columns, as List<Double>
-    q.rows().col("sort")...;           // columns by name 
-    q.rows().col("sort").getInteger(); // "sort" columns, as List<Integer>
-    q.rows().cols();                   // all columns, as List<Object[]>
-    q.rows().cols(1,3,7);              // columns 1,3,7, as List<Object[]> 
-    q.rows().map();                    // returns a List<Map<String,Object>>
+    q.rows().col()...                  // values of first column
+    q.rows().col().getString();        // values of first column as List<String>
+    q.rows().col(3)...                 // values of column by index
+    q.rows().col(3).getDouble();       // values of third column, as List<Double>
+    q.rows().col("sort")...;           // values of column by name 
+    q.rows().col("sort").getInteger(); // values of "sort" column, as List<Integer>
+    q.rows().cols();                   // values of all columns, as List<Object[]>
+    q.rows().cols(1,3,7);              // values of columns 1,3,7, as List<Object[]> 
+    q.rows().map();                    // a List<Map<String,Object>>
     q.rows().value(City::read);        // returns List<City>
     q.rows().read(...callback...)      // invokes the callback for every result row 
      
-You may also limit the number of rows, if this is not done within the SQL query itself:
+You may also limit the number of processed rows, if this is not done within the SQL query itself:
 
     q.rows(5)...
     
@@ -219,7 +222,7 @@ You still can obtain the `java.sql.ResultSet` of a query if you want to process 
     
 ### <a name="queries-result-toquery"></a>Turning a ResultSet into a Query
     
-The other way round, if you have a `java.sql.ResultSet` reference you can also turn it into a query object for easy value extraction:
+The other way round, if you have a `java.sql.ResultSet` you can also turn it into a query object for easy value extraction:
 
     ResultSet resultSet = ...
     List<String> names  = Query.of(resultSet).rows().col("name").getString();
@@ -229,7 +232,7 @@ The other way round, if you have a `java.sql.ResultSet` reference you can also t
 
 The builder API of `Query` allows easy extraction of values from a result set in forward only manner. For scrollable
 result sets and its operations JDBX provides `org.jdbx.QueryResult`: It is a wrapper around `java.sql.ResultSet` 
-which wants to improve the `ResultSet` API similar to the effort of the JDBX statement classes with respect to its JDBC counterparts.
+which improves the `ResultSet` API similar to the effort of the JDBX statement classes with respect to its JDBC counterparts.
 
 You can obtain a `QueryResult` from a `Query`:
 
@@ -240,13 +243,13 @@ or from a `ResultSet` object:
      ResultSet resultSet = ...
      QueryResult qr = QueryResult.of(resultSet);
      
-Looping over the result is done via the `.next()` method:
+Use the `.next()` method to loop over the result rows: 
      
      while (qr.next()) {
          ...       
      }
      
-Like `Query.row()` you can easily extract values from the current result row using `QueryResult.row()`:
+`QueryResult` offers similar methods like the builder returned by `Query.row()` to extract values from the current result:
 
     qr.col()...                  // first column as String
     qr.col().getString();        // first column as String
@@ -257,11 +260,10 @@ Like `Query.row()` you can easily extract values from the current result row usi
     qr.cols();                   // all columns, as Object[]
     qr.cols(1,3,7);              // columns 1,3,7, as Object[] 
     qr.map();                    // returns a Map<String,Object>
-    qr.value(City::read);        // invokes a reader method
     
 If your result set is scrollable and/or updatable, you can ask for the position, move the cursor 
 or perform operations on the current row. Instead of cluttering the `QueryResult` interface
-with these methods (like done in `java.sql.ResultSet`) they are available in service objects returned by `QueryResult.position()`,
+with these methods (as done in `java.sql.ResultSet`) they are available in service objects returned by `QueryResult.position()`,
 `.move()` and `.row()`:
 
     qr.position().isBeforeFirst() 
@@ -279,26 +281,40 @@ with these methods (like done in `java.sql.ResultSet`) they are available in ser
 
 ## <a name="updates"></a>7. Running DML or DDL Updates
 
-Like in JDBC the term *update* covers UPDATE, INSERT, DELETE (DML) and DDL commands.
+JDBX - as JDBC - uses the term *Update* for DML (i.e. UPDATE, INSERT, DELETE) and DDL commands.
 Running a DML command can return the number of affected records and the auto-generated values of primary key columns.
-
-Updates can be executed by either calling a `StaticStmt` or a `PrepStmt`:
-
 
 ### <a name="updates-updateclass">Update Class
 
+Updates can be executed by either using a `StaticStmt` or a `PrepStmt`:
+
 `StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` return a `org.jdbx.Update` object
-which provides a builder API to run the update:
+which provides a builder API to configure and run the update:
 
-     Update u = stmt.createQuery(sql);
-     Update u = pstmt.createQuery();
+     Update u = stmt.createUpdate(sql);
+     Update u = pstmt.createUpdate();
      
-Because of its builder API you will rarely need to store it in a variable but rather chain
-method calls. In the following variable `u` represents
-an Update object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`     
+Because of its builder API you will rarely need to store an `Update` object in a variable but rather chain
+method calls. In the following the variable `u` represents
+an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`     
      
 
+### <a name="updates-running">Run an Update
 
+If you just want to run an update command and are not interested in auto-generated values you simply call
+`Update.run()` or `Update.runLarge()` which return the number of affected records as `ìnt` or `long` value.
+
+	int updateCount = u.run();
+	// or: long largeUpdateCount = u.runLarge();
+
+
+### <a name="updates-autogen">Run an Update and Read Auto-generated Primary Key Values
+
+TODO
+
+
+TODO Execute
+	
 
 ## <a name="classes-abbr"></a>8. Running a Single Command
         

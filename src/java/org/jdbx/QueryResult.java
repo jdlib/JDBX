@@ -111,7 +111,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the column values of the current row as map.
 	 * @return a map whose keys are the column names
 	 */
-	public Map<String, Object> colMap() throws JdbException
+	public Map<String, Object> map() throws JdbException
 	{
 		try
 		{
@@ -129,7 +129,7 @@ public class QueryResult implements AutoCloseable
 	 * @param names the column names
 	 * @return a map whose keys are the column names
 	 */
-	public Map<String, Object> colMap(String... names) throws JdbException
+	public Map<String, Object> map(String... names) throws JdbException
 	{
 		Check.notNull(names, "names");
 		try
@@ -141,8 +141,17 @@ public class QueryResult implements AutoCloseable
 			throw JdbException.of(e);
 		}
 	}
+	
+	
+	/**
+	 * Calls {@link #col(int)} with column index 1.
+	 */
+	public IndexedColumn col()
+	{
+		return col(1);
+	}
 
-
+	
 	/**
 	 * Returns the result column for the given index.
 	 * The column should only be used to immediately access the value, but
@@ -747,7 +756,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * @return should the internal ResultSet be closed when this QueryResult is closed
+	 * Returns if the internal ResultSet should be closed when this QueryResult is closed.
 	 */
 	public boolean isCloseResult()
 	{

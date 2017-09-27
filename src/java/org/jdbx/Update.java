@@ -62,7 +62,7 @@ public abstract class Update extends StmtRunnable
 
 	/**
 	 * Runs the command.
-	 * @return the number of affected records as long
+	 * @return the number of affected records as long value
 	 * @see Statement#executeLargeUpdate(String)
 	 * @see PreparedStatement#executeLargeUpdate()
 	 */
@@ -73,7 +73,7 @@ public abstract class Update extends StmtRunnable
 
 
 	/**
-	 * Implementation for run() and runLarge().
+	 * Common implementation for run() and runLarge().
 	 */
 	private long run(boolean large) throws JdbException
 	{

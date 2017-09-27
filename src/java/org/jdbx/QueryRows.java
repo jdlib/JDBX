@@ -57,11 +57,12 @@ public class QueryRows
 	public void read(CheckedConsumer<ResultSet> consumer) throws JdbException
 	{
 		Check.notNull(consumer, "consumer");
-		query_.read(result -> {
+		CheckedConsumer<ResultSet> c = result -> {
 			int index = -1;
 			while ((++index < max_) && result.next())
 				consumer.accept(result);
-		});
+		}; 
+		query_.read(c);
 	}
 
 

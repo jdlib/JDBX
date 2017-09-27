@@ -1,10 +1,10 @@
 # JDBX
 
 JDBX is a library which provides replacements for Java JDBC Statement and ResultSet classes
-to allow you to write compact and effective database code.
+to allow you to write compact and concise database code.
 
 It shares this intent with libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which all wrap plain JDBC to make database access easier.
-But unlike these libraries it does not only simplify coding but still provides an API which retains 100% of the original JDBC functionality.
+But unlike these libraries JDBX does not only simplify coding but still provides an API which retains 100% of the original JDBC functionality.
     
 JDBX requires Java 8+, has no external dependencies and is released under the Apache 2.0 license.
 
@@ -16,65 +16,66 @@ JDBX requires Java 8+, has no external dependencies and is released under the Ap
 
 ## <a name="examples"></a>Examples
 
-The following snippets show two examples of typical JDBC code and the JDBX rewrite:
+The following snippets show two examples of typical JDBC code and the JDBX rewrite, giving you a impression
+how database code gets easier when using JDBX.
 
 **Example 1:** 
-Perform a SQL select, create a bean object for every result row, return all beans in a list.
+Perform a SQL select, create a bean object for every result row, return the beans stored in a List.
 
 *using JDBC:*
         
-	public List<City> queryCities(Connection con) throws SQLException {
-		try (Statement stmt = con.createStatement()) {
-			List<City> list = new ArrayList<>();
-			ResultSet result = stmt.executeQuery("SELECT * FROM Cities ORDER BY name");
-			while (result.next())
-				list.add(City.read(result));
-			return list;
-		}
-	}
-	
+    public List<City> queryCities(Connection con) throws SQLException {
+        List<City> list = new ArrayList<>();
+        try (Statement stmt = con.createStatement()) {
+            ResultSet result = stmt.executeQuery("SELECT * FROM Cities ORDER BY name");
+            while (result.next())
+                list.add(City.read(result));
+        }
+        return list;
+    }
+    	
 *using JDBX:*
 
-	public List<City> queryCities(Connection con) {
-		return Jdbx.createQuery(con, "SELECT * FROM Cities ORDER BY name").rows().value(City::read);
-	}
+    public List<City> queryCities(Connection con) {
+        return Jdbx.createQuery(con, "SELECT * FROM Cities ORDER BY name").rows().value(City::read);
+    }
 
 
 **Example 2:**
 Perform a parameterized INSERT, return the auto generated primary key, convert any `SQLException` to a runtime exception.
 
 *using JDBC:*
-
-	public Integer createUser(Connection con, String firstName, String lastName) {
-		try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO Users VALUES (DEFAULT, ?, ?)",
-			new String[] { "id" })) {
-			pstmt.setString(1, firstName);
-			pstmt.setString(2, lastName);
-			if (pstmt.executeUpdate() != 1)
-				throw new IllegalStateException("insert failed");
-			Integer id = null;
-			ResultSet result = pstmt.getGeneratedKeys();
-			if (result.next())
-				id = result.getObject(1, Integer.class);
-			if (id == null)
-				throw new IllegalStateException("id not returned");
-			return id;
-		}
-		catch (SQLException e) {
-			throw new IllegalStateException("sql error", e);
-		}
-	}
+    
+    public Integer createUser(Connection con, String firstName, String lastName) {
+        try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO Users VALUES (DEFAULT, ?, ?)",
+            new String[] { "id" })) {
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            if (pstmt.executeUpdate() != 1)
+                throw new IllegalStateException("insert failed");
+            Integer id = null;
+            ResultSet result = pstmt.getGeneratedKeys();
+            if (result.next())
+                id = result.getObject(1, Integer.class);
+            if (id == null)
+                throw new IllegalStateException("id not returned");
+            return id;
+        }
+        catch (SQLException e) {
+            throw new IllegalStateException("sql error", e);
+        }
+    }
 
 
 *using JDBX:*
 
-	public Integer createUser(Connection con, String firstName, String lastName) {
-		try (PrepStmt pstmt = new PrepStmt(con)) {
-			pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-			pstmt.params(firstName, lastName);
-			return pstmt.createUpdate().runGetAutoKey(Integer.class).checkCount(1).checkHasValue();
-		}
-	}
+    public Integer createUser(Connection con, String firstName, String lastName) {
+        try (PrepStmt pstmt = new PrepStmt(con)) {
+            pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+            pstmt.params(firstName, lastName);
+            return pstmt.createUpdate().runGetAutoKey(Integer.class).checkCount(1).checkHasValue();
+        }
+    }
 	
 	
 ## <a name="download"></a>Download and Installation 

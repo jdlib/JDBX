@@ -34,7 +34,7 @@ public class JdbException extends RuntimeException
 		INVALID_RESULT,
 
 		/**
-		 * The JdbException was thrown because an operation was done on a closed statement or resultset.
+		 * The JdbException was thrown because an operation was performed on a closed statement or resultset.
 		 */
 		CLOSED,
 

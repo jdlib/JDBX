@@ -112,7 +112,7 @@ public class ReturnCols
 
 	/**
 	 * Returns the names of the columns which should be returned.
-	 * @return the named or null if this ReturnCols object is not name based
+	 * @return the names or null if this ReturnCols object is not name based
 	 */
 	public String[] getNames()
 	{

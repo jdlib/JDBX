@@ -106,7 +106,7 @@ public abstract class Query extends StmtRunnable
 
 	/**
 	 * Implementation method for #read(ResultReader<T> reader).
-	 * We allow callers to decide if they want to apply skipping themselves:
+	 * We allow callers of this method to decide if they want to apply skipping themselves:
 	 * If skipping is done here, the ResultReader may invoke ResultSet.next()
 	 * after an unsuccessful prior call to this method - unfortunately in this case
 	 * a JDBC driver is allowed to throw an exceptions instead of returning false.
@@ -157,7 +157,7 @@ public abstract class Query extends StmtRunnable
 
 
 	/**
-	 * Returns a builder to access the all rows of the result set.
+	 * Returns a builder to access all rows of the result set.
 	 * @return the builder
 	 */
 	public QueryRows rows()

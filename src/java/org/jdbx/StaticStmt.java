@@ -138,7 +138,7 @@ public class StaticStmt extends Stmt
 
 
 	/**
-	 * A Builder to initialize the Stmt.
+	 * A Builder to initialize the StaticStmt.
 	 */
 	public class Init extends InitBase<Init>
 	{
@@ -152,7 +152,7 @@ public class StaticStmt extends Stmt
 		{
 			checkOpen();
 			updateOptions(options()); // will create options if not yet done
-			closeStmt();
+			closeStmt(); // will force recreate of jdbc statement with new options
 		}
 	}
 

@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 
 /**
  * Jdbx allows you to perform simple queries and updates
- * without the need to explicitly creating a statement.
+ * without the need to explicitly create a statement.
  */
 public class Jdbx
 {
@@ -141,7 +141,7 @@ public class Jdbx
 
 		@Override public ResultSet resultSet() throws JdbException
 		{
-			throw JdbException.illegalState("fast query cannot return results");
+			throw JdbException.illegalState("fast query cannot return ResultSet");
 		}
 
 
