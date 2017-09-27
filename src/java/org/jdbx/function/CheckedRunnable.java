@@ -17,7 +17,7 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 
 
 /**
@@ -28,10 +28,10 @@ import org.jdbx.JdbException;
 public interface CheckedRunnable
 {
 	/**
-	 * Runs the runnable and converts any exception into a JdbException.
+	 * Runs the runnable and converts any exception into a JdbxException.
 	 * @param runnable the runnable
 	 */
-	public static void unchecked(CheckedRunnable runnable) throws JdbException
+	public static void unchecked(CheckedRunnable runnable) throws JdbxException
 	{
 		try
 		{
@@ -39,7 +39,7 @@ public interface CheckedRunnable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 

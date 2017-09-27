@@ -29,7 +29,7 @@ public class CallStmt extends Stmt
 	 * Creates a new CallStmt.
 	 * @param dataSource provides a connection
 	 */
-	public CallStmt(DataSource dataSource) throws JdbException
+	public CallStmt(DataSource dataSource) throws JdbxException
 	{
 		super(dataSource);
 	}
@@ -40,7 +40,7 @@ public class CallStmt extends Stmt
 	 * @param supplier provides a connection
 	 * @param closeCon defines if the connection should be closed when the statement is closed.
 	 */
-	public CallStmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbException
+	public CallStmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbxException
 	{
 		super(supplier, closeCon);
 	}
@@ -71,7 +71,7 @@ public class CallStmt extends Stmt
 	 * Returns the JDBC CallableStatement used by the CallStmt.
 	 * This method can only be called if {@link #isInitialized()} returns true.
 	 */
-	@Override public CallableStatement getJdbcStmt() throws JdbException
+	@Override public CallableStatement getJdbcStmt() throws JdbxException
 	{
 		checkInitialized();
 		return (CallableStatement)stmt_;
@@ -82,7 +82,7 @@ public class CallStmt extends Stmt
 	 * Returns the ParameterMetaData.
 	 * @return the meta data
 	 */
-	public ParameterMetaData getParamMetaData() throws JdbException
+	public ParameterMetaData getParamMetaData() throws JdbxException
 	{
 		return get(PreparedStatement::getParameterMetaData);
 	}
@@ -97,7 +97,7 @@ public class CallStmt extends Stmt
 	 * Returns a builder to initialize the CallStmt.
 	 * @return the builder
 	 */
-	public Init init() throws JdbException
+	public Init init() throws JdbxException
 	{
 		checkOpen();
 		return new Init();
@@ -109,7 +109,7 @@ public class CallStmt extends Stmt
 	 * @param sql the sql command
 	 * @return this
 	 */
-	public CallStmt init(String sql) throws JdbException
+	public CallStmt init(String sql) throws JdbxException
 	{
 		return init().cmd(sql);
 	}
@@ -131,7 +131,7 @@ public class CallStmt extends Stmt
 		 * @param sql the sql command
 		 * @return the CallStmt
 		 */
-		public CallStmt cmd(String sql) throws JdbException
+		public CallStmt cmd(String sql) throws JdbxException
 		{
 			Check.notNull(sql, "sql");
 			checkOpen();
@@ -157,7 +157,7 @@ public class CallStmt extends Stmt
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
@@ -193,7 +193,7 @@ public class CallStmt extends Stmt
 	 * Clears the parameters.
 	 * @return this
 	 */
-	public CallStmt clearParams() throws JdbException
+	public CallStmt clearParams() throws JdbxException
 	{
 		checkInitialized();
 		call(PreparedStatement::clearParameters);
@@ -216,19 +216,19 @@ public class CallStmt extends Stmt
 	 */
 	public interface RegisterOut<P>
 	{
-		public P out(int sqlType) throws JdbException;
+		public P out(int sqlType) throws JdbxException;
 
 
-		public P out(int sqlType, int scale) throws JdbException;
+		public P out(int sqlType, int scale) throws JdbxException;
 
 
-		public P out(SQLType sqlType) throws JdbException;
+		public P out(SQLType sqlType) throws JdbxException;
 
 
-		public P out(SQLType sqlType, int scale) throws JdbException;
+		public P out(SQLType sqlType, int scale) throws JdbxException;
 
 
-		public P out(SQLType sqlType, String typeName) throws JdbException;
+		public P out(SQLType sqlType, String typeName) throws JdbxException;
 	}
 
 
@@ -244,68 +244,68 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override public IndexedParam out(int sqlType) throws JdbException
+		@Override public IndexedParam out(int sqlType) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(int sqlType, int scale) throws JdbException
+		@Override public IndexedParam out(int sqlType, int scale) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(SQLType sqlType) throws JdbException
+		@Override public IndexedParam out(SQLType sqlType) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(SQLType sqlType, int scale) throws JdbException
+		@Override public IndexedParam out(SQLType sqlType, int scale) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(SQLType sqlType, String typeName) throws JdbException
+		@Override public IndexedParam out(SQLType sqlType, String typeName) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType, typeName));
 			return this;
 		}
 
-		@Override public void set(Object value) throws JdbException
+		@Override public void set(Object value) throws JdbxException
 		{
 			set(value, PreparedStatement::setObject);
 		}
 
 
-		@Override public void set(Object value, SQLType type) throws JdbException
+		@Override public void set(Object value, SQLType type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			CheckedRunnable.unchecked(() -> getJdbcStmt().setObject(index_, value, type));
 		}
 
 
-		@Override public <T> void set(T value, SetForIndex<CallableStatement,T> setter) throws JdbException
+		@Override public <T> void set(T value, SetForIndex<CallableStatement,T> setter) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			CheckedRunnable.unchecked(() -> setter.set(getJdbcStmt(), index_, value));
 		}
 
 
-		@Override public void apply(DoForIndex<CallableStatement> runner) throws JdbException
+		@Override public void apply(DoForIndex<CallableStatement> runner) throws JdbxException
 		{
 			Check.notNull(runner, "runner");
 			CheckedRunnable.unchecked(() -> runner.accept(getJdbcStmt(), index_));
 		}
 
 
-		@Override public <T> T get(Class<T> type) throws JdbException
+		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try
@@ -314,12 +314,12 @@ public class CallStmt extends Stmt
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override public Object get(Map<String,Class<?>> map) throws JdbException
+		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try
@@ -328,12 +328,12 @@ public class CallStmt extends Stmt
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		public <T> T get(GetForIndex<CallableStatement,T> getter) throws JdbException
+		public <T> T get(GetForIndex<CallableStatement,T> getter) throws JdbxException
 		{
 			Check.notNull(getter, "getter");
 			try
@@ -342,12 +342,12 @@ public class CallStmt extends Stmt
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbException
+		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
 			return get(accessors.paramForIndex);
@@ -379,69 +379,69 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override public NamedParam out(int sqlType) throws JdbException
+		@Override public NamedParam out(int sqlType) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
 			return this;
 		}
 
 
-		@Override public NamedParam out(int sqlType, int scale) throws JdbException
+		@Override public NamedParam out(int sqlType, int scale) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
 			return this;
 		}
 
 
-		@Override public NamedParam out(SQLType sqlType) throws JdbException
+		@Override public NamedParam out(SQLType sqlType) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
 			return this;
 		}
 
 
-		@Override public NamedParam out(SQLType sqlType, int scale) throws JdbException
+		@Override public NamedParam out(SQLType sqlType, int scale) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
 			return this;
 		}
 
 
-		@Override public NamedParam out(SQLType sqlType, String typeName) throws JdbException
+		@Override public NamedParam out(SQLType sqlType, String typeName) throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType, typeName));
 			return this;
 		}
 
 
-		public void set(Object value) throws JdbException
+		public void set(Object value) throws JdbxException
 		{
 			set(value, CallableStatement::setObject);
 		}
 
 
-		public void set(Object value, SQLType type) throws JdbException
+		public void set(Object value, SQLType type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			CheckedRunnable.unchecked(() -> getJdbcStmt().setObject(name_, value, type));
 		}
 
 
-		public <T> void set(T value, SetForName<CallableStatement,T> setter) throws JdbException
+		public <T> void set(T value, SetForName<CallableStatement,T> setter) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			CheckedRunnable.unchecked(() -> setter.set(getJdbcStmt(), name_, value));
 		}
 
 
-		public <T> void apply(DoForName<CallableStatement> runner) throws JdbException
+		public <T> void apply(DoForName<CallableStatement> runner) throws JdbxException
 		{
 			Check.notNull(runner, "runner");
 			CheckedRunnable.unchecked(() -> runner.accept(getJdbcStmt(), name_));
 		}
 
 
-		@Override public <T> T get(Class<T> type) throws JdbException
+		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try
@@ -450,12 +450,12 @@ public class CallStmt extends Stmt
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override public Object get(Map<String,Class<?>> map) throws JdbException
+		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try
@@ -464,12 +464,12 @@ public class CallStmt extends Stmt
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		public <T> T get(GetForName<CallableStatement,T> getter) throws JdbException
+		public <T> T get(GetForName<CallableStatement,T> getter) throws JdbxException
 		{
 			Check.notNull(getter, "getter");
 			try
@@ -478,12 +478,12 @@ public class CallStmt extends Stmt
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbException
+		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
 			return get(accessors.paramForName);
@@ -503,7 +503,7 @@ public class CallStmt extends Stmt
 	 * Creates a query to execute the current SQL command.
 	 * @return the query object
 	 */
-	public Query createQuery() throws JdbException
+	public Query createQuery() throws JdbxException
 	{
 		checkInitialized();
 		return new PrepStmtQuery(this::getJdbcStmt);
@@ -547,7 +547,7 @@ public class CallStmt extends Stmt
 	 */
 	public class CallBatch extends Batch
 	{
-		public Batch add() throws JdbException
+		public Batch add() throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().addBatch());
 			return this;

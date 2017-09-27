@@ -18,13 +18,13 @@ package org.jdbx.test;
 
 
 import java.sql.Connection;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.junit.Assert;
 
 
 public class JdbxTest extends Assert
 {
-	public static Connection con() throws JdbException
+	public static Connection con() throws JdbxException
 	{
 		return Globals.con();
 	}

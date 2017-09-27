@@ -28,7 +28,7 @@
 	ParamStatement pstmt = ...;
 	List<String> list = pstmt.createQuery().rows().col().getString();
 
-* replaces the checked java.sql.SQLException by an unchecked JdbException 
+* replaces the checked java.sql.SQLException by an unchecked JdbxException 
 
 * introduces Enums for Statement and ResultSet int constants
 		

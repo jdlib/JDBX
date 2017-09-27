@@ -18,7 +18,7 @@ package org.jdbx.demo;
 
 
 import java.sql.Connection;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.PrepStmt;
 import org.jdbx.StaticStmt;
 
@@ -32,7 +32,7 @@ public class BatchDemo
 	/**
 	 * Use {@link StaticStmt#batch()} to add batch cmds and run the batch.
 	 */
-	public void staticCmds(Connection con) throws JdbException
+	public void staticCmds(Connection con) throws JdbxException
 	{
 		try (StaticStmt stmt = new StaticStmt(con))
 		{
@@ -48,7 +48,7 @@ public class BatchDemo
 	/**
 	 * Use {@link PrepStmt#batch()} to add batch cmds and run the batch.
 	 */
-	public void paramCmds(Connection con, int... ids) throws JdbException
+	public void paramCmds(Connection con, int... ids) throws JdbxException
 	{
 		try (PrepStmt stmt = new PrepStmt(con))
 		{

@@ -20,7 +20,7 @@ package org.jdbx.demo;
 import java.sql.Connection;
 import java.util.List;
 import org.jdbx.Jdbx;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 
 
 /**
@@ -33,7 +33,7 @@ import org.jdbx.JdbException;
 @SuppressWarnings({"unused"})
 public class SimpleDemo
 {
-	public void run(Connection con) throws JdbException
+	public void run(Connection con) throws JdbxException
 	{
 		String sql;
 

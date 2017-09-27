@@ -13,7 +13,7 @@ class PrepStmtExecute extends Execute
 	}
 
 
-	@Override public ExecuteResult run() throws JdbException
+	@Override public ExecuteResult run() throws JdbxException
 	{
 		try
 		{
@@ -23,7 +23,7 @@ class PrepStmtExecute extends Execute
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 

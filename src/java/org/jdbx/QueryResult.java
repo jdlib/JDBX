@@ -74,7 +74,7 @@ public class QueryResult implements AutoCloseable
 	 * @param indexes the column indexes
 	 * @return the value array
 	 */
-	public Object[] cols(int... indexes) throws JdbException
+	public Object[] cols(int... indexes) throws JdbxException
 	{
 		Check.notNull(indexes, "colIndexes");
 		try
@@ -83,7 +83,7 @@ public class QueryResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class QueryResult implements AutoCloseable
 	 * @param names the column names
 	 * @return the value array
 	 */
-	public Object[] cols(String... names) throws JdbException
+	public Object[] cols(String... names) throws JdbxException
 	{
 		Check.notNull(names, "names");
 		try
@@ -102,7 +102,7 @@ public class QueryResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the column values of the current row as map.
 	 * @return a map whose keys are the column names
 	 */
-	public Map<String, Object> map() throws JdbException
+	public Map<String, Object> map() throws JdbxException
 	{
 		try
 		{
@@ -119,7 +119,7 @@ public class QueryResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class QueryResult implements AutoCloseable
 	 * @param names the column names
 	 * @return a map whose keys are the column names
 	 */
-	public Map<String, Object> map(String... names) throws JdbException
+	public Map<String, Object> map(String... names) throws JdbxException
 	{
 		Check.notNull(names, "names");
 		try
@@ -138,7 +138,7 @@ public class QueryResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 	
@@ -185,7 +185,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public class IndexedColumn extends GetResult
 	{
-		@Override public <T> T get(Class<T> type) throws JdbException
+		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try
@@ -194,12 +194,12 @@ public class QueryResult implements AutoCloseable
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override public Object get(Map<String,Class<?>> map) throws JdbException
+		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try
@@ -208,19 +208,19 @@ public class QueryResult implements AutoCloseable
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbException
+		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
 			return get(accessors.resultForIndex);
 		}
 
 
-		public <T> T get(GetForIndex<ResultSet,T> getter) throws JdbException
+		public <T> T get(GetForIndex<ResultSet,T> getter) throws JdbxException
 		{
 			Check.notNull(getter, "getter");
 			try
@@ -229,7 +229,7 @@ public class QueryResult implements AutoCloseable
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
@@ -243,7 +243,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public class NamedColumn extends GetResult
 	{
-		@Override public <T> T get(Class<T> type) throws JdbException
+		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try
@@ -252,12 +252,12 @@ public class QueryResult implements AutoCloseable
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override public Object get(Map<String,Class<?>> map) throws JdbException
+		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try
@@ -266,12 +266,12 @@ public class QueryResult implements AutoCloseable
 			}
 			catch (SQLException e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbException
+		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
 			try
@@ -280,7 +280,7 @@ public class QueryResult implements AutoCloseable
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
@@ -298,7 +298,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the fetch size of the ResultSet.
 	 * @return the fetch size
 	 */
-	public int getFetchSize() throws JdbException
+	public int getFetchSize() throws JdbxException
 	{
 		return toInt(ResultSet::getFetchSize);
 	}
@@ -308,7 +308,7 @@ public class QueryResult implements AutoCloseable
 	 * Sets the fetch size of the ResultSet.
 	 * @param size the fetch size
 	 */
-	public void setFetchSize(int size) throws JdbException
+	public void setFetchSize(int size) throws JdbxException
 	{
 		CheckedRunnable.unchecked(() -> resultSet_.setFetchSize(size));
 	}
@@ -318,7 +318,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the fetch direction of the ResultSet.
 	 * @return the fetch direction as enum value
 	 */
-	public FetchDirection getFetchDirection() throws JdbException
+	public FetchDirection getFetchDirection() throws JdbxException
 	{
 		return FetchDirection.map.forCode(toInt(ResultSet::getFetchDirection));
 	}
@@ -329,7 +329,7 @@ public class QueryResult implements AutoCloseable
 	 * Sets the fetch direction of the ResultSet.
 	 * @param dir the fetch direction as enum value
 	 */
-	public void setFetchDirection(FetchDirection dir) throws JdbException
+	public void setFetchDirection(FetchDirection dir) throws JdbxException
 	{
 		Check.valid(dir);
 		CheckedRunnable.unchecked(() -> resultSet_.setFetchDirection(dir.getCode()));
@@ -340,7 +340,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the concurrency of the ResultSet.
 	 * @return the concurrency as enum value
 	 */
-	public ResultConcurrency getConcurrency() throws JdbException
+	public ResultConcurrency getConcurrency() throws JdbxException
 	{
 		return ResultConcurrency.map.forCode(toInt(ResultSet::getConcurrency));
 	}
@@ -350,7 +350,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the holdability of the ResultSet.
 	 * @return the holdability as enum value
 	 */
-	public ResultHoldability getHoldability() throws JdbException
+	public ResultHoldability getHoldability() throws JdbxException
 	{
 		return ResultHoldability.map.forCode(toInt(ResultSet::getHoldability));
 	}
@@ -360,7 +360,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the type of the ResultSet.
 	 * @return the type as enum value
 	 */
-	public ResultType getType() throws JdbException
+	public ResultType getType() throws JdbxException
 	{
 		return ResultType.map.forCode(toInt(ResultSet::getType));
 	}
@@ -370,7 +370,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the name of the SQL cursor used by the ResultSet.
 	 * @return the cursor name
 	 */
-	public String getCursorName() throws JdbException
+	public String getCursorName() throws JdbxException
 	{
 		return toValue(ResultSet::getCursorName);
 	}
@@ -380,7 +380,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the meta data of the ResultSet.
 	 * @return the meta data
 	 */
-	public ResultSetMetaData getMetaData() throws JdbException
+	public ResultSetMetaData getMetaData() throws JdbxException
 	{
 		return toValue(ResultSet::getMetaData);
 	}
@@ -391,7 +391,7 @@ public class QueryResult implements AutoCloseable
 	 * @param columnLabel the label
 	 * @return the meta data
 	 */
-	public int findColumn(String columnLabel) throws JdbException
+	public int findColumn(String columnLabel) throws JdbxException
 	{
 		return CheckedSupplier.unchecked(() -> Integer.valueOf(resultSet_.findColumn(columnLabel))).intValue();
 	}
@@ -401,7 +401,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns the ResultSet warnings.
 	 * @return the first warning or null
 	 */
-	public SQLWarning getWarnings() throws JdbException
+	public SQLWarning getWarnings() throws JdbxException
 	{
 		return toValue(ResultSet::getWarnings);
 	}
@@ -410,7 +410,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Clears the ResultSet warnings.
 	 */
-	public void clearWarnings() throws JdbException
+	public void clearWarnings() throws JdbxException
 	{
 		call(ResultSet::clearWarnings);
 	}
@@ -420,7 +420,7 @@ public class QueryResult implements AutoCloseable
 	 * Returns if the last value read from the ResultSet was null.
 	 * @return was the last value read from the ResultSet null?
 	 */
-	public boolean wasNull() throws JdbException
+	public boolean wasNull() throws JdbxException
 	{
 		return toBoolean(ResultSet::wasNull);
 	}
@@ -449,7 +449,7 @@ public class QueryResult implements AutoCloseable
 		/**
 		 * @return true if the result set is positioned before the first row
 		 */
-		public boolean isBeforeFirst() throws JdbException
+		public boolean isBeforeFirst() throws JdbxException
 		{
 			return toBoolean(ResultSet::isBeforeFirst);
 		}
@@ -458,7 +458,7 @@ public class QueryResult implements AutoCloseable
 		/**
 		 * @return true if the result set is positioned after the last row
 		 */
-		public boolean isAfterLast() throws JdbException
+		public boolean isAfterLast() throws JdbxException
 		{
 			return toBoolean(ResultSet::isAfterLast);
 		}
@@ -467,7 +467,7 @@ public class QueryResult implements AutoCloseable
 		/**
 		 * @return true if the result set is positioned on the last row
 		 */
-		public boolean isLast() throws JdbException
+		public boolean isLast() throws JdbxException
 		{
 			return toBoolean(ResultSet::isLast);
 		}
@@ -501,7 +501,7 @@ public class QueryResult implements AutoCloseable
 		 * @return true if successful
 		 * @see ResultSet#absolute(int)
 		 */
-		public boolean absolute(int row) throws JdbException
+		public boolean absolute(int row) throws JdbxException
 		{
 			return CheckedSupplier.unchecked(() -> Boolean.valueOf(resultSet_.absolute(row))).booleanValue();
 		}
@@ -513,7 +513,7 @@ public class QueryResult implements AutoCloseable
 		 * @return true if successful
 		 * @see ResultSet#relative(int)
 		 */
-		public boolean relative(int rows) throws JdbException
+		public boolean relative(int rows) throws JdbxException
 		{
 			return CheckedSupplier.unchecked(() -> Boolean.valueOf(resultSet_.relative(rows))).booleanValue();
 		}
@@ -523,7 +523,7 @@ public class QueryResult implements AutoCloseable
 		 * Moves the cursor to the end of the result.
 		 * @see ResultSet#afterLast()
 		 */
-		public void afterLast() throws JdbException
+		public void afterLast() throws JdbxException
 		{
 			call(ResultSet::afterLast);
 		}
@@ -533,7 +533,7 @@ public class QueryResult implements AutoCloseable
 		 * Moves the cursor before the start of the result.
 		 * @see ResultSet#beforeFirst()
 		 */
-		public void beforeFirst() throws JdbException
+		public void beforeFirst() throws JdbxException
 		{
 			call(ResultSet::beforeFirst);
 		}
@@ -544,7 +544,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#first()
 		 * @return was the cursor moved?
 		 */
-		public boolean first() throws JdbException
+		public boolean first() throws JdbxException
 		{
 			return toBoolean(ResultSet::first);
 		}
@@ -555,7 +555,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#last()
 		 * @return was the cursor moved?
 		 */
-		public boolean last() throws JdbException
+		public boolean last() throws JdbxException
 		{
 			return toBoolean(ResultSet::last);
 		}
@@ -566,7 +566,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#previous()
 		 * @return was the cursor moved?
 		 */
-		public boolean previous() throws JdbException
+		public boolean previous() throws JdbxException
 		{
 			return toBoolean(ResultSet::previous);
 		}
@@ -577,7 +577,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#next()
 		 * @return was the cursor moved?
 		 */
-		public boolean next() throws JdbException
+		public boolean next() throws JdbxException
 		{
 			return QueryResult.this.next();
 		}
@@ -587,7 +587,7 @@ public class QueryResult implements AutoCloseable
 		 * Moves the cursor to the remembered cursor position.
 		 * @see ResultSet#moveToCurrentRow()
 		 */
-		public void toCurrentRow() throws JdbException
+		public void toCurrentRow() throws JdbxException
 		{
 			call(ResultSet::moveToCurrentRow);
 		}
@@ -597,7 +597,7 @@ public class QueryResult implements AutoCloseable
 		 * Moves the cursor to the insert row.
 		 * @see ResultSet#moveToInsertRow()
 		 */
-		public void toInsertRow() throws JdbException
+		public void toInsertRow() throws JdbxException
 		{
 			call(ResultSet::moveToInsertRow);
 		}
@@ -609,7 +609,7 @@ public class QueryResult implements AutoCloseable
 	 * @return true if cursor was moved
 	 * @see ResultSet#next()
 	 */
-	public boolean next() throws JdbException
+	public boolean next() throws JdbxException
 	{
 		return toBoolean(ResultSet::next);
 	}
@@ -641,7 +641,7 @@ public class QueryResult implements AutoCloseable
 		 * Inserts the contents of the insert row into the result.
 		 * @see ResultSet#insertRow()
 		 */
-		public void insert() throws JdbException
+		public void insert() throws JdbxException
 		{
 			call(ResultSet::insertRow);
 		}
@@ -652,7 +652,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#rowInserted()
 		 * @return the flag
 		 */
-		public boolean isInserted() throws JdbException
+		public boolean isInserted() throws JdbxException
 		{
 			return toBoolean(ResultSet::rowInserted);
 		}
@@ -662,7 +662,7 @@ public class QueryResult implements AutoCloseable
 		 * Updates the contents of the current row.
 		 * @see ResultSet#updateRow()
 		 */
-		public void update() throws JdbException
+		public void update() throws JdbxException
 		{
 			call(ResultSet::updateRow);
 		}
@@ -673,7 +673,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#rowUpdated()
 		 * @return the flag
 		 */
-		public boolean isUpdated() throws JdbException
+		public boolean isUpdated() throws JdbxException
 		{
 			return toBoolean(ResultSet::rowUpdated);
 		}
@@ -683,7 +683,7 @@ public class QueryResult implements AutoCloseable
 		 * Deletes the the current row.
 		 * @see ResultSet#deleteRow()
 		 */
-		public void delete() throws JdbException
+		public void delete() throws JdbxException
 		{
 			call(ResultSet::deleteRow);
 		}
@@ -694,7 +694,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#rowDeleted()
 		 * @return the flag
 		 */
-		public boolean isDeleted() throws JdbException
+		public boolean isDeleted() throws JdbxException
 		{
 			return toBoolean(ResultSet::rowDeleted);
 		}
@@ -704,7 +704,7 @@ public class QueryResult implements AutoCloseable
 		 * Refreshes the current row.
 		 * @see ResultSet#refreshRow()
 		 */
-		public void refresh() throws JdbException
+		public void refresh() throws JdbxException
 		{
 			call(ResultSet::refreshRow);
 		}
@@ -714,7 +714,7 @@ public class QueryResult implements AutoCloseable
 		 * Cancels the updates made to the current row.
 		 * @see ResultSet#cancelRowUpdates()
 		 */
-		public void cancelUpdates() throws JdbException
+		public void cancelUpdates() throws JdbxException
 		{
 			call(ResultSet::cancelRowUpdates);
 		}
@@ -726,25 +726,25 @@ public class QueryResult implements AutoCloseable
 	//----------------------------------
 
 
-	private boolean toBoolean(CheckedFunction<ResultSet,Boolean> fn) throws JdbException
+	private boolean toBoolean(CheckedFunction<ResultSet,Boolean> fn) throws JdbxException
 	{
 		return CheckedFunction.unchecked(fn, resultSet_).booleanValue();
 	}
 
 
-	private int toInt(CheckedFunction<ResultSet,Integer> fn) throws JdbException
+	private int toInt(CheckedFunction<ResultSet,Integer> fn) throws JdbxException
 	{
 		return CheckedFunction.unchecked(fn, resultSet_).intValue();
 	}
 
 
-	private <T> T toValue(CheckedFunction<ResultSet,T> fn) throws JdbException
+	private <T> T toValue(CheckedFunction<ResultSet,T> fn) throws JdbxException
 	{
 		return CheckedFunction.unchecked(fn, resultSet_);
 	}
 
 
-	private void call(CheckedConsumer<ResultSet> fn) throws JdbException
+	private void call(CheckedConsumer<ResultSet> fn) throws JdbxException
 	{
 		CheckedConsumer.unchecked(fn, resultSet_);
 	}
@@ -780,7 +780,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Closes the ResultSet if {@link #isCloseResult()} is true.
 	 */
-	@Override public void close() throws JdbException
+	@Override public void close() throws JdbxException
 	{
 		if (closeResult_)
 			call(ResultSet::close);

@@ -62,7 +62,7 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and returns a QueryResult.
 	 * @return the result
 	 */
-	public QueryResult result() throws JdbException
+	public QueryResult result() throws JdbxException
 	{
 		return new QueryResult(resultSet());
 	}
@@ -72,7 +72,7 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and returns a ResultSet.
 	 * @return the result
 	 */
-	public ResultSet resultSet() throws JdbException
+	public ResultSet resultSet() throws JdbxException
 	{
 		return CheckedSupplier.unchecked(this::runQuery);
 	}
@@ -82,7 +82,7 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and passes the result-set to the consumer.
 	 * @param consumer a result set consumer
 	 */
-	public void read(CheckedConsumer<ResultSet> consumer) throws JdbException
+	public void read(CheckedConsumer<ResultSet> consumer) throws JdbxException
 	{
 		read(rs -> {
 			consumer.accept(rs);
@@ -97,7 +97,7 @@ public abstract class Query extends StmtRunnable
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader.
 	 */
-	public <T> T read(CheckedFunction<ResultSet,T> reader) throws JdbException
+	public <T> T read(CheckedFunction<ResultSet,T> reader) throws JdbxException
 	{
 		return read0(skip_ > 0, reader);
 	}
@@ -111,7 +111,7 @@ public abstract class Query extends StmtRunnable
 	 * after an unsuccessful prior call to this method - unfortunately in this case
 	 * a JDBC driver is allowed to throw an exceptions instead of returning false.
 	 */
-	<R> R read0(boolean applySkip, CheckedFunction<ResultSet,R> reader) throws JdbException
+	<R> R read0(boolean applySkip, CheckedFunction<ResultSet,R> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 
@@ -141,7 +141,7 @@ public abstract class Query extends StmtRunnable
 		}
 
 		if ((e1 != null) || (e2 != null))
-			throw JdbException.combine(e1, e2);
+			throw JdbxException.combine(e1, e2);
 		return returnValue;
 	}
 

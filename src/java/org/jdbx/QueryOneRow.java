@@ -26,7 +26,7 @@ public class QueryOneRow
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader. If the result is empty, null is returned
 	 */
-	public <T> T value(CheckedFunction<ResultSet,T> reader) throws JdbException
+	public <T> T value(CheckedFunction<ResultSet,T> reader) throws JdbxException
 	{
 		return value(reader, null);
 	}
@@ -39,7 +39,7 @@ public class QueryOneRow
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader, or emptyValue if the result is empty
 	 */
-	public <T> T value(CheckedFunction<ResultSet,T> reader, T emptyValue) throws JdbException
+	public <T> T value(CheckedFunction<ResultSet,T> reader, T emptyValue) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		return query_.read0(false, result -> {
@@ -47,13 +47,13 @@ public class QueryOneRow
 			{
 				T value = reader.apply(result);
 				if (unique_ && result.next())
-					throw JdbException.invalidResult("query returned more than one row");
+					throw JdbxException.invalidResult("query returned more than one row");
 				return value;
 			}
 			else if (!required_)
 				return emptyValue;
 			else
-				throw JdbException.invalidResult("query did not return a result");
+				throw JdbxException.invalidResult("query did not return a result");
 		});
 	}
 
@@ -63,7 +63,7 @@ public class QueryOneRow
 	 * are the keys in the map.
 	 * @return the map or null if the result is empty.
 	 */
-	public Map<String,Object> map() throws JdbException
+	public Map<String,Object> map() throws JdbxException
 	{
 		return value(ResultUtil::readMap);
 	}
@@ -75,7 +75,7 @@ public class QueryOneRow
 	 * @param colNames the names of the columns which should be returned
 	 * @return the map or null if the result is empty.
 	 */
-	public Map<String,Object> map(String... colNames) throws JdbException
+	public Map<String,Object> map(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "column names");
 		return value(rs -> ResultUtil.readMap(rs, colNames));
@@ -86,7 +86,7 @@ public class QueryOneRow
 	 * Reads the first row and returns its values as array.
 	 * @return the array or null if the result is empty.
 	 */
-	public Object[] cols() throws JdbException
+	public Object[] cols() throws JdbxException
 	{
 		return value(ResultUtil::readValues);
 	}
@@ -97,7 +97,7 @@ public class QueryOneRow
 	 * @param indexes the indexes of the columns to read
 	 * @return the array or null if the result is empty.
 	 */
-	public Object[] cols(int... indexes) throws JdbException
+	public Object[] cols(int... indexes) throws JdbxException
 	{
 		Check.notNull(indexes, "indexes");
 		return value(rs -> ResultUtil.readValues(rs, indexes));
@@ -109,7 +109,7 @@ public class QueryOneRow
 	 * @param names the names of the columns to read
 	 * @return the array or null if the result is empty.
 	 */
-	public Object[] cols(String... names) throws JdbException
+	public Object[] cols(String... names) throws JdbxException
 	{
 		Check.notNull(names, "names");
 		return value(rs -> ResultUtil.readValues(rs, names));
@@ -188,7 +188,7 @@ public class QueryOneRow
 		 * @param type the object type
 		 * @return the object
 		 */
-		@Override public <T> T get(Class<T> type) throws JdbException
+		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			return value(result -> result.getObject(index_, type));
@@ -200,7 +200,7 @@ public class QueryOneRow
 		 * @param map contains mapping from SQL type names to Java classes
 		 * @return the object
 		 */
-		@Override public Object get(Map<String,Class<?>> map) throws JdbException
+		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			return value(result -> result.getObject(index_, map));
@@ -213,7 +213,7 @@ public class QueryOneRow
 		 * @param <T> the type of the value returned by the function
 		 * @return the object
 		 */
-		public <T> T get(GetForIndex<ResultSet,T> fn) throws JdbException
+		public <T> T get(GetForIndex<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
 			return value(result -> fn.get(result, index_));
@@ -225,7 +225,7 @@ public class QueryOneRow
 		 * @param map contains mapping from SQL type names to Java classes
 		 * @return the object
 		 */
-		@Override <T> T get(GetAccessors<T> accessor) throws JdbException
+		@Override <T> T get(GetAccessors<T> accessor) throws JdbxException
 		{
 			Check.notNull(accessor, "accessor");
 			return get(accessor.resultForIndex);
@@ -252,7 +252,7 @@ public class QueryOneRow
 		 * @param type the object type
 		 * @return the object
 		 */
-		@Override public <T> T get(Class<T> type) throws JdbException
+		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			return value(result -> result.getObject(name_, type));
@@ -264,7 +264,7 @@ public class QueryOneRow
 		 * @param map contains mapping from SQL type names to Java classes
 		 * @return the object
 		 */
-		@Override public Object get(Map<String,Class<?>> map) throws JdbException
+		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			return value(result -> result.getObject(name_, map));
@@ -277,14 +277,14 @@ public class QueryOneRow
 		 * @param <T> the type of the result returned by the function
 		 * @return the object
 		 */
-		public <T> T get(GetForName<ResultSet,T> fn) throws JdbException
+		public <T> T get(GetForName<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
 			return value(result -> fn.get(result, name_));
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessor) throws JdbException
+		@Override <T> T get(GetAccessors<T> accessor) throws JdbxException
 		{
 			Check.notNull(accessor, "accessor");
 			return get(accessor.resultForName);

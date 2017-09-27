@@ -54,7 +54,7 @@ public abstract class Update extends StmtRunnable
 	 * @see Statement#executeUpdate(String)
 	 * @see PreparedStatement#executeUpdate()
 	 */
-	public int run() throws JdbException
+	public int run() throws JdbxException
 	{
 		return (int)run(false);
 	}
@@ -66,7 +66,7 @@ public abstract class Update extends StmtRunnable
 	 * @see Statement#executeLargeUpdate(String)
 	 * @see PreparedStatement#executeLargeUpdate()
 	 */
-	public long runLarge() throws JdbException
+	public long runLarge() throws JdbxException
 	{
 		return run(true);
 	}
@@ -75,7 +75,7 @@ public abstract class Update extends StmtRunnable
 	/**
 	 * Common implementation for run() and runLarge().
 	 */
-	private long run(boolean large) throws JdbException
+	private long run(boolean large) throws JdbxException
 	{
 		long count = 0L;
 		Exception ex = null;
@@ -101,7 +101,7 @@ public abstract class Update extends StmtRunnable
 	 * @param <V> the type of the value returned by the AutoKeysReader
 	 * @return an UpdateResult holding the update count and the key value
 	 */
-	public <V> UpdateResult<V> runGetAutoKey(Class<V> keyType) throws JdbException
+	public <V> UpdateResult<V> runGetAutoKey(Class<V> keyType) throws JdbxException
 	{
 		Check.notNull(keyType, "keyType");
 		return runGetAutoKeys((rs,r) -> {
@@ -117,7 +117,7 @@ public abstract class Update extends StmtRunnable
 	 * @param <V> the type of the value returned by the AutoKeysReader
 	 * @return an UpdateResult holding the update count and the key list
 	 */
-	public <V> UpdateResult<List<V>> runGetAutoKeys(Class<V> keyType) throws JdbException
+	public <V> UpdateResult<List<V>> runGetAutoKeys(Class<V> keyType) throws JdbxException
 	{
 		Check.notNull(keyType, "keyType");
 		return runGetAutoKeys((rs,r) -> {
@@ -132,7 +132,7 @@ public abstract class Update extends StmtRunnable
 	 * @param <V> the type of the value returned by the AutoKeysReader
 	 * @return an UpdateResult holding the update count and the key list
 	 */
-	public <V> UpdateResult<V> runGetAutoKeys(AutoKeysReader<V> reader) throws JdbException
+	public <V> UpdateResult<V> runGetAutoKeys(AutoKeysReader<V> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		UpdateResult<V> result = new UpdateResult<>();
@@ -174,7 +174,7 @@ public abstract class Update extends StmtRunnable
 	protected abstract void cleanup() throws Exception;
 
 
-	private void cleanup(Exception e1) throws JdbException
+	private void cleanup(Exception e1) throws JdbxException
 	{
 		Exception e2 = null;
 		try
@@ -186,7 +186,7 @@ public abstract class Update extends StmtRunnable
 			e2 = e;
 		}
 		if ((e1 != null) || (e2 != null))
-			throw JdbException.combine(e1, e2);
+			throw JdbxException.combine(e1, e2);
 	}
 
 

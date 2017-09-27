@@ -36,7 +36,7 @@ public class StaticStmt extends Stmt
 	 * and closes the connection when itself is closed.
 	 * @param dataSource a DataSource
 	 */
-	public StaticStmt(DataSource dataSource) throws JdbException
+	public StaticStmt(DataSource dataSource) throws JdbxException
 	{
 		super(dataSource);
 	}
@@ -47,7 +47,7 @@ public class StaticStmt extends Stmt
 	 * @param supplier provides a connection
 	 * @param closeCon determines if the connection is closed when this statement is closed.
 	 */
-	public StaticStmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbException
+	public StaticStmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbxException
 	{
 		super(supplier, closeCon);
 	}
@@ -74,7 +74,7 @@ public class StaticStmt extends Stmt
 	}
 
 
-	@Override protected void checkInitialized() throws JdbException
+	@Override protected void checkInitialized() throws JdbxException
 	{
 		checkOpen();
 	}
@@ -83,7 +83,7 @@ public class StaticStmt extends Stmt
 	/**
 	 * Returns the internal java.sql.Statement.
 	 */
-	@Override public Statement getJdbcStmt() throws JdbException
+	@Override public Statement getJdbcStmt() throws JdbxException
 	{
 		checkOpen();
 		try
@@ -104,7 +104,7 @@ public class StaticStmt extends Stmt
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 		return stmt_;
 	}
@@ -128,9 +128,9 @@ public class StaticStmt extends Stmt
 	/**
 	 * Returns a builder to initialize the statement holdability, concurrency and resultset type.
 	 * @return a init builder
-	 * @throws JdbException if closed
+	 * @throws JdbxException if closed
 	 */
-	public Init init() throws JdbException
+	public Init init() throws JdbxException
 	{
 		checkOpen();
 		return new Init();
@@ -148,7 +148,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		@Override protected void optionsChanged() throws JdbException
+		@Override protected void optionsChanged() throws JdbxException
 		{
 			checkOpen();
 			updateOptions(options()); // will create options if not yet done
@@ -188,7 +188,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		@Override protected void cleanup() throws JdbException
+		@Override protected void cleanup() throws JdbxException
 		{
 		}
 
@@ -213,7 +213,7 @@ public class StaticStmt extends Stmt
 	 * @param sql a SQL command
 	 * @return an update object
 	 */
-	public StaticUpdate createUpdate(String sql) throws JdbException
+	public StaticUpdate createUpdate(String sql) throws JdbxException
 	{
 		Check.notNull(sql, "sql");
 		checkOpen();
@@ -226,7 +226,7 @@ public class StaticStmt extends Stmt
 	 * @param sql a SQL command
 	 * @return the number of affected records.
 	 */
-	public int update(String sql) throws JdbException
+	public int update(String sql) throws JdbxException
 	{
 		return createUpdate(sql).run();
 	}
@@ -339,7 +339,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		@Override public ExecuteResult run() throws JdbException
+		@Override public ExecuteResult run() throws JdbxException
 		{
 			try
 			{
@@ -357,7 +357,7 @@ public class StaticStmt extends Stmt
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
@@ -401,7 +401,7 @@ public class StaticStmt extends Stmt
 		 * @param sql a SQL command
 		 * @return this
 		 */
-		public StaticBatch add(String sql) throws JdbException
+		public StaticBatch add(String sql) throws JdbxException
 		{
 			Check.notNull(sql, "sql");
 			CheckedRunnable.unchecked(() -> getJdbcStmt().addBatch(sql));

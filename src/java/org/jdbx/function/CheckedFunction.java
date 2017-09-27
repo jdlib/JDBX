@@ -17,7 +17,7 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 
 
 /**
@@ -30,15 +30,14 @@ import org.jdbx.JdbException;
 public interface CheckedFunction<T,R>
 {
 	/**
-	 * Calls the function and converts any exception into
-	 * a JdbException
+	 * Calls the function and converts any exception into a JdbxException
 	 * @param function a function
 	 * @param arg an argument
 	 * @param <T> the type of the input to the function
 	 * @param <R> the type of results supplied
 	 * @return the function result
 	 */
-	public static <T,R> R unchecked(CheckedFunction<T,R> function, T arg) throws JdbException
+	public static <T,R> R unchecked(CheckedFunction<T,R> function, T arg) throws JdbxException
 	{
 		try
 		{
@@ -46,7 +45,7 @@ public interface CheckedFunction<T,R>
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 

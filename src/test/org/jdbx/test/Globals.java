@@ -20,12 +20,12 @@ package org.jdbx.test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 
 
 public class Globals
 {
-	public static synchronized Connection con() throws JdbException
+	public static synchronized Connection con() throws JdbxException
 	{
 		if (con_ == null)
 			init();
@@ -33,7 +33,7 @@ public class Globals
 	}
 
 
-	private static void init() throws JdbException
+	private static void init() throws JdbxException
 	{
 		try
 		{
@@ -42,7 +42,7 @@ public class Globals
 		}
 		catch (SQLException e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 

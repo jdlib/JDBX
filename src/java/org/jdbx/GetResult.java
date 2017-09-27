@@ -12,7 +12,7 @@ abstract class GetResult extends GetValue
 	 * @return the stream
      * @see ResultSet#getAsciiStream(int)
 	 */
-	public InputStream getAsciiStream() throws JdbException
+	public InputStream getAsciiStream() throws JdbxException
 	{
 		return get(GetAccessors.ASCIISTREAM);
 	}
@@ -24,7 +24,7 @@ abstract class GetResult extends GetValue
 	 * @return the stream
      * @see ResultSet#getBinaryStream(int)
 	 */
-	public InputStream getBinaryStream() throws JdbException
+	public InputStream getBinaryStream() throws JdbxException
 	{
 		return get(GetAccessors.BINARYTREAM);
 	}

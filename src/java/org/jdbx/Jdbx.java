@@ -48,7 +48,7 @@ public class Jdbx
 	 * @param params zero or more parameters
 	 * @return the update count
 	 */
-	public static int update(Connection con, String sql, Object... params) throws JdbException
+	public static int update(Connection con, String sql, Object... params) throws JdbxException
 	{
 		return createUpdate(con, sql, params).run();
 	}
@@ -71,7 +71,7 @@ public class Jdbx
 		}
 
 
-		public Update createUpdate() throws JdbException
+		public Update createUpdate() throws JdbxException
 		{
 			checkNotUsed();
 			if (params_ == null)
@@ -87,7 +87,7 @@ public class Jdbx
 		}
 
 
-		public Query createQuery() throws JdbException
+		public Query createQuery() throws JdbxException
 		{
 			checkNotUsed();
 			if (params_ == null)
@@ -139,9 +139,9 @@ public class Jdbx
 		}
 
 
-		@Override public ResultSet resultSet() throws JdbException
+		@Override public ResultSet resultSet() throws JdbxException
 		{
-			throw JdbException.illegalState("fast query cannot return ResultSet");
+			throw JdbxException.illegalState("fast query cannot return ResultSet");
 		}
 
 

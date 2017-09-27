@@ -63,7 +63,7 @@ public class MultiStmt implements AutoCloseable
 	 * Returns the connection used by the MultiStmt.
 	 * @return the connection
 	 */
-	public Connection getConnection() throws JdbException
+	public Connection getConnection() throws JdbxException
 	{
 		checkOpen();
 		if (con_ == null)
@@ -81,7 +81,7 @@ public class MultiStmt implements AutoCloseable
 	 * Returns a new StaticStmt.
 	 * @return the statement
 	 */
-	public StaticStmt newStaticStmt() throws JdbException
+	public StaticStmt newStaticStmt() throws JdbxException
 	{
 		return add(new StaticStmt(getConnection(), false));
 	}
@@ -91,7 +91,7 @@ public class MultiStmt implements AutoCloseable
 	 * Returns a new PrepStmt.
 	 * @return the statement
 	 */
-	public PrepStmt newPrepStmt() throws JdbException
+	public PrepStmt newPrepStmt() throws JdbxException
 	{
 		return add(new PrepStmt(getConnection(), false));
 	}
@@ -101,7 +101,7 @@ public class MultiStmt implements AutoCloseable
 	 * Returns a new CallStmt.
 	 * @return the statement
 	 */
-	public CallStmt newCallStmt() throws JdbException
+	public CallStmt newCallStmt() throws JdbxException
 	{
 		return add(new CallStmt(getConnection(), false));
 	}
@@ -139,21 +139,21 @@ public class MultiStmt implements AutoCloseable
 	}
 
 
-	protected void checkOpen() throws JdbException
+	protected void checkOpen() throws JdbxException
 	{
 		if (isClosed())
-			throw JdbException.closed();
+			throw JdbxException.closed();
 	}
 
 
 	/**
 	 * Closes all statement held by this MultiStmt.
 	 */
-	public void closeStmts() throws JdbException
+	public void closeStmts() throws JdbxException
 	{
 		if (!isClosed())
 		{
-			JdbException first = null;
+			JdbxException first = null;
 
 			for (Stmt stmt : statements_)
 			{
@@ -161,7 +161,7 @@ public class MultiStmt implements AutoCloseable
 				{
 					stmt.close();
 				}
-				catch (JdbException e)
+				catch (JdbxException e)
 				{
 					if (first == null)
 						first = e;
@@ -181,7 +181,7 @@ public class MultiStmt implements AutoCloseable
 	/**
 	 * Closes this MultiStmt.
 	 */
-	@Override public void close() throws JdbException
+	@Override public void close() throws JdbxException
 	{
 		if (!isClosed())
 		{
@@ -192,7 +192,7 @@ public class MultiStmt implements AutoCloseable
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 			finally
 			{

@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.PrepStmt;
 
 
@@ -108,7 +108,7 @@ public class PrepStmtDemo
 	}
 
 
-	public List<Integer> jdbxCreateCities(Connection con, List<String> names) throws JdbException
+	public List<Integer> jdbxCreateCities(Connection con, List<String> names) throws JdbxException
 	{
 		List<Integer> ids = new ArrayList<>();
 		try (PrepStmt pstmt = new PrepStmt(con))

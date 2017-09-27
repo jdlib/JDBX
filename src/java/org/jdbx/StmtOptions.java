@@ -40,7 +40,7 @@ public class StmtOptions
 	 * @return this
 	 * @see Statement#setPoolable(boolean)
 	 */
-	public StmtOptions setPoolable(boolean poolable) throws JdbException
+	public StmtOptions setPoolable(boolean poolable) throws JdbxException
 	{
 		stmt_.setBoolean(Statement::setPoolable, poolable);
 		return this;
@@ -52,7 +52,7 @@ public class StmtOptions
 	 * @return the flag
 	 * @see Statement#isPoolable
 	 */
-	public boolean isPoolable() throws JdbException
+	public boolean isPoolable() throws JdbxException
 	{
 		return stmt_.get(Statement::isPoolable).booleanValue();
 	}
@@ -64,7 +64,7 @@ public class StmtOptions
 	 * @return this
 	 * @see Statement#setCursorName
 	 */
-	public StmtOptions setCursorName(String cursorName) throws JdbException
+	public StmtOptions setCursorName(String cursorName) throws JdbxException
 	{
 		CheckedRunnable.unchecked(() -> stmt_.getJdbcStmt().setCursorName(cursorName));
 		return this;
@@ -76,7 +76,7 @@ public class StmtOptions
 	 * @param size the maximum number of bytes
 	 * @return this
 	 */
-	public StmtOptions setMaxFieldSize(int size) throws JdbException
+	public StmtOptions setMaxFieldSize(int size) throws JdbxException
 	{
 		stmt_.setInt(Statement::setMaxFieldSize, size);
 		return this;
@@ -87,7 +87,7 @@ public class StmtOptions
 	 * Returns {@link Statement#getMaxFieldSize()}.
 	 * @return the maximum size
 	 */
-	public int getMaxFieldSize() throws JdbException
+	public int getMaxFieldSize() throws JdbxException
 	{
 		return stmt_.get(Statement::getMaxFieldSize).intValue();
 	}
@@ -98,7 +98,7 @@ public class StmtOptions
 	 * @param max the maximum number
 	 * @return this
 	 */
-	public StmtOptions setLargeMaxRows(long max) throws JdbException
+	public StmtOptions setLargeMaxRows(long max) throws JdbxException
 	{
 		CheckedRunnable.unchecked(() -> stmt_.getJdbcStmt().setLargeMaxRows(max));
 		return this;
@@ -109,7 +109,7 @@ public class StmtOptions
 	 * Returns {@link Statement#getLargeMaxRows()}.
 	 * @return the maximum number of rows
 	 */
-	public long getLargeMaxRows() throws JdbException
+	public long getLargeMaxRows() throws JdbxException
 	{
 		return stmt_.get(Statement::getLargeMaxRows).longValue();
 	}
@@ -120,7 +120,7 @@ public class StmtOptions
 	 * @param max the maximum number
 	 * @return this
 	 */
-	public StmtOptions setMaxRows(int max) throws JdbException
+	public StmtOptions setMaxRows(int max) throws JdbxException
 	{
 		stmt_.setInt(Statement::setMaxRows, max);
 		return this;
@@ -131,7 +131,7 @@ public class StmtOptions
 	 * Returns {@link Statement#getMaxRows()}.
 	 * @return the maximum number of rows
 	 */
-	public int getMaxRows() throws JdbException
+	public int getMaxRows() throws JdbxException
 	{
 		return stmt_.get(Statement::getMaxRows).intValue();
 	}
@@ -142,7 +142,7 @@ public class StmtOptions
 	 * @param seconds the timeout in seconds
 	 * @return this
 	 */
-	public StmtOptions setQueryTimeout(int seconds) throws JdbException
+	public StmtOptions setQueryTimeout(int seconds) throws JdbxException
 	{
 		stmt_.setInt(Statement::setQueryTimeout, seconds);
 		return this;
@@ -153,7 +153,7 @@ public class StmtOptions
 	 * Returns {@link Statement#getQueryTimeout()}.
 	 * @return the timeout in seconds
 	 */
-	public int getQueryTimeout() throws JdbException
+	public int getQueryTimeout() throws JdbxException
 	{
 		return stmt_.get(Statement::getQueryTimeout).intValue();
 	}
@@ -164,7 +164,7 @@ public class StmtOptions
 	 * @param enable the flag
 	 * @return this
 	 */
-	public StmtOptions setEscapeProcessing(boolean enable) throws JdbException
+	public StmtOptions setEscapeProcessing(boolean enable) throws JdbxException
 	{
 		stmt_.setBoolean(Statement::setEscapeProcessing, enable);
 		return this;
@@ -176,7 +176,7 @@ public class StmtOptions
 	 * @param direction the fetch direction enum
 	 * @return this
 	 */
-	public StmtOptions setFetchDirection(FetchDirection direction) throws JdbException
+	public StmtOptions setFetchDirection(FetchDirection direction) throws JdbxException
 	{
 		Check.valid(direction);
 		stmt_.setInt(Statement::setFetchDirection, direction.getCode());
@@ -188,7 +188,7 @@ public class StmtOptions
 	 * Returns {@link Statement#getFetchDirection()} as enum value.
 	 * @return the fetch direction
 	 */
-	public FetchDirection getFetchDirection() throws JdbException
+	public FetchDirection getFetchDirection() throws JdbxException
 	{
 		return FetchDirection.map.forCode(stmt_.get(Statement::getFetchDirection));
 	}
@@ -199,7 +199,7 @@ public class StmtOptions
 	 * @param rows the fetch size
 	 * @return this
 	 */
-	public StmtOptions setFetchSize(int rows) throws JdbException
+	public StmtOptions setFetchSize(int rows) throws JdbxException
 	{
 		stmt_.setInt(Statement::setFetchSize, rows);
 		return this;
@@ -210,7 +210,7 @@ public class StmtOptions
 	 * Returns {@link Statement#getFetchSize()}.
 	 * @return the fetch size
 	 */
-	public int getFetchSize() throws JdbException
+	public int getFetchSize() throws JdbxException
 	{
 		return stmt_.get(Statement::getFetchSize).intValue();
 	}

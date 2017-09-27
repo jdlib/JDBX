@@ -59,12 +59,12 @@ public class UpdateResult<V>
 	 * Checks if the count stored in the result matches the expected count.
 	 * @param expectedCount the expected count
 	 * @return this
-	 * @throws JdbException if the counts do not match
+	 * @throws JdbxException if the counts do not match
 	 */
-	public UpdateResult<V> checkCount(int expectedCount) throws JdbException
+	public UpdateResult<V> checkCount(int expectedCount) throws JdbxException
 	{
 		if (this.count != expectedCount)
-			throw JdbException.invalidResult("expected update count " + expectedCount + ", but was " + this.count);
+			throw JdbxException.invalidResult("expected update count " + expectedCount + ", but was " + this.count);
 		return this;
 	}
 
@@ -72,12 +72,12 @@ public class UpdateResult<V>
 	/**
 	 * Checks that the value is not null
 	 * @return the value
-	 * @throws JdbException if the value is null
+	 * @throws JdbxException if the value is null
 	 */
-	public V checkHasValue() throws JdbException
+	public V checkHasValue() throws JdbxException
 	{
 		if (this.value == null)
-			throw JdbException.invalidResult("expected non-null value");
+			throw JdbxException.invalidResult("expected non-null value");
 		return this.value;
 	}
 

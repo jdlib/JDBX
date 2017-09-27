@@ -18,7 +18,7 @@ package org.jdbx.demo;
 
 
 import java.sql.ResultSet;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.ResultIterator;
 
 
@@ -31,7 +31,7 @@ public class City
 	/**
 	 * Reads fields from current result row (City.*) and returns a new City object.
 	 */
-	public static City read(ResultSet rs) throws JdbException
+	public static City read(ResultSet rs) throws JdbxException
 	{
 		ResultIterator it 	= ResultIterator.of(rs);
 		City city 			= new City();

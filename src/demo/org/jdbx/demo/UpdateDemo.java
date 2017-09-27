@@ -17,14 +17,14 @@
 package org.jdbx.demo;
 
 
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.StaticStmt;
 
 
 public class UpdateDemo
 {
 	@SuppressWarnings("unused")
-	public static void stmt(StaticStmt stmt) throws JdbException
+	public static void stmt(StaticStmt stmt) throws JdbxException
 	{
 		String sql1 	= "INSERT INTO X VALUES('a', 'b')";
 		int count  		= stmt.createUpdate(sql1).returnGenCols().run(); // todo receive autokeys

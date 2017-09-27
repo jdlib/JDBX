@@ -20,7 +20,7 @@ package org.jdbx.test;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.Jdbx;
 import org.jdbx.ResultConcurrency;
 import org.jdbx.ResultIterator;
@@ -34,26 +34,26 @@ import org.junit.Test;
 
 public class StaticStmtTest extends JdbxTest
 {
-	@BeforeClass public static void beforeClass() throws JdbException
+	@BeforeClass public static void beforeClass() throws JdbxException
 	{
 		Jdbx.update(con(), "CREATE TABLE PlainUser (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
 	}
 
 
-	@Before public void before() throws JdbException
+	@Before public void before() throws JdbxException
 	{
 		stmt_ = new StaticStmt(con());
 		stmt_.update("DELETE FROM PlainUser");
 	}
 
 
-	@After public void after() throws JdbException
+	@After public void after() throws JdbxException
 	{
 		stmt_.close();
 	}
 
 
-	@Test public void testQuery() throws JdbException
+	@Test public void testQuery() throws JdbxException
 	{
 		String sql;
 		int count;
@@ -101,7 +101,7 @@ public class StaticStmtTest extends JdbxTest
 	}
 
 
-	@Test public void testUpdate() throws JdbException
+	@Test public void testUpdate() throws JdbxException
 	{
 		String sql;
 		int count;
@@ -122,7 +122,7 @@ public class StaticStmtTest extends JdbxTest
 	}
 
 
-	@Test public void testExecute() throws JdbException
+	@Test public void testExecute() throws JdbxException
 	{
 		stmt_.createExecute("INSERT INTO PlainUser (name) VALUES ('A')").returnGenCols().run(r -> {
 			assertTrue(r.next());
@@ -135,7 +135,7 @@ public class StaticStmtTest extends JdbxTest
 	}
 
 
-	@Test public void testOptions() throws JdbException
+	@Test public void testOptions() throws JdbxException
 	{
 		assertTrue(stmt_.isInitialized());
 		assertEquals(ResultConcurrency.READ_ONLY, stmt_.options().getResultConcurrency());
@@ -145,7 +145,7 @@ public class StaticStmtTest extends JdbxTest
 	}
 
 
-	@Test public void testBatch() throws JdbException
+	@Test public void testBatch() throws JdbxException
 	{
 		stmt_.batch().add("INSERT INTO PlainUser (name) VALUES ('A'), ('B')");
 		stmt_.batch().add("INSERT INTO PlainUser (name) VALUES ('C'), ('D')");
@@ -158,7 +158,7 @@ public class StaticStmtTest extends JdbxTest
 
 	public static class Dao
 	{
-		public static Dao read(ResultSet result) throws JdbException
+		public static Dao read(ResultSet result) throws JdbxException
 		{
 			ResultIterator it	= ResultIterator.of(result);
 			Dao user		= new Dao();

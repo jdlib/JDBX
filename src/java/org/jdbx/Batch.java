@@ -34,7 +34,7 @@ public abstract class Batch
 	 * Clears the batch.
 	 * @see Statement#clearBatch()
 	 */
-	public void clear() throws JdbException
+	public void clear() throws JdbxException
 	{
 		stmt().call(Statement::clearBatch);
 	}
@@ -45,7 +45,7 @@ public abstract class Batch
 	 * @return an array of update counts
 	 * @see Statement#executeBatch()
 	 */
-	public int[] run() throws JdbException
+	public int[] run() throws JdbxException
 	{
 		int[] result = stmt().get(Statement::executeBatch);
 		return result != null ? result : new int[0];
@@ -57,7 +57,7 @@ public abstract class Batch
 	 * @return an array of update counts
 	 * @see Statement#executeLargeBatch()
 	 */
-	public long[] runLarge() throws JdbException
+	public long[] runLarge() throws JdbxException
 	{
 		long[] result = stmt().get(Statement::executeLargeBatch);
 		return result != null ? result : new long[0];
@@ -71,7 +71,7 @@ public abstract class Batch
 	 * @param <V> the type of the value returned in {@link BatchResult#value}
 	 * @return the result
 	 */
-	public <V> BatchResult<V> runGetAutoKeys(AutoKeysReader<V> reader) throws JdbException
+	public <V> BatchResult<V> runGetAutoKeys(AutoKeysReader<V> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 
@@ -82,7 +82,7 @@ public abstract class Batch
 		}
 		catch(Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 		return result;
 	}
@@ -95,7 +95,7 @@ public abstract class Batch
 	 * @param <V> the type of the auto generated keys
 	 * @return the result
 	 */
-	public <V> BatchResult<List<V>> runGetAutoKeys(Class<V> keyType) throws JdbException
+	public <V> BatchResult<List<V>> runGetAutoKeys(Class<V> keyType) throws JdbxException
 	{
 		Check.notNull(keyType, "keyType");
 		return runGetAutoKeys((rs,r) -> {
@@ -111,7 +111,7 @@ public abstract class Batch
 	 * @param <V> the type of the auto generated key
 	 * @return the result
 	 */
-	public <V> BatchResult<V> runGetAutoKey(Class<V> keyType) throws JdbException
+	public <V> BatchResult<V> runGetAutoKey(Class<V> keyType) throws JdbxException
 	{
 		Check.notNull(keyType, "keyType");
 		return runGetAutoKeys((rs,r) -> {

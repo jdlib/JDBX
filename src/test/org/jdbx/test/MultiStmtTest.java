@@ -17,7 +17,7 @@
 package org.jdbx.test;
 
 
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.MultiStmt;
 import org.jdbx.StaticStmt;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class MultiStmtTest extends JdbxTest
 {
-	@Test public void test() throws JdbException
+	@Test public void test() throws JdbxException
 	{
 		StaticStmt staticStmt;
 		try (MultiStmt mstmt = new MultiStmt(con()))

@@ -20,7 +20,7 @@ package org.jdbx.demo;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.List;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.PrepStmt;
 import org.jdbx.StaticStmt;
 
@@ -63,7 +63,7 @@ public class QueryDemo
 	}
 
 
-	public static void stmt(StaticStmt stmt) throws JdbException
+	public static void stmt(StaticStmt stmt) throws JdbxException
 	{
 		String sql1 	= "SELECT count(*) FROM Orders";
 		int count  		= stmt.createQuery(sql1).row().col().getInt();

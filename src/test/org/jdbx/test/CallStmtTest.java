@@ -19,7 +19,7 @@ package org.jdbx.test;
 
 import java.sql.ParameterMetaData;
 import org.jdbx.CallStmt;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.ResultType;
 import org.jdbx.StaticStmt;
 import org.junit.After;
@@ -31,7 +31,7 @@ import org.junit.Test;
 public class CallStmtTest extends JdbxTest
 {
 	private static Integer id_;
-	@BeforeClass public static void beforeClass() throws JdbException
+	@BeforeClass public static void beforeClass() throws JdbxException
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
@@ -68,13 +68,13 @@ public class CallStmtTest extends JdbxTest
 	}
 
 
-	@Before public void before() throws JdbException
+	@Before public void before() throws JdbxException
 	{
 		stmt_ = new CallStmt(con());
 	}
 
 
-	@After public void after() throws JdbException
+	@After public void after() throws JdbxException
 	{
 		stmt_.close();
 	}
@@ -84,7 +84,7 @@ public class CallStmtTest extends JdbxTest
 	 * Calls a stored procedure which returns a result set.
 	 * The result set is accessed via {@link CallStmt#createQuery()}.
 	 */
-	@Test public void testQueryReturnResultSet() throws JdbException
+	@Test public void testQueryReturnResultSet() throws JdbxException
 	{
 		stmt_.init("call GetUserAsResult(?)");
 		stmt_.param(1).set(id_);
@@ -117,7 +117,7 @@ public class CallStmtTest extends JdbxTest
 	 * Calls a stored procedure which returns a result set.
 	 * The result is accessed via {@link CallStmt#execute()}.
 	 */
-	@Test public void testExecuteReturnResultSet() throws JdbException
+	@Test public void testExecuteReturnResultSet() throws JdbxException
 	{
 		stmt_.init("call GetUserAsResult(?)");
 		stmt_.param(1).set(id_);
@@ -134,7 +134,7 @@ public class CallStmtTest extends JdbxTest
 	}
 
 
-	@Test public void testReturnOutParam() throws JdbException
+	@Test public void testReturnOutParam() throws JdbxException
 	{
 		stmt_.init("call GetUserName(?,?,?)");
 		stmt_.param(1).setDouble(1.1);

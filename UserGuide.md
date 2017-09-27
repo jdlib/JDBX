@@ -72,24 +72,24 @@ connection will also be closed automatically.
     int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
     
 
-## <a name="prepstmt"></a>4. PrepStmt
+## <a name="prepstmt"></a>4. `PrepStmt`
 
-`org.jdbx.StaticStmt` can execute precompiled, parameterized SQL commands. After it is initialized it can
-be executed multiple times, using the current parameters. 
-Contrary to `PreparedStatement` you can also re-initialize the command. Example:
+`org.jdbx.PrepStmt` can execute precompiled, parameterized SQL commands. After it is initialized it can
+be executed multiple times, using different parameter values. 
+Contrary to `java.sql.PreparedStatement` you can also re-initialize the command. Example:
 
     PrepStmt pstmt = ...
     pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-    int count1 = pstmt.params("John", "Doe").update();
-    int count2 = pstmt.params("Mary", "Jane").update();
+    pstmt.params("John", "Doe").update();
+    pstmt.params("Mary", "Jane").update();
     pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
     ...
      
 
-## <a name="callstmt"></a>5. CallStmt
+## <a name="callstmt"></a>5. `CallStmt`
 
 `org.jdbx.CallStmt` can call stored procedures. After it is initialized it can
-be executed multiple times, using the current parameters. Example:
+be executed multiple times, using different parameter values. Example:
 
     CallStmt cstmt = ...
     cstmt.init("{call CreateUser(?,?)}");
@@ -138,7 +138,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 	    
     // JDBX
     PrepStmt pstmt = new PrepStmt(con);
-    String name = pstmt.init(sql).params("fr").createQuery().row().value().getString();
+    String name = pstmt.init(sql).params("fr").createQuery().row().col().getString();
 
 
 ### <a name="queries-queryclass">Query Class

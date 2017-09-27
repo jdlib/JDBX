@@ -17,7 +17,7 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 
 
 /**
@@ -29,13 +29,12 @@ import org.jdbx.JdbException;
 public interface CheckedConsumer<T>
 {
 	/**
-	 * Passes the argument to the consumer and converts any exception into
-	 * a JdbException
+	 * Passes the argument to the consumer and converts any exception into a JdbxException
 	 * @param consumer a consumer
 	 * @param arg an argument
 	 * @param <T> the type of the input
 	 */
-	public static <T> void unchecked(CheckedConsumer<T> consumer, T arg) throws JdbException
+	public static <T> void unchecked(CheckedConsumer<T> consumer, T arg) throws JdbxException
 	{
 		try
 		{
@@ -43,7 +42,7 @@ public interface CheckedConsumer<T>
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 

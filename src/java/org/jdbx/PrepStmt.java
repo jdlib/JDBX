@@ -28,7 +28,7 @@ public class PrepStmt extends Stmt
 	 * and closes the connection when itself is closed.
 	 * @param dataSource a DataSource
 	 */
-	public PrepStmt(DataSource dataSource) throws JdbException
+	public PrepStmt(DataSource dataSource) throws JdbxException
 	{
 		super(dataSource);
 	}
@@ -39,7 +39,7 @@ public class PrepStmt extends Stmt
 	 * @param supplier provides a connection
 	 * @param closeCon determines if the connection is closed when this statement is closed.
 	 */
-	public PrepStmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbException
+	public PrepStmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbxException
 	{
 		super(supplier, closeCon);
 	}
@@ -70,7 +70,7 @@ public class PrepStmt extends Stmt
 	 * Returns the meta data of the PreparedStatement.
 	 * @return the meta data
 	 */
-	public ResultSetMetaData getMetaData() throws JdbException
+	public ResultSetMetaData getMetaData() throws JdbxException
 	{
 		checkInitialized();
 		return get(PreparedStatement::getMetaData);
@@ -81,7 +81,7 @@ public class PrepStmt extends Stmt
 	 * Returns the meta data of the PreparedStatement.
 	 * @return the parameter meta data
 	 */
-	public ParameterMetaData getParamMetaData() throws JdbException
+	public ParameterMetaData getParamMetaData() throws JdbxException
 	{
 		checkInitialized();
 		return get(PreparedStatement::getParameterMetaData);
@@ -91,7 +91,7 @@ public class PrepStmt extends Stmt
 	/**
 	 * Returns the internal java.sql.PreparedStatement.
 	 */
-	@Override public PreparedStatement getJdbcStmt() throws JdbException
+	@Override public PreparedStatement getJdbcStmt() throws JdbxException
 	{
 		checkInitialized();
 		return (PreparedStatement)stmt_;
@@ -117,7 +117,7 @@ public class PrepStmt extends Stmt
 	 * Returns a builder to initialize the statement.
 	 * @return a init builder
 	 */
-	public Init init() throws JdbException
+	public Init init() throws JdbxException
 	{
 		checkOpen();
 		return new Init();
@@ -130,7 +130,7 @@ public class PrepStmt extends Stmt
 	 * @param sql a SQL command
 	 * @return this
 	 */
-	public PrepStmt init(String sql) throws JdbException
+	public PrepStmt init(String sql) throws JdbxException
 	{
 		return init().cmd(sql);
 	}
@@ -164,7 +164,7 @@ public class PrepStmt extends Stmt
 		 * @param cmd a SQL command with named parameters
 		 * @return the PrepStmt
 		 */
-		public PrepStmt cmd(NamedParamCmd cmd) throws JdbException
+		public PrepStmt cmd(NamedParamCmd cmd) throws JdbxException
 		{
 			Check.notNull(cmd, "cmd");
 			namedParams_ = false;
@@ -179,7 +179,7 @@ public class PrepStmt extends Stmt
 		 * @param sql a SQL command
 		 * @return the PrepStmt
 		 */
-		public PrepStmt cmd(String sql) throws JdbException
+		public PrepStmt cmd(String sql) throws JdbxException
 		{
 			Check.notNull(sql, "sql");
 			checkOpen();
@@ -209,7 +209,7 @@ public class PrepStmt extends Stmt
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 		}
 
@@ -262,7 +262,7 @@ public class PrepStmt extends Stmt
 	 * @param values the parameter values
 	 * @return this
 	 */
-	public PrepStmt params(Object... values) throws JdbException
+	public PrepStmt params(Object... values) throws JdbxException
 	{
 		if ((values != null) && (values.length > 0))
 		{
@@ -280,7 +280,7 @@ public class PrepStmt extends Stmt
 	 * @param builder a parameter builder
 	 * @return this
 	 */
-	public PrepStmt params(CheckedConsumer<PreparedStatement> builder) throws JdbException
+	public PrepStmt params(CheckedConsumer<PreparedStatement> builder) throws JdbxException
 	{
 		Check.notNull(builder, "builder");
 		try
@@ -289,7 +289,7 @@ public class PrepStmt extends Stmt
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 		return this;
 	}
@@ -301,7 +301,7 @@ public class PrepStmt extends Stmt
 	 * @param value a parameter value
 	 * @return this
 	 */
-	public PrepStmt param(int index, Object value) throws JdbException
+	public PrepStmt param(int index, Object value) throws JdbxException
 	{
 		param(index).set(value);
 		return this;
@@ -324,7 +324,7 @@ public class PrepStmt extends Stmt
 	 * @param name a parameter name
 	 * @return the parameter object. Use setters of the parameter object to set a parameter value
 	 */
-	public NamedParam param(String name) throws JdbException
+	public NamedParam param(String name) throws JdbxException
 	{
 		Check.notNull(name, "name");
 		checkInitialized();
@@ -341,7 +341,7 @@ public class PrepStmt extends Stmt
 	 * Clears the parameters.
 	 * @return this
 	 */
-	public PrepStmt clearParams() throws JdbException
+	public PrepStmt clearParams() throws JdbxException
 	{
 		CheckedRunnable.unchecked(getJdbcStmt()::clearParameters);
 		return this;
@@ -359,27 +359,27 @@ public class PrepStmt extends Stmt
 		}
 
 
-		@Override public void set(Object value) throws JdbException
+		@Override public void set(Object value) throws JdbxException
 		{
 			set(value, PreparedStatement::setObject);
 		}
 
 
-		@Override public void set(Object value, SQLType type) throws JdbException
+		@Override public void set(Object value, SQLType type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			CheckedRunnable.unchecked(() -> getJdbcStmt().setObject(index_, value, type));
 		}
 
 
-		@Override public <T> void set(T value, SetForIndex<PreparedStatement,T> setter) throws JdbException
+		@Override public <T> void set(T value, SetForIndex<PreparedStatement,T> setter) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			CheckedRunnable.unchecked(() -> setter.set(getJdbcStmt(), index_, value));
 		}
 
 
-		@Override public void apply(DoForIndex<PreparedStatement> runner) throws JdbException
+		@Override public void apply(DoForIndex<PreparedStatement> runner) throws JdbxException
 		{
 			Check.notNull(runner, "runner");
 			CheckedRunnable.unchecked(() -> runner.accept(getJdbcStmt(), index_));
@@ -401,13 +401,13 @@ public class PrepStmt extends Stmt
 		}
 
 
-		@Override public void set(Object value) throws JdbException
+		@Override public void set(Object value) throws JdbxException
 		{
 			set(value, PreparedStatement::setObject);
 		}
 
 
-		@Override public void set(Object value, SQLType type) throws JdbException
+		@Override public void set(Object value, SQLType type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			for (int index : indexes_)
@@ -415,7 +415,7 @@ public class PrepStmt extends Stmt
 		}
 
 
-		@Override public <T> void set(T value, SetForIndex<PreparedStatement,T> setter) throws JdbException
+		@Override public <T> void set(T value, SetForIndex<PreparedStatement,T> setter) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			for (int index : indexes_)
@@ -423,7 +423,7 @@ public class PrepStmt extends Stmt
 		}
 
 
-		@Override public void apply(DoForIndex<PreparedStatement> runner) throws JdbException
+		@Override public void apply(DoForIndex<PreparedStatement> runner) throws JdbxException
 		{
 			Check.notNull(runner, "runner");
 			for (int index : indexes_)
@@ -444,7 +444,7 @@ public class PrepStmt extends Stmt
 	 * Creates a query to execute the current SQL command.
 	 * @return the query
 	 */
-	public Query createQuery() throws JdbException
+	public Query createQuery() throws JdbxException
 	{
 		checkInitialized();
 		return new PrepStmtQuery(this::getJdbcStmt);
@@ -461,7 +461,7 @@ public class PrepStmt extends Stmt
 	 * SQL command.
 	 * @return an update object
 	 */
-	public Update createUpdate() throws JdbException
+	public Update createUpdate() throws JdbxException
 	{
 		checkInitialized();
 		return new PrepStmtUpdate(this::getJdbcStmt);
@@ -472,7 +472,7 @@ public class PrepStmt extends Stmt
 	 * Executes an update operation for the current SQL command.
 	 * @return the number of affected records.
 	 */
-	public int update() throws JdbException
+	public int update() throws JdbxException
 	{
 		return createUpdate().run();
 	}
@@ -515,7 +515,7 @@ public class PrepStmt extends Stmt
 	 */
 	public class ParamBatch extends Batch
 	{
-		public ParamBatch add() throws JdbException
+		public ParamBatch add() throws JdbxException
 		{
 			CheckedRunnable.unchecked(() -> getJdbcStmt().addBatch());
 			return this;

@@ -5,41 +5,39 @@ import java.sql.*;
 
 
 /**
- * JdbException is a RuntimeException which is thrown
- * by Jdbx operations.
- * All SQLExceptions thrown by JDBC operations are wrapped
- * in a JdbException.
+ * JdbxException is a RuntimeException which is thrown by Jdbx operations.
+ * All SQLExceptions thrown by inner JDBC operations are wrapped in a JdbxException.
  */
-public class JdbException extends RuntimeException
+public class JdbxException extends RuntimeException
 {
 	/**
-	 * Categorizes JdbExceptions.
-	 * @see JdbException#getReason()
+	 * Categorizes JdbxException.
+	 * @see JdbxException#getReason()
 	 */
 	public enum Reason
 	{
 		/**
-		 * The JdbException wraps a SQLException thrown by a JDBC operation.
+		 * The JdbxException wraps a SQLException thrown by a JDBC operation.
 		 */
 		JDBC,
 
 		/**
-		 * The JdbException wraps an Exception thrown when processing a result.
+		 * The JdbxException wraps an Exception thrown when processing a result.
 		 */
 		PROCESS,
 
 		/**
-		 * The JdbException was thrown because of an invalid result.
+		 * The JdbxException was thrown because of an invalid result.
 		 */
 		INVALID_RESULT,
 
 		/**
-		 * The JdbException was thrown because an operation was performed on a closed statement or resultset.
+		 * The JdbxException was thrown because an operation was performed on a closed statement or resultset.
 		 */
 		CLOSED,
 
 		/**
-		 * The JdbException was thrown because an invalid operation was executed.
+		 * The JdbxException was thrown because an invalid operation was executed.
 		 */
 		ILLEGAL_STATE
 	}
@@ -100,18 +98,18 @@ public class JdbException extends RuntimeException
 
 
 	/**
-	 * Creates a JdbException which wraps another Throwable.
+	 * Creates a JdbxException which wraps another Throwable.
 	 * @param e Throwable
-	 * @return the exception itself if it is already JdbException. Else a new JdbException
+	 * @return the exception itself if it is already JdbxException. Else a new JdbxException
 	 * 		with Reason JDBC or PROCESS is created
 	 */
-	public static JdbException of(Throwable e)
+	public static JdbxException of(Throwable e)
 	{
 		Check.notNull(e, "exception");
-		if (e instanceof JdbException)
-			return (JdbException)e;
+		if (e instanceof JdbxException)
+			return (JdbxException)e;
 		else
-			return new JdbException(e, e instanceof SQLException ? Reason.JDBC : Reason.PROCESS);
+			return new JdbxException(e, e instanceof SQLException ? Reason.JDBC : Reason.PROCESS);
 	}
 
 
@@ -120,11 +118,11 @@ public class JdbException extends RuntimeException
 	 * @param exceptions the exception which get combined
 	 * @return the combined exception
 	 */
-	public static JdbException combine(Throwable... exceptions)
+	public static JdbxException combine(Throwable... exceptions)
 	{
 		if (exceptions == null)
 			return null;
-		JdbException combined = null;
+		JdbxException combined = null;
 		for (Throwable e : exceptions)
 		{
 			if (e != null)
@@ -133,7 +131,7 @@ public class JdbException extends RuntimeException
 					combined = of(e);
 				else
 				{
-					if ((e instanceof JdbException) && (e.getCause() != null))
+					if ((e instanceof JdbxException) && (e.getCause() != null))
 						e = e.getCause();
 					combined.addSuppressed(e);
 				}
@@ -144,51 +142,56 @@ public class JdbException extends RuntimeException
 
 
 	/**
-	 * Creates a new JdbException with reason CLOSED.
+	 * Creates a new JdbxException with reason CLOSED.
 	 * @return the exception
 	 */
-	public static JdbException closed()
+	public static JdbxException closed()
 	{
-		return new JdbException("stmt already closed", Reason.CLOSED);
+		return new JdbxException("stmt already closed", Reason.CLOSED);
 	}
 
 
 	/**
-	 * Creates a new JdbException with reason ILLEGAL_STATE.
+	 * Creates a new JdbxException with reason ILLEGAL_STATE.
 	 * @param message an error message
 	 * @return the exception
 	 */
-	public static JdbException illegalState(String message)
+	public static JdbxException illegalState(String message)
 	{
-		return new JdbException(message, Reason.ILLEGAL_STATE);
+		return new JdbxException(message, Reason.ILLEGAL_STATE);
 	}
 
 
 	/**
-	 * Creates a new JdbException with reason INVALID_RESULT.
+	 * Creates a new JdbxException with reason INVALID_RESULT.
 	 * @param message an error message
 	 * @return the exception
 	 */
-	public static JdbException invalidResult(String message)
+	public static JdbxException invalidResult(String message)
 	{
-		return new JdbException(message, Reason.INVALID_RESULT);
+		return new JdbxException(message, Reason.INVALID_RESULT);
 	}
 
 
-    protected JdbException(String message, Reason reason)
+    public JdbxException(String message, Reason reason)
     {
-        super(message);
-        reason_ = Check.notNull(reason, "reason");
+        this(message, null, reason);
     }
 
 
-    protected JdbException(Throwable cause, Reason reason)
+    public JdbxException(Throwable cause, Reason reason)
     {
-        super(cause);
+        this(null, cause, reason);
+    }
+
+
+    public JdbxException(String message, Throwable cause, Reason reason)
+    {
+        super(message, cause);
 		reason_ = Check.notNull(reason, "reason");
     }
 
-
+    
     /**
      * Returns the reason.
      * @return the reason
@@ -201,7 +204,7 @@ public class JdbException extends RuntimeException
 
     /**
      * Returns if the cause of this exception is a SQLException
-     * @return is the cause of this exception a SQLException
+     * @return is the cause of this exception a SQLException?
      */
     public boolean hasSqlExCause()
     {

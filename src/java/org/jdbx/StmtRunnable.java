@@ -19,10 +19,10 @@ package org.jdbx;
 
 abstract class StmtRunnable
 {
-	protected void registerRun() throws JdbException
+	protected void registerRun() throws JdbxException
 	{
 		if (hasRun_)
-			throw JdbException.illegalState(getRunnableType() + " can only be run once");
+			throw JdbxException.illegalState(getRunnableType() + " can only be run once");
 		hasRun_ = true;
 	}
 

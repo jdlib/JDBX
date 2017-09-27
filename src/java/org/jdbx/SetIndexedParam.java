@@ -29,7 +29,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * Sets a byte value.
 	 * @param value the value
 	 */
-	public default void setByte(byte value) throws JdbException
+	public default void setByte(byte value) throws JdbxException
 	{
 		apply((stmt,i) -> stmt.setByte(i,value));
 	}
@@ -39,7 +39,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * Sets a float value.
 	 * @param value the value
 	 */
-	public default void setFloat(float value) throws JdbException
+	public default void setFloat(float value) throws JdbxException
 	{
 		apply((stmt,i) -> stmt.setFloat(i,value));
 	}
@@ -49,7 +49,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * Sets a double value.
 	 * @param value the value
 	 */
-	public default void setDouble(double value) throws JdbException
+	public default void setDouble(double value) throws JdbxException
 	{
 		apply((stmt,i) -> stmt.setDouble(i,value));
 	}
@@ -59,7 +59,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * Sets a int value.
 	 * @param value the value
 	 */
-	public default void setInt(int value) throws JdbException
+	public default void setInt(int value) throws JdbxException
 	{
 		apply((stmt,i) -> stmt.setInt(i,value));
 	}
@@ -69,7 +69,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * Sets a long value.
 	 * @param value the value
 	 */
-	public default void setLong(long value) throws JdbException
+	public default void setLong(long value) throws JdbxException
 	{
 		apply((stmt,i) -> stmt.setLong(i,value));
 	}
@@ -79,7 +79,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * Sets a short value.
 	 * @param value the value
 	 */
-	public default void setShort(short value) throws JdbException
+	public default void setShort(short value) throws JdbxException
 	{
 		apply((stmt,i) -> stmt.setShort(i,value));
 	}
@@ -89,7 +89,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * Sets a Object value.
 	 * @param value the value
 	 */
-	public void set(Object value) throws JdbException;
+	public void set(Object value) throws JdbxException;
 
 
 	/**
@@ -97,7 +97,7 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * @param value the value
 	 * @param type the target SQLType
 	 */
-	public void set(Object value, SQLType type) throws JdbException;
+	public void set(Object value, SQLType type) throws JdbxException;
 
 
 	/**
@@ -106,12 +106,12 @@ interface SetIndexedParam<STMT extends PreparedStatement>
 	 * @param setter used to actually the value.
 	 * @param <T> the type of the value
 	 */
-	public <T> void set(T value, SetForIndex<STMT,T> setter) throws JdbException;
+	public <T> void set(T value, SetForIndex<STMT,T> setter) throws JdbxException;
 
 
 	/**
 	 * Calls the runner to perform its action.
 	 * @param runner a function to perform some action
 	 */
-	public void apply(DoForIndex<STMT> runner) throws JdbException;
+	public void apply(DoForIndex<STMT> runner) throws JdbxException;
 }

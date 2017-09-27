@@ -96,12 +96,12 @@ public class BatchResult<R>
 	/**
 	 * Checks that the update count with the given index equals the given count.
 	 * @return this
-	 * @throws JdbException thrown if the actual value does not match the expected value
+	 * @throws JdbxException thrown if the actual value does not match the expected value
 	 */
-	public BatchResult<R> checkCount(int index, int count) throws JdbException
+	public BatchResult<R> checkCount(int index, int count) throws JdbxException
 	{
 		if (getCount(index) != count)
-			throw JdbException.invalidResult("#" + index + ": expected update count " + count + ", but was " + getCount(index));
+			throw JdbxException.invalidResult("#" + index + ": expected update count " + count + ", but was " + getCount(index));
 		return this;
 	}
 
@@ -109,24 +109,24 @@ public class BatchResult<R>
 	/**
 	 * Checks that the update count  type with the given index equals the given type.
 	 * @return this
-	 * @throws JdbException thrown if the actual type does not match the expected type
+	 * @throws JdbxException thrown if the actual type does not match the expected type
 	 */
-	public BatchResult<R> checkCountType(int index, UpdateType type) throws JdbException
+	public BatchResult<R> checkCountType(int index, UpdateType type) throws JdbxException
 	{
 		if (getCountType(index) != type)
-			throw JdbException.invalidResult("#" + index + ": expected update count type " + type + ", but was " + getCountType(index));
+			throw JdbxException.invalidResult("#" + index + ": expected update count type " + type + ", but was " + getCountType(index));
 		return this;
 	}
 
 
 	/**
 	 * Checks that the value of this BatchResult is not null.
-	 * @throws JdbException thrown if the actual value does not match the expected value
+	 * @throws JdbxException thrown if the actual value does not match the expected value
 	 */
-	public R checkHasValue() throws JdbException
+	public R checkHasValue() throws JdbxException
 	{
 		if (this.value == null)
-			throw JdbException.invalidResult("expected non-null value");
+			throw JdbxException.invalidResult("expected non-null value");
 		return this.value;
 	}
 

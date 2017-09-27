@@ -94,7 +94,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 	 * Advances the result set to the next row.
 	 * @return true if the new current row is valid
 	 */
-	public boolean nextRow() throws JdbException
+	public boolean nextRow() throws JdbxException
 	{
 		resetIndex();
 		try
@@ -103,7 +103,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
@@ -159,7 +159,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 	/**
 	 * Returns the value as object of the given type.
 	 */
-	@Override public <T> T get(Class<T> type) throws JdbException
+	@Override public <T> T get(Class<T> type) throws JdbxException
 	{
 		Check.notNull(type, "type");
 		try
@@ -168,7 +168,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
@@ -177,7 +177,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 	 * Returns the value as object.
 	 * @param map a map that contains the mapping from SQL type names to Java classes
 	 */
-	@Override public Object get(Map<String,Class<?>> map) throws JdbException
+	@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 	{
 		Check.notNull(map, "map");
 		try
@@ -186,12 +186,12 @@ public class ResultIterator extends GetResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
 
-	@Override <T> T get(GetAccessors<T> accessors) throws JdbException
+	@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
 	{
 		try
 		{
@@ -199,7 +199,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
@@ -230,7 +230,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 	 * Closes the ResultIterator.
 	 * Depending on the {@link #isCloseResult() close flag} it also closes the ResultSet.
 	 */
-	@Override public void close() throws JdbException
+	@Override public void close() throws JdbxException
 	{
 		if (closeResult_)
 			CheckedRunnable.unchecked(resultSet_::close);

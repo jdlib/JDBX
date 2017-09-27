@@ -18,7 +18,7 @@ package org.jdbx.test;
 
 
 import java.sql.ResultSet;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 import org.jdbx.ResultIterator;
@@ -30,27 +30,27 @@ import org.junit.Test;
 
 public class PrepStmtTest extends JdbxTest
 {
-	@BeforeClass public static void beforeClass() throws JdbException
+	@BeforeClass public static void beforeClass() throws JdbxException
 	{
 		Jdbx.update(con(), "CREATE TABLE PTests(id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30), type INTEGER NOT NULL)");
 	}
 
 
-	@Before public void before() throws JdbException
+	@Before public void before() throws JdbxException
 	{
 		Jdbx.update(con(), "DELETE FROM PTests");
 		pstmt_ = new PrepStmt(con());
 	}
 
 
-	@After public void after() throws JdbException
+	@After public void after() throws JdbxException
 	{
 		pstmt_.close();
 	}
 
 
 	@SuppressWarnings("boxing")
-	@Test public void test() throws JdbException
+	@Test public void test() throws JdbxException
 	{
 		assertFalse(pstmt_.isInitialized());
 
@@ -90,7 +90,7 @@ public class PrepStmtTest extends JdbxTest
 	
 	public static class Dao
 	{
-		public static Dao read(ResultSet result) throws JdbException
+		public static Dao read(ResultSet result) throws JdbxException
 		{
 			ResultIterator it 	= ResultIterator.of(result);
 			Dao dao 			= new Dao();

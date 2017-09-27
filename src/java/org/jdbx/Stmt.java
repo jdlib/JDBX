@@ -47,13 +47,13 @@ public abstract class Stmt implements AutoCloseable
 	}
 
 
-	protected Stmt(DataSource dataSource) throws JdbException
+	protected Stmt(DataSource dataSource) throws JdbxException
 	{
 		this(Check.notNull(dataSource, "dataSource")::getConnection, true);
 	}
 
 
-	protected Stmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbException
+	protected Stmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbxException
 	{
 		Check.notNull(supplier, "supplier");
 		con_ 		 = CheckedSupplier.unchecked(supplier);
@@ -64,9 +64,9 @@ public abstract class Stmt implements AutoCloseable
 	/**
 	 * Returns the connection used by the Stmt.
 	 * @return the connection
-	 * @throws JdbException if the Stmt is already closed.
+	 * @throws JdbxException if the Stmt is already closed.
 	 */
-	public Connection getConnection() throws JdbException
+	public Connection getConnection() throws JdbxException
 	{
 		checkOpen();
 		return con_;
@@ -84,9 +84,9 @@ public abstract class Stmt implements AutoCloseable
 	/**
 	 * Returns the internal JDBC statement used by the JDBC statement.
 	 * @return the JDBC statement
-	 * @throws JdbException if the statement is not open.
+	 * @throws JdbxException if the statement is not open.
 	 */
-	public abstract Statement getJdbcStmt() throws JdbException;
+	public abstract Statement getJdbcStmt() throws JdbxException;
 
 
 	//------------------------------
@@ -112,28 +112,28 @@ public abstract class Stmt implements AutoCloseable
 
 	/**
 	 * Tests if the statement is open.
-	 * @throws JdbException thrown when the statement is already closed
+	 * @throws JdbxException thrown when the statement is already closed
 	 */
-	protected void checkOpen() throws JdbException
+	protected void checkOpen() throws JdbxException
 	{
 		if (isClosed())
-			throw JdbException.closed();
+			throw JdbxException.closed();
 	}
 
 
 	/**
 	 * Tests if the statement is prepared, i.e. {@link #getJdbcStmt()} may be called.
-	 * @throws JdbException thrown when the statement is not prepared
+	 * @throws JdbxException thrown when the statement is not prepared
 	 */
-	protected void checkInitialized() throws JdbException
+	protected void checkInitialized() throws JdbxException
 	{
 		checkOpen();
 		if (stmt_ == null)
-			throw JdbException.illegalState("no statement prepared");
+			throw JdbxException.illegalState("no statement prepared");
 	}
 
 
-	protected void closeStmt() throws JdbException
+	protected void closeStmt() throws JdbxException
 	{
 		try
 		{
@@ -150,7 +150,7 @@ public abstract class Stmt implements AutoCloseable
 	/**
 	 * Closes the statement. This operation has no effect if already closed.
 	 */
-	@Override public void close() throws JdbException
+	@Override public void close() throws JdbxException
 	{
 		if (!isClosed())
 		{
@@ -163,7 +163,7 @@ public abstract class Stmt implements AutoCloseable
 			}
 			catch (Exception e)
 			{
-				throw JdbException.of(e);
+				throw JdbxException.of(e);
 			}
 			finally
 			{
@@ -178,7 +178,7 @@ public abstract class Stmt implements AutoCloseable
 	 * Returns {@link Statement#isCloseOnCompletion()}
 	 * @return the flag
 	 */
-	public boolean isCloseOnCompletion() throws JdbException
+	public boolean isCloseOnCompletion() throws JdbxException
 	{
 		return get(Statement::isCloseOnCompletion).booleanValue();
 	}
@@ -187,7 +187,7 @@ public abstract class Stmt implements AutoCloseable
 	/**
 	 * Calls {@link Statement#closeOnCompletion()}
 	 */
-	public void closeOnCompletion() throws JdbException
+	public void closeOnCompletion() throws JdbxException
 	{
 		call(Statement::closeOnCompletion);
 	}
@@ -202,7 +202,7 @@ public abstract class Stmt implements AutoCloseable
 	 * Returns the statement options.
 	 * @return the options
 	 */
-	public final StmtOptions options() throws JdbException
+	public final StmtOptions options() throws JdbxException
 	{
 		if (options_ == null)
 			options_ = new StmtOptions(this);
@@ -218,7 +218,7 @@ public abstract class Stmt implements AutoCloseable
 	/**
 	 * Cancels execution of the current command.
 	 */
-	public void cancel() throws JdbException
+	public void cancel() throws JdbxException
 	{
 		call(Statement::cancel);
 	}
@@ -234,7 +234,7 @@ public abstract class Stmt implements AutoCloseable
 	 * @return the warnings
 	 * @see Statement#getWarnings()
 	 */
-	public SQLWarning getWarnings() throws JdbException
+	public SQLWarning getWarnings() throws JdbxException
 	{
 		checkOpen();
 		return stmt_ != null ? get(Statement::getWarnings) : null;
@@ -245,7 +245,7 @@ public abstract class Stmt implements AutoCloseable
 	 * Clears the warnings.
 	 * @see Statement#clearWarnings()
 	 */
-	public void clearWarnings() throws JdbException
+	public void clearWarnings() throws JdbxException
 	{
 		if (stmt_ != null)
 			call(Statement::clearWarnings);
@@ -270,27 +270,27 @@ public abstract class Stmt implements AutoCloseable
 
 
 	@SuppressWarnings("unchecked")
-	protected <STMT extends Statement, T> void call(CheckedConsumer<STMT> fn) throws JdbException
+	protected <STMT extends Statement, T> void call(CheckedConsumer<STMT> fn) throws JdbxException
 	{
 		CheckedConsumer.unchecked(fn, (STMT)getJdbcStmt());
 	}
 
 
 	@SuppressWarnings("unchecked")
-	protected <STMT extends Statement, T> T get(CheckedFunction<STMT,T> fn) throws JdbException
+	protected <STMT extends Statement, T> T get(CheckedFunction<STMT,T> fn) throws JdbxException
 	{
 		return CheckedFunction.unchecked(fn, (STMT)getJdbcStmt());
 	}
 
 
 	@SuppressWarnings("unchecked")
-	protected <STMT extends Statement> void setInt(IntSetter<STMT> fn, int arg) throws JdbException
+	protected <STMT extends Statement> void setInt(IntSetter<STMT> fn, int arg) throws JdbxException
 	{
 		CheckedRunnable.unchecked(() -> fn.set((STMT)getJdbcStmt(), arg));
 	}
 
 
-	protected <STMT extends Statement> void setBoolean(BooleanSetter<STMT> fn, boolean arg) throws JdbException
+	protected <STMT extends Statement> void setBoolean(BooleanSetter<STMT> fn, boolean arg) throws JdbxException
 	{
 		CheckedRunnable.unchecked(() -> fn.set(getJdbcStmt(), arg));
 	}

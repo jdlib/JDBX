@@ -17,7 +17,7 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 
 
 /**
@@ -30,12 +30,12 @@ public interface CheckedSupplier<T>
 {
 	/**
 	 * Returns the value provided by the supplier and converts
-	 * any exception into a JdbException.
+	 * any exception into a JdbxException.
 	 * @param supplier a supplier
 	 * @param <T> the type of results supplied by this supplier
 	 * @return the value provided by the supplier
 	 */
-	public static <T> T unchecked(CheckedSupplier<T> supplier) throws JdbException
+	public static <T> T unchecked(CheckedSupplier<T> supplier) throws JdbxException
 	{
 		try
 		{
@@ -43,7 +43,7 @@ public interface CheckedSupplier<T>
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 

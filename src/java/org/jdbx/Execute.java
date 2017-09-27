@@ -17,7 +17,7 @@ public abstract class Execute extends StmtRunnable
 	}
 
 
-	public void run(CheckedConsumer<ExecuteResult> consumer) throws JdbException
+	public void run(CheckedConsumer<ExecuteResult> consumer) throws JdbxException
 	{
 		Check.notNull(consumer, "consumer");
 		run(r -> {
@@ -27,7 +27,7 @@ public abstract class Execute extends StmtRunnable
 	}
 
 
-	public <R> R run(CheckedFunction<ExecuteResult,R> reader) throws JdbException
+	public <R> R run(CheckedFunction<ExecuteResult,R> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		registerRun();
@@ -39,10 +39,10 @@ public abstract class Execute extends StmtRunnable
 		}
 		catch (Exception e)
 		{
-			throw JdbException.of(e);
+			throw JdbxException.of(e);
 		}
 	}
 
 
-	public abstract ExecuteResult run() throws JdbException;
+	public abstract ExecuteResult run() throws JdbxException;
 }

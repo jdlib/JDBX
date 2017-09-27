@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.jdbx.JdbException;
+import org.jdbx.JdbxException;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 
@@ -68,7 +68,7 @@ public class TeaserDemo
 	/**
 	 * JDBX version of {@link #oldJdbcInsertWithAutoKeys(Connection, String, String)}:
 	 */
-	public Integer newJdbxInsertWithAutoKeys(Connection con, String firstName, String lastName) throws JdbException
+	public Integer newJdbxInsertWithAutoKeys(Connection con, String firstName, String lastName) throws JdbxException
 	{
 		try (PrepStmt pstmt = new PrepStmt(con))
 		{
@@ -101,7 +101,7 @@ public class TeaserDemo
 	/**
 	 * JDBX version of {@link #oldJdbcQueryBeanList(Connection)}:
 	 */
-	public List<City> newJdbxQueryBeanList(Connection con) throws JdbException
+	public List<City> newJdbxQueryBeanList(Connection con) throws JdbxException
 	{
 		return Jdbx.createQuery(con, "SELECT * FROM Cities ORDER BY name").rows().value(City::read);
 	}
