@@ -29,7 +29,6 @@ import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 
 
-
 /**
  * Contains the examples from readme.md
  */

@@ -101,7 +101,7 @@ public class DocSnippets
 	{
 		String sql = null;
 		Query q = stmt.createQuery(sql);
-		q = pstmt.createQuery();
+		q = pstmt.init(sql).createQuery();
 	}
 	
 	
@@ -136,8 +136,6 @@ public class DocSnippets
 		q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
 		q.rows().map();                    // return a List<Map<String,Object>>
 		q.rows().read(City::read);        // returns List<City>
-//		q.read(consumer);
-//		q.rows().read(...callback...);     // invokes the callback for every result row
 		
 		q.rows(5);
 		q.skip(3).rows();
