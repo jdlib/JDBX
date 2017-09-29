@@ -67,7 +67,7 @@ public class QueryOneRow
 	{
 		Check.notNull(reader, "reader");
 		return query_.read(false, result -> {
-			if (query_.applySkip(result.getJdbcResult()) && result.next())
+			if (query_.applySkip(result) && result.next())
 			{
 				T value = reader.apply(result);
 				if (unique_ && result.next())

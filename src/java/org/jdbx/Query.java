@@ -42,19 +42,9 @@ public abstract class Query extends StmtRunnable
 	}
 
 
-	boolean applySkip(ResultSet result) throws SQLException
+	boolean applySkip(QueryResult result) throws SQLException
 	{
-		if (skip_ > 0)
-		{
-			int count = 0;
-			while (count < skip_)
-			{
-				if (!result.next())
-					return false;
-				count++;
-			}
-		}
-		return true;
+		return (skip_ <= 0) || result.skip(skip_);
 	}
 
 
@@ -62,7 +52,6 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and returns a QueryResult.
 	 * @return the result
 	 */
-	// TODO
 	public QueryResult result() throws JdbxException
 	{
 		return new QueryResult(resultSet());
@@ -73,6 +62,7 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and returns a ResultSet.
 	 * @return the result
 	 */
+	// TODO remove
 	public ResultSet resultSet() throws JdbxException
 	{
 		return CheckedSupplier.unchecked(this::runQuery);
@@ -153,7 +143,7 @@ public abstract class Query extends StmtRunnable
 		try (QueryResult result = new QueryResult(runQuery()))
 		{
 			if (applySkip)
-				applySkip(result.getJdbcResult());
+				applySkip(result);
 			returnValue = reader.apply(result);
 		}
 		catch (Exception e)

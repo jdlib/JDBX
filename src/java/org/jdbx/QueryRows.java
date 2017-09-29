@@ -94,7 +94,7 @@ public class QueryRows
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");
 		return query_.read(false, result -> {
-			if (query_.applySkip(result.getJdbcResult()))
+			if (query_.applySkip(result))
 			{
 				int index = -1;
 				while ((++index < max_) && result.next())

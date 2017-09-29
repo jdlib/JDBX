@@ -70,6 +70,25 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
+	 * Skips n rows.
+	 * @param count the number of rows to skip. If <= 0 this call has no effect.
+	 * @return true, if the amount of rows have been skipped or count was <= 0, false
+	 * 		if the result had less rows than then given row count
+	 */
+	public boolean skip(int count)
+	{
+		int n = 0;
+		while (n < count)
+		{
+			if (!next())
+				return false;
+			n++;
+		}
+		return true;
+	}
+	
+
+	/**
 	 * Returns column values of the current row as array.
 	 * @param indexes the column indexes, starting at 1.
 	 * @return the value array
