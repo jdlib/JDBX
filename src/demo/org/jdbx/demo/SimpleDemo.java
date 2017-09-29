@@ -57,7 +57,7 @@ public class SimpleDemo
 		sql = "SELECT * FROM City WHERE country = ?";
 		List<City> cities = Jdbx.createQuery(con, sql, "fr")
 			.rows()				// read all rows
-			.value(City::read);		// and create a city object for each row
+			.read(City::read);		// and create a city object for each row
 
 
 		// run a parameterless update

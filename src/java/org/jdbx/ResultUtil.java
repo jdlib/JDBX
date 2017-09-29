@@ -24,13 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Provides helper methods to read values from a ResultSet.
+ */
 class ResultUtil
 {
-	//-----------------------------------
-	// read resultset value
-	//-----------------------------------
-
-
 	public static Object[] readValues(ResultSet resultSet) throws SQLException
 	{
 		Object[] values = new Object[resultSet.getMetaData().getColumnCount()];

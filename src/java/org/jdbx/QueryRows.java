@@ -54,7 +54,7 @@ public class QueryRows
 	 * the ResultSet consumer for each row.
 	 * @param consumer a ResultSet consumer
 	 */
-	public void read(CheckedConsumer<ResultSet> consumer) throws JdbxException
+	public void forEach(CheckedConsumer<ResultSet> consumer) throws JdbxException
 	{
 		Check.notNull(consumer, "consumer");
 		CheckedConsumer<ResultSet> c = result -> {
@@ -74,12 +74,12 @@ public class QueryRows
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> value(CheckedFunction<ResultSet,T> reader) throws JdbxException
+	public <T> List<T> read(CheckedFunction<ResultSet,T> reader) throws JdbxException
 	{
-		return value(reader, new ArrayList<>());
+		return read(reader, new ArrayList<>());
 	}
 
-
+	
 	/**
 	 * Loops through all rows of the ResultSet and calls
 	 * the ResultSet reader for each row. All values returned by the reader
@@ -89,7 +89,7 @@ public class QueryRows
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> value(CheckedFunction<ResultSet,T> reader, List<T> list) throws JdbxException
+	public <T> List<T> read(CheckedFunction<ResultSet,T> reader, List<T> list) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");
@@ -112,7 +112,7 @@ public class QueryRows
 	 */
 	public List<Map<String,Object>> map() throws JdbxException
 	{
-		return value(rs -> ResultUtil.readMap(rs));
+		return read(rs -> ResultUtil.readMap(rs));
 	}
 
 
@@ -125,7 +125,7 @@ public class QueryRows
 	public List<Map<String,Object>> map(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "column names");
-		return value(rs -> ResultUtil.readMap(rs, colNames));
+		return read(rs -> ResultUtil.readMap(rs, colNames));
 	}
 
 
@@ -136,7 +136,7 @@ public class QueryRows
 	 */
 	public List<Object[]> cols() throws JdbxException
 	{
-		return value(rs -> ResultUtil.readValues(rs));
+		return read(ResultUtil::readValues);
 	}
 
 
@@ -149,7 +149,7 @@ public class QueryRows
 	public List<Object[]> cols(int... colIndexes) throws JdbxException
 	{
 		Check.notNull(colIndexes, "colIndexes");
-		return value(rs -> ResultUtil.readValues(rs, colIndexes));
+		return read(rs -> ResultUtil.readValues(rs, colIndexes));
 	}
 
 
@@ -162,7 +162,7 @@ public class QueryRows
 	public List<Object[]> cols(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "colNames");
-		return value(rs -> ResultUtil.readValues(rs, colNames));
+		return read(rs -> ResultUtil.readValues(rs, colNames));
 	}
 
 
@@ -484,7 +484,7 @@ public class QueryRows
 		@Override public <T> List<T> get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return value(result -> result.getObject(index_, type));
+			return read(result -> result.getObject(index_, type));
 		}
 
 
@@ -504,7 +504,7 @@ public class QueryRows
 		public <T> List<T> get(GetForIndex<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return value(result -> fn.get(result, index_));
+			return read(result -> fn.get(result, index_));
 		}
 
 
@@ -531,7 +531,7 @@ public class QueryRows
 		@Override public <T> List<T> get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return value(result -> result.getObject(name_, type));
+			return read(result -> result.getObject(name_, type));
 		}
 
 
@@ -544,7 +544,7 @@ public class QueryRows
 		public <T> List<T> get(GetForName<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return value(result -> fn.get(result, name_));
+			return read(result -> fn.get(result, name_));
 		}
 
 

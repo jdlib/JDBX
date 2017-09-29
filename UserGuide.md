@@ -138,7 +138,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 	    
     // JDBX
     StaticStmt stmt = new StaticStmt(con);
-    List<City> cities = stmt.createQuery(sql).rows().value(City::read);
+    List<City> cities = stmt.createQuery(sql).rows().read(City::read);
      
 **Example 2:** Extract a single value from a result set which contains 0 or 1 rows:
 
@@ -187,7 +187,7 @@ Call `Query.row()` to retrieve a builder to read values from the first result ro
     q.row().cols();               // returns the value of all columns, as Object[]
     q.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
     q.row().map();                // returns a Map<String,Object> mapping column name to value
-    q.row().value(City::read);    // returns the value returned by the reader function 	 
+    q.row().read(City::read);     // returns the value returned by the reader function 	 
 
 Note that the SQL query is actually run in the terminal operation of the builder chain.
    
@@ -217,7 +217,7 @@ Call `Query.rows()` to retrieve a builder to read values from all rows and pack 
     q.rows().cols();                   // return values of all columns, as List<Object[]>
     q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
     q.rows().map();                    // return a List<Map<String,Object>>
-    q.rows().value(City::read);        // returns List<City>
+    q.rows().read(City::read);         // returns List<City>
     q.rows().read(...callback...)      // invokes the callback for every result row 
      
 Note that the SQL query is actually run in the terminal operation of the builder chain.

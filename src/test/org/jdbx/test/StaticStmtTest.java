@@ -93,7 +93,7 @@ public class StaticStmtTest extends JdbxTest
 		assertTrue(array[0] instanceof Integer);
 		assertEquals("D", array[1]);
 
-		List<Dao> users = stmt_.createQuery(sql).rows().value(Dao::read);
+		List<Dao> users = stmt_.createQuery(sql).rows().read(Dao::read);
 		assertEquals(4, users.size());
 		Dao userD = users.get(0);
 		assertNotNull(userD.id);

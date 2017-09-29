@@ -73,7 +73,7 @@ public class DocSnippets
 		    
 		// JDBX
 		StaticStmt stmt = new StaticStmt(con);
-		List<City> cities = stmt.createQuery(sql).rows().value(City::read);
+		List<City> cities = stmt.createQuery(sql).rows().read(City::read);
 	}
 	
 	
@@ -116,7 +116,7 @@ public class DocSnippets
 		q.row().cols();               // returns the value of all columns, as Object[]
 		q.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
 		q.row().map();                // returns a Map<String,Object> mapping column name to value
-		q.row().value(City::read);    // returns the value returned by the reader function
+		q.row().read(City::read);    // returns the value returned by the reader function
 		
 		q.row().required().col().getString();
 		q.row().unique().col().getString();
@@ -135,7 +135,7 @@ public class DocSnippets
 		q.rows().cols();                   // return values of all columns, as List<Object[]>
 		q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
 		q.rows().map();                    // return a List<Map<String,Object>>
-		q.rows().value(City::read);        // returns List<City>
+		q.rows().read(City::read);        // returns List<City>
 //		q.read(consumer);
 //		q.rows().read(...callback...);     // invokes the callback for every result row
 		
