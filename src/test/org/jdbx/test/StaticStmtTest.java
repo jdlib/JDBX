@@ -36,14 +36,14 @@ public class StaticStmtTest extends JdbxTest
 {
 	@BeforeClass public static void beforeClass() throws JdbxException
 	{
-		Jdbx.update(con(), "CREATE TABLE PlainUser (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
+		Jdbx.update(con(), "CREATE TABLE STest (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
 	}
 
 
 	@Before public void before() throws JdbxException
 	{
 		stmt_ = new StaticStmt(con());
-		stmt_.update("DELETE FROM PlainUser");
+		stmt_.update("DELETE FROM STest");
 	}
 
 
@@ -58,19 +58,19 @@ public class StaticStmtTest extends JdbxTest
 		String sql;
 		int count;
 
-		sql   = "SELECT COUNT(*) FROM PlainUser";
+		sql   = "SELECT COUNT(*) FROM STest";
 		count = stmt_.createQuery(sql).row ().col().getInt();
 		assertEquals(0, count);
 
-		sql   = "INSERT INTO PlainUser (name) VALUES ('A'), ('B'), ('C'), ('D')";
+		sql   = "INSERT INTO STest (name) VALUES ('A'), ('B'), ('C'), ('D')";
 		count = stmt_.update(sql);
 		assertEquals(4, count);
 
-		sql   = "SELECT count(*) FROM PlainUser";
+		sql   = "SELECT count(*) FROM STest";
 		count = stmt_.createQuery(sql).row().col().getInt();
 		assertEquals(4, count);
 
-		sql   = "SELECT * FROM PlainUser ORDER BY name DESC";
+		sql   = "SELECT * FROM STest ORDER BY name DESC";
 		List<String> names = stmt_.createQuery(sql).rows().col("NAME").getString();
 		assertEquals(4, names.size());
 		assertEquals("D", names.get(0));
@@ -106,7 +106,7 @@ public class StaticStmtTest extends JdbxTest
 		String sql;
 		int count;
 
-		sql = "INSERT INTO PlainUser (name) VALUES ('A'), ('B')";
+		sql = "INSERT INTO STest (name) VALUES ('A'), ('B')";
 		UpdateResult<List<Integer>> result = stmt_.createUpdate(sql)
 			.returnCols("ID")
 			.runGetAutoKeys(Integer.class);
@@ -116,7 +116,7 @@ public class StaticStmtTest extends JdbxTest
 		int idB = result.value.get(1).intValue();
 		assertEquals(idA + 1, idB);
 
-		sql 	= "UPDATE PlainUser SET name = 'BB' WHERE name = 'B'";
+		sql 	= "UPDATE STest SET name = 'BB' WHERE name = 'B'";
 		count	= stmt_.update(sql);
 		assertEquals(1, count);
 	}
@@ -124,7 +124,7 @@ public class StaticStmtTest extends JdbxTest
 
 	@Test public void testExecute() throws JdbxException
 	{
-		stmt_.createExecute("INSERT INTO PlainUser (name) VALUES ('A')").returnGenCols().run(r -> {
+		stmt_.createExecute("INSERT INTO STest (name) VALUES ('A')").returnGenCols().run(r -> {
 			assertTrue(r.next());
 			assertTrue(r.isUpdateCount());
 			assertEquals(1, r.getUpdateCount());
@@ -141,14 +141,14 @@ public class StaticStmtTest extends JdbxTest
 		assertEquals(ResultConcurrency.READ_ONLY, stmt_.options().getResultConcurrency());
 		stmt_.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
 		assertEquals(ResultConcurrency.CONCUR_UPDATABLE, stmt_.options().getResultConcurrency());
-		stmt_.update("INSERT INTO PlainUser (name) VALUES ('A'), ('B')");
+		stmt_.update("INSERT INTO STest (name) VALUES ('A'), ('B')");
 	}
 
 
 	@Test public void testBatch() throws JdbxException
 	{
-		stmt_.batch().add("INSERT INTO PlainUser (name) VALUES ('A'), ('B')");
-		stmt_.batch().add("INSERT INTO PlainUser (name) VALUES ('C'), ('D')");
+		stmt_.batch().add("INSERT INTO STest (name) VALUES ('A'), ('B')");
+		stmt_.batch().add("INSERT INTO STest (name) VALUES ('C'), ('D')");
 		int[] count = stmt_.batch().run();
 		assertEquals(2, count.length);
 		assertEquals(2, count[0]);
