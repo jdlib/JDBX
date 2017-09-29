@@ -19,6 +19,7 @@ package org.jdbx.demo;
 
 import java.sql.ResultSet;
 import org.jdbx.JdbxException;
+import org.jdbx.QueryResult;
 import org.jdbx.ResultIterator;
 
 
@@ -31,15 +32,24 @@ public class City
 	/**
 	 * Reads fields from current result row (City.*) and returns a new City object.
 	 */
-	public static City read(ResultSet rs) throws JdbxException
+	public static City read(ResultSet r) throws JdbxException
 	{
-		ResultIterator it 	= ResultIterator.of(rs);
+		ResultIterator it 	= ResultIterator.of(r);
 		City city 			= new City();
 		city.id 			= it.getInteger();
 		city.name			= it.getString();
 		city.country		= it.getString();
 		city.size			= it.getInt();
 		return city;
+	}
+
+	
+	/**
+	 * Reads fields from current result row (City.*) and returns a new City object.
+	 */
+	public static City read(QueryResult r) throws JdbxException
+	{
+		return read(r.getJdbcResult());
 	}
 
 

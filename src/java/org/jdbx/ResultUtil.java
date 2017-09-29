@@ -29,6 +29,12 @@ import java.util.Map;
  */
 class ResultUtil
 {
+	public static Object[] readValues(QueryResult result) throws SQLException
+	{
+		return readValues(result.getJdbcResult());
+	}
+
+	
 	public static Object[] readValues(ResultSet resultSet) throws SQLException
 	{
 		Object[] values = new Object[resultSet.getMetaData().getColumnCount()];
@@ -57,6 +63,12 @@ class ResultUtil
 	}
 
 
+	public static Map<String,Object> readMap(QueryResult result) throws SQLException
+	{
+		return readMap(result.getJdbcResult());
+	}
+	
+	
 	public static Map<String,Object> readMap(ResultSet rs) throws SQLException
 	{
 		HashMap<String,Object> map = new HashMap<>();

@@ -38,7 +38,7 @@ import org.jdbx.function.GetForName;
 
 /**
  * QueryRows is a builder class to
- * define the multi-row result of a query.
+ * retrieve the multi-row result of a query.
  */
 public class QueryRows
 {
@@ -54,10 +54,10 @@ public class QueryRows
 	 * the ResultSet consumer for each row.
 	 * @param consumer a ResultSet consumer
 	 */
-	public void forEach(CheckedConsumer<ResultSet> consumer) throws JdbxException
+	public void forEach(CheckedConsumer<QueryResult> consumer) throws JdbxException
 	{
 		Check.notNull(consumer, "consumer");
-		CheckedConsumer<ResultSet> c = result -> {
+		CheckedConsumer<QueryResult> c = result -> {
 			int index = -1;
 			while ((++index < max_) && result.next())
 				consumer.accept(result);
@@ -67,34 +67,34 @@ public class QueryRows
 
 
 	/**
-	 * Loops through all rows of the ResultSet and calls
-	 * the ResultSet reader for each row. All values returned by the reader
+	 * Loops through all rows of the result and calls
+	 * the reader function for each row. All values returned by the reader
 	 * are collected in a List.
-	 * @param reader receives a ResultSet and returns a value
+	 * @param reader receives a result and returns a value for the current row
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> read(CheckedFunction<ResultSet,T> reader) throws JdbxException
+	public <T> List<T> read(CheckedFunction<QueryResult,T> reader) throws JdbxException
 	{
 		return read(reader, new ArrayList<>());
 	}
 
 	
 	/**
-	 * Loops through all rows of the ResultSet and calls
-	 * the ResultSet reader for each row. All values returned by the reader
+	 * Loops through all rows of the result and calls
+	 * the reader function for each row. All values returned by the reader
 	 * are collected in the given List.
-	 * @param reader receives a ResultSet and returns a value
+	 * @param reader receives a result and returns a value for the current row
 	 * @param list a list
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> read(CheckedFunction<ResultSet,T> reader, List<T> list) throws JdbxException
+	public <T> List<T> read(CheckedFunction<QueryResult,T> reader, List<T> list) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");
-		return query_.read0(false, result -> {
-			if (query_.applySkip(result))
+		return query_.read(false, result -> {
+			if (query_.applySkip(result.getJdbcResult()))
 			{
 				int index = -1;
 				while ((++index < max_) && result.next())
@@ -125,7 +125,7 @@ public class QueryRows
 	public List<Map<String,Object>> map(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "column names");
-		return read(rs -> ResultUtil.readMap(rs, colNames));
+		return read(r -> ResultUtil.readMap(r.getJdbcResult(), colNames));
 	}
 
 
@@ -149,7 +149,7 @@ public class QueryRows
 	public List<Object[]> cols(int... colIndexes) throws JdbxException
 	{
 		Check.notNull(colIndexes, "colIndexes");
-		return read(rs -> ResultUtil.readValues(rs, colIndexes));
+		return read(r -> ResultUtil.readValues(r.getJdbcResult(), colIndexes));
 	}
 
 
@@ -162,7 +162,7 @@ public class QueryRows
 	public List<Object[]> cols(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "colNames");
-		return read(rs -> ResultUtil.readValues(rs, colNames));
+		return read(r -> ResultUtil.readValues(r.getJdbcResult(), colNames));
 	}
 
 
@@ -484,7 +484,7 @@ public class QueryRows
 		@Override public <T> List<T> get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return read(result -> result.getObject(index_, type));
+			return read(r -> r.getJdbcResult().getObject(index_, type));
 		}
 
 
@@ -504,7 +504,7 @@ public class QueryRows
 		public <T> List<T> get(GetForIndex<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return read(result -> fn.get(result, index_));
+			return read(r -> fn.get(r.getJdbcResult(), index_));
 		}
 
 
@@ -531,7 +531,7 @@ public class QueryRows
 		@Override public <T> List<T> get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return read(result -> result.getObject(name_, type));
+			return read(r -> r.getJdbcResult().getObject(name_, type));
 		}
 
 
@@ -544,7 +544,7 @@ public class QueryRows
 		public <T> List<T> get(GetForName<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return read(result -> fn.get(result, name_));
+			return read(r -> fn.get(r.getJdbcResult(), name_));
 		}
 
 

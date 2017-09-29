@@ -62,6 +62,7 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and returns a QueryResult.
 	 * @return the result
 	 */
+	// TODO
 	public QueryResult result() throws JdbxException
 	{
 		return new QueryResult(resultSet());
@@ -75,74 +76,6 @@ public abstract class Query extends StmtRunnable
 	public ResultSet resultSet() throws JdbxException
 	{
 		return CheckedSupplier.unchecked(this::runQuery);
-	}
-
-
-	/**
-	 * Executes the query and passes the result-set to the consumer.
-	 * @param consumer a result set consumer
-	 */
-	public void read(CheckedConsumer<ResultSet> consumer) throws JdbxException
-	{
-		read(rs -> {
-			consumer.accept(rs);
-			return null;
-		});
-	}
-
-
-	/**
-	 * Executes the query and passes the result-set to the reader.
-	 * @param reader a reader which can return a value from a result set
-	 * @param <T> the type of the value returned by the reader
-	 * @return the value returned by the reader.
-	 */
-	public <T> T read(CheckedFunction<ResultSet,T> reader) throws JdbxException
-	{
-		return read0(skip_ > 0, reader);
-	}
-
-
-
-	/**
-	 * Implementation method for #read(ResultReader<T> reader).
-	 * We allow callers of this method to decide if they want to apply skipping themselves:
-	 * If skipping is done here, the ResultReader may invoke ResultSet.next()
-	 * after an unsuccessful prior call to this method - unfortunately in this case
-	 * a JDBC driver is allowed to throw an exceptions instead of returning false.
-	 */
-	<R> R read0(boolean applySkip, CheckedFunction<ResultSet,R> reader) throws JdbxException
-	{
-		Check.notNull(reader, "reader");
-
-		Exception e1 = null, e2 = null;
-		R returnValue = null;
-
-		try (ResultSet result = runQuery())
-		{
-			if (applySkip)
-				applySkip(result);
-			returnValue = reader.apply(result);
-		}
-		catch (Exception e)
-		{
-			e1 = e;
-		}
-		finally
-		{
-			try
-			{
-				cleanup();
-			}
-			catch (Exception e)
-			{
-				e2 = e;
-			}
-		}
-
-		if ((e1 != null) || (e2 != null))
-			throw JdbxException.combine(e1, e2);
-		return returnValue;
 	}
 
 
@@ -174,6 +107,74 @@ public abstract class Query extends StmtRunnable
 	public QueryRows rows(int max)
 	{
 		return new QueryRows(this, max);
+	}
+
+
+	/**
+	 * Executes the query and passes the result to the consumer.
+	 * @param consumer a result consumer
+	 */
+	public void read(CheckedConsumer<QueryResult> consumer) throws JdbxException
+	{
+		read(result -> {
+			consumer.accept(result);
+			return null;
+		});
+	}
+
+
+	/**
+	 * Executes the query and passes the result to the reader.
+	 * @param reader a reader which can return a value from a result
+	 * @param <T> the type of the value returned by the reader
+	 * @return the value returned by the reader.
+	 */
+	public <T> T read(CheckedFunction<QueryResult,T> reader) throws JdbxException
+	{
+		return read(skip_ > 0, reader);
+	}
+
+
+
+	/**
+	 * Implementation method to read the result using a reader function.
+	 * We allow callers of this method to decide if they want to apply skipping themselves:
+	 * If skipping is done here, the ResultReader may invoke ResultSet.next()
+	 * after an unsuccessful prior call to this method - unfortunately in this case
+	 * a JDBC driver is allowed to throw an exception instead of returning false.
+	 */
+	<R> R read(boolean applySkip, CheckedFunction<QueryResult,R> reader) throws JdbxException
+	{
+		Check.notNull(reader, "reader");
+
+		Exception e1 = null, e2 = null;
+		R returnValue = null;
+
+		try (QueryResult result = new QueryResult(runQuery()))
+		{
+			if (applySkip)
+				applySkip(result.getJdbcResult());
+			returnValue = reader.apply(result);
+		}
+		catch (Exception e)
+		{
+			e1 = e;
+		}
+		finally
+		{
+			try
+			{
+				cleanup();
+			}
+			catch (Exception e)
+			{
+				e2 = e;
+			}
+		}
+
+		if ((e1 != null) || (e2 != null))
+			throw JdbxException.combine(e1, e2);
+		return returnValue;
 	}
 
 

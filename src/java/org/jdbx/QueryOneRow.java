@@ -10,7 +10,7 @@ import org.jdbx.function.GetForName;
 
 /**
  * QueryOneRow is a builder class to
- * define the single-row result of a query.
+ * retrieve the single-row result of a query.
  */
 public class QueryOneRow
 {
@@ -21,12 +21,36 @@ public class QueryOneRow
 
 
 	/**
+	 * Instructs the query to throw an Exception
+	 * if the result is empty.
+	 * @return this
+	 */
+	public QueryOneRow required()
+	{
+		required_ = true;
+		return this;
+	}
+
+
+	/**
+	 * Instructs the query to throw an Exception
+	 * if the result contains more than one row.
+	 * @return this
+	 */
+	public QueryOneRow unique()
+	{
+		unique_ = true;
+		return this;
+	}
+
+
+	/**
 	 * Calls the reader function for the first result row.
-	 * @param reader receives a ResultSet and returns a value
+	 * @param reader receives a result and returns a value
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader. If the result is empty, null is returned
 	 */
-	public <T> T read(CheckedFunction<ResultSet,T> reader) throws JdbxException
+	public <T> T read(CheckedFunction<QueryResult,T> reader) throws JdbxException
 	{
 		return read(reader, null);
 	}
@@ -34,16 +58,16 @@ public class QueryOneRow
 
 	/**
 	 * Calls the ResultSet reader for the first result row.
-	 * @param reader receives a ResultSet and returns a value
+	 * @param reader receives a result and returns a value
 	 * @param emptyValue the return value if the result is empty
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader, or emptyValue if the result is empty
 	 */
-	public <T> T read(CheckedFunction<ResultSet,T> reader, T emptyValue) throws JdbxException
+	public <T> T read(CheckedFunction<QueryResult,T> reader, T emptyValue) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
-		return query_.read0(false, result -> {
-			if (query_.applySkip(result) && result.next())
+		return query_.read(false, result -> {
+			if (query_.applySkip(result.getJdbcResult()) && result.next())
 			{
 				T value = reader.apply(result);
 				if (unique_ && result.next())
@@ -80,7 +104,7 @@ public class QueryOneRow
 	public Map<String,Object> map(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "column names");
-		return read(rs -> ResultUtil.readMap(rs, colNames));
+		return read(r -> ResultUtil.readMap(r.getJdbcResult(), colNames));
 	}
 
 
@@ -102,7 +126,7 @@ public class QueryOneRow
 	public Object[] cols(int... indexes) throws JdbxException
 	{
 		Check.notNull(indexes, "indexes");
-		return read(rs -> ResultUtil.readValues(rs, indexes));
+		return read(r -> ResultUtil.readValues(r.getJdbcResult(), indexes));
 	}
 
 
@@ -114,7 +138,7 @@ public class QueryOneRow
 	public Object[] cols(String... names) throws JdbxException
 	{
 		Check.notNull(names, "names");
-		return read(rs -> ResultUtil.readValues(rs, names));
+		return read(r -> ResultUtil.readValues(r.getJdbcResult(), names));
 	}
 
 
@@ -151,30 +175,6 @@ public class QueryOneRow
 
 
 	/**
-	 * Instructs the query to throw an Exception
-	 * if the result is empty.
-	 * @return this
-	 */
-	public QueryOneRow required()
-	{
-		required_ = true;
-		return this;
-	}
-
-
-	/**
-	 * Instructs the query to throw an Exception
-	 * if the result contains more than one row.
-	 * @return this
-	 */
-	public QueryOneRow unique()
-	{
-		unique_ = true;
-		return this;
-	}
-
-
-	/**
 	 * A Column implementation for columns accessed by index.
 	 */
 	public class IndexedCol extends GetResult
@@ -193,7 +193,7 @@ public class QueryOneRow
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return read(result -> result.getObject(index_, type));
+			return read(r -> r.getJdbcResult().getObject(index_, type));
 		}
 
 
@@ -205,7 +205,7 @@ public class QueryOneRow
 		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
-			return read(result -> result.getObject(index_, map));
+			return read(r -> r.getJdbcResult().getObject(index_, map));
 		}
 
 
@@ -218,7 +218,7 @@ public class QueryOneRow
 		public <T> T get(GetForIndex<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return read(result -> fn.get(result, index_));
+			return read(r -> fn.get(r.getJdbcResult(), index_));
 		}
 
 
@@ -257,7 +257,7 @@ public class QueryOneRow
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return read(result -> result.getObject(name_, type));
+			return read(r -> r.getJdbcResult().getObject(name_, type));
 		}
 
 
@@ -269,7 +269,7 @@ public class QueryOneRow
 		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
-			return read(result -> result.getObject(name_, map));
+			return read(r -> r.getJdbcResult().getObject(name_, map));
 		}
 
 
@@ -282,7 +282,7 @@ public class QueryOneRow
 		public <T> T get(GetForName<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return read(result -> fn.get(result, name_));
+			return read(r -> fn.get(r.getJdbcResult(), name_));
 		}
 
 

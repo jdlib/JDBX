@@ -27,8 +27,12 @@
 	// also has many abbreviations for standard read patterns    
 	ParamStatement pstmt = ...;
 	List<String> list = pstmt.createQuery().rows().col().getString();
+	
+	in particular this reduces nested try-with-resources blocks to close resultsets
 
 * replaces the checked java.sql.SQLException by an unchecked JdbxException 
 
 * introduces Enums for Statement and ResultSet int constants
+		
+ 		
 		
