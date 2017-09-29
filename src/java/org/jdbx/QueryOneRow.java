@@ -128,7 +128,7 @@ public class QueryOneRow
 
 	/**
 	 * Returns a column object for the n-th column.
-	 * @param index the column index
+	 * @param index the column index, starting at 1.
 	 * @return the column
 	 */
 	public IndexedCol col(int index)

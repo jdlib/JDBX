@@ -297,7 +297,7 @@ public class PrepStmt extends Stmt
 
 	/**
 	 * Sets the value of the parameter with the given index..
-	 * @param index a parameter index
+	 * @param index a parameter index, starting at 1.
 	 * @param value a parameter value
 	 * @return this
 	 */
@@ -310,7 +310,7 @@ public class PrepStmt extends Stmt
 
 	/**
 	 * Returns a parameter object for given index.
-	 * @param index a parameter index
+	 * @param index a parameter index, starting at 1.
 	 * @return the parameter object. Use setters of the parameter object to set a parameter value
 	 */
 	public IndexedParam param(int index)

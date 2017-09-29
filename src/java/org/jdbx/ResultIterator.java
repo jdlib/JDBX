@@ -120,7 +120,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 
 	/**
 	 * Sets the current column index.
-	 * @param index the index
+	 * @param index the index (>= 1)
 	 */
 	public void setIndex(int index)
 	{

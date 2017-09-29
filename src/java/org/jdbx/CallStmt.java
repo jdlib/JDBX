@@ -20,7 +20,7 @@ import org.jdbx.function.SetForName;
 
 
 /**
- * CallStmt allows to execute SQL stored procedures.
+ * CallStmt allows to call SQL stored procedures.
  * It wraps java.sql.CallableStatement.
  */
 public class CallStmt extends Stmt
@@ -47,8 +47,9 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * Creates a new CallStmt.
-	 * @param con the connection used by the statement
+	 * Creates a new CallStmt.  
+	 * @param con the connection used by the statement. The connection is not closed
+	 * 		when the statement is closed.
 	 */
 	public CallStmt(Connection con)
 	{
@@ -277,6 +278,7 @@ public class CallStmt extends Stmt
 			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType, typeName));
 			return this;
 		}
+		
 
 		@Override public void set(Object value) throws JdbxException
 		{

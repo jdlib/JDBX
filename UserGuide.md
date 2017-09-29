@@ -24,13 +24,13 @@ JDBX User Guide
 ## <a name="stmts"></a>1. Intro
 
 JDBX offers an alternative way to execute SQL or DDL commands and read query or update results.
-For that it wraps JDBC statement and result-set classes with an improved API.
-The starting point of all its operations though is still a `java.sql.Connection` or `javax.sql.DataSource` object. 
+For that it wraps JDBC statement and result-set classes with an own API.
+Still the starting point of all its operations is a `java.sql.Connection` or `javax.sql.DataSource` object. 
  
 
-## <a name="stmts"></a>1. Statements
+## <a name="stmts"></a>2. Statements
 
-JDBX provides three alternative statement classes to replace the corresponding JDBC statements classes:
+JDBX provides three alternative statement classes to replace the corresponding JDBC classes:
 
 JDBC|JDBX|Used to 
 ----|----|-------
@@ -97,7 +97,7 @@ Contrary to `java.sql.PreparedStatement` you can also re-initialize the command.
     ...
      
      
-Like in `StaticStmt` you can use the builder returned by its `init()` method to configure the statement.
+Like in `StaticStmt` you can use the builder returned by the `init()` method to configure the `PrepStmt`.
       
     pstmt.init().resultType(ResultType.SCROLL_INSENSITIVE);
      
@@ -108,9 +108,11 @@ Like in `StaticStmt` you can use the builder returned by its `init()` method to 
 be executed multiple times using different parameter values. Example:
 
     CallStmt cstmt = ...
-    cstmt.init("{call CreateUser(?,?)}");
-    cstmt.params("John", "Doe");
-    cstmt.update();
+    cstmt.init("{call getUserName(?, ?)");
+    cstmt.param(1).setInt(12045);
+    cstmt.param(2).out(Types.VARCHAR);
+	cstmt.execute();
+	String userName = cstmt.param(2).getString();
 
 
 ## <a name="queries"></a>3. Running SQL queries
@@ -123,37 +125,37 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 **Example 1:** Extract a list of beans from a result set
 
     Connection con = ...
-    String sql = "SELECT * FROM Countries ORDER BY name";
+    String sql = "SELECT * FROM Cities ORDER BY name";
      
     // JDBC:             
     Statement stmt = con.createStatement();                        
     ResultSet result = stmt.executeQuery(sql);         
-    List<Country> countries = new ArrayList<>();
+    List<City> cities = new ArrayList<>();
     while (result.next()) {
-        Country country = Country.read(result); 
-        countries.add(country);
+        City city = City.read(result); 
+        cities.add(city);
     }
 	    
     // JDBX
     StaticStmt stmt = new StaticStmt(con);
-    List<Country> countries = stmt.createQuery(sql).rows().value(Country::read);
+    List<City> cities = stmt.createQuery(sql).rows().value(City::read);
      
 **Example 2:** Extract a single value from a result set which contains 0 or 1 rows:
 
     Connection con = ...
-    String sql = "SELECT name FROM Countries WHERE code = ?";
+    String sql = "SELECT name FROM Cities WHERE code = ?";
     
     // JDBC:             
-    PreparedStatement pstmt = con.createPreparedStatement(sql);
-    pstmt.setParameter(1, "fr");                        
-    ResultSet result = stmt.executeQuery();
+    PreparedStatement pstmt = con.prepareStatement(sql);
+    pstmt.setString(1, "MUC");                        
+    ResultSet result = pstmt.executeQuery();
     String name = null;         
     if (result.next())
-        name = result.getString(); 
+        name = result.getString(1); 
 	    
     // JDBX
     PrepStmt pstmt = new PrepStmt(con);
-    String name = pstmt.init(sql).params("fr").createQuery().row().col().getString();
+    String name = pstmt.init(sql).params("MUC").createQuery().row().col().getString();
 
 
 ### <a name="queries-queryclass">Query class
@@ -180,13 +182,15 @@ Call `Query.row()` to retrieve a builder to read values from the first result ro
     q.row().col().getString();    // returns the value of the first column as String
     q.row().col(3)...             // returns a builder to retrieve a value of the third column
     q.row().col(3).getInteger();  // returns the value of the third column as Integer
-    q.row().col("sort")...;       // returns a builder to retrieve a value of the "sort" column  
+    q.row().col("sort")...        // returns a builder to retrieve a value of the "sort" column  
     q.row().col("sort").getInt(); // returns the value of "sort" column as int
     q.row().cols();               // returns the value of all columns, as Object[]
     q.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
     q.row().map();                // returns a Map<String,Object> mapping column name to value
     q.row().value(City::read);    // returns the value returned by the reader function 	 
 
+Note that the SQL query is actually run in the terminal operation of the builder chain.
+   
 If the result is empty, all the examples above will return a null value (or a default value for primitive terminals like `getInt()`).
 If you want rule out this case use `.row().required().`
 
@@ -216,6 +220,8 @@ Call `Query.rows()` to retrieve a builder to read values from all rows and pack 
     q.rows().value(City::read);        // returns List<City>
     q.rows().read(...callback...)      // invokes the callback for every result row 
      
+Note that the SQL query is actually run in the terminal operation of the builder chain.
+
 You may also limit the number of processed rows, if this is not done within the SQL query itself:
 
     q.rows(5)...
@@ -341,3 +347,5 @@ to avoid explicit creation and closing of a `StaticStmt` or `PrepStmt` object:
 TODO 
  
 
+TODO
+org.jdbx.demo package

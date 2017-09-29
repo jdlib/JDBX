@@ -60,7 +60,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Returns the internal ResultSet.
+	 * Returns the internal JDBC ResultSet.
 	 * @return the ResultSet
 	 */
 	public ResultSet getJdbcResult()
@@ -71,7 +71,7 @@ public class QueryResult implements AutoCloseable
 
 	/**
 	 * Returns column values of the current row as array.
-	 * @param indexes the column indexes
+	 * @param indexes the column indexes, starting at 1.
 	 * @return the value array
 	 */
 	public Object[] cols(int... indexes) throws JdbxException
