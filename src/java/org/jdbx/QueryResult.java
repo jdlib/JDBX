@@ -787,7 +787,7 @@ public class QueryResult implements AutoCloseable
 	}
 
 
-	private boolean closeResult_;
+	private boolean closeResult_ = true;
 	private ResultSet resultSet_;
 	private IndexedColumn indexedColumn_ = new IndexedColumn();
 	private NamedColumn namedColumn_ = new NamedColumn();
