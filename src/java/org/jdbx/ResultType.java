@@ -25,9 +25,29 @@ import java.sql.ResultSet;
  */
 public enum ResultType implements JdbcEnum
 {
+    /**
+     * The enum indicating the type for a <code>QueryResult</code> object
+     * whose cursor may move only forward.
+     * @since 1.2
+     */
 	FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
+	
+    /**
+     * The enum indicating the type for a <code>QueryResult</code> object
+     * that is scrollable but generally not sensitive to changes to the data
+     * that underlies the <code>QueryResult</code>.
+     * @see ResultSet#TYPE_SCROLL_INSENSITIVE
+     */
 	SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
+
+	/**
+     * The enum indicating the type for a <code>QueryResult</code> object
+     * that is scrollable and generally sensitive to changes to the data
+     * that underlies the <code>QueryResult</code>.
+     * @see ResultSet#TYPE_SCROLL_SENSITIVE
+     */
 	SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE),
+	
 	INVALID(-1);
 
 
