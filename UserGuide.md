@@ -80,7 +80,9 @@ connection will also be closed automatically.
     
 To configure a `StaticStmt` use the builder returned by its `init()` method.      
 
-    stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.READ_ONLY);
+    stmt.init()
+        .resultType(ResultType.SCROLL_SENSITIVE)
+        .resultConcurrency(ResultConcurrency.READ_ONLY);
 
 
 ### <a name="stmts-prep"></a>PrepStmt
@@ -99,7 +101,10 @@ Contrary to `java.sql.PreparedStatement` you can also re-initialize the command.
      
 Like in `StaticStmt` you can use the builder returned by the `init()` method to configure the `PrepStmt`.
       
-    pstmt.init().resultType(ResultType.SCROLL_INSENSITIVE).resultHoldability(ResultHoldability.HOLD_OVER_COMMIT);
+    pstmt.init()
+        .resultType(ResultType.SCROLL_INSENSITIVE)
+        .resultHoldability(ResultHoldability.HOLD_OVER_COMMIT)
+        .cmd("SELECT * FROM Cities WHERE name LIKE ?");
      
 
 ### <a name="stmts-call"></a>CallStmt
@@ -192,12 +197,12 @@ Call `Query.row()` to retrieve a builder to read values from the first result ro
 (Note that the SQL query is actually run in the terminal operation of the builder chain).
    
 If the result is empty, all the examples above will return a null value (or a default value for primitive terminals like `getInt()`).
-If you want rule out this case use `.row().required().`
+If you want rule out this case use `.row().required()`:
 
      // will throw an exception if the result contains no rows
      q.row().required().col().getString()
      
-You may also want detect the case when the result contains more than one row, using `.row().unique().`:
+You may also want detect the case when the result contains more than one row, using `.row().unique()`:
      
      // will throw an exception if the result contains more than one row
      q.row().unique().col().getString()
@@ -240,7 +245,7 @@ As shown above the `Query` class makes it easy to extract a column value or an a
 using the various `col()` and `cols()` builder methods.
 
 For more complicated cases JDBX provides the `QueryResult` class which replaces `java.sql.ResultSet` and allows
-you to loop through the result rows and read values from each row.
+you to read values from each row.
 
 When positioned on a result row, `QueryResult` offers similar methods like the builder returned by `Query.row()` to extract values 
 from the row:
@@ -252,12 +257,27 @@ from the row:
     qr.col(3).getDouble();       // third column as double
     qr.col("sort")...;           // column by name 
     qr.col("sort").getInteger(); // "sort" column, as Integer
-    qr.cols();                   // all columns, as Object[]
     qr.cols(1,3,7);              // columns 1,3,7, as Object[] 
     qr.map();                    // returns a Map<String,Object>
 
-Now given this API the `Query` gives  
+Now given this `QueryBuilder` API it is easy to create a function which obtains a `QueryResult` and return a complex
+value read from a result row:
 
+    public class City {
+         public static City read(QueryResult qr) {
+             City city = new City();
+             city.setCode(qr.col(1).getString());
+             city.setName(qr.col(2).getString());
+             ...
+             return city;  
+         }
+    }    
+
+The builders returned by `Query.row()` and `Query.rows()` accept such a reader function and invoke the the function
+to return a single object / a list of objects:
+
+    City city       = q.row().read(City::read); 	 
+    List<City> city = q.rows().read(City::read); 	 
 
 Next we explain how to read values from a `QueryResult`,  how to move through its rows, and how to obtain a 
 `QueryResult`. 

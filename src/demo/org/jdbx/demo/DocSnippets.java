@@ -42,7 +42,10 @@ public class DocSnippets
 		pstmt.params("John", "Doe").update();
 		pstmt.params("Mary", "Jane").update();
 		pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
-		pstmt.init().resultType(ResultType.SCROLL_INSENSITIVE).resultHoldability(ResultHoldability.HOLD_OVER_COMMIT);
+		pstmt.init()
+	        .resultType(ResultType.SCROLL_INSENSITIVE)
+	        .resultHoldability(ResultHoldability.HOLD_OVER_COMMIT)
+	        .cmd("SELECT * FROM Cities WHERE name LIKE ?");
 	}
 	
 	
@@ -143,6 +146,38 @@ public class DocSnippets
 		ResultSet resultSet = q.resultSet();
 		List<String> names  = Query.of(resultSet).rows().col("name").getString();
 	}
+	
+	
+	public void queryResult() throws Exception
+	{
+        qr.col();                    // first column
+        qr.col().getString();        // first column as String
+        qr.col(3);                   // column by index
+        qr.col(3).getDouble();       // third column as double
+        qr.col("sort");              // column by name 
+        qr.col("sort").getInteger(); // "sort" column, as Integer
+        qr.cols(1,3,7);              // columns 1,3,7, as Object[] 
+        qr.map();                    // returns a Map<String,Object>
+	}
+
+	
+    public static class City1 
+    {
+        public static City1 read(QueryResult qr) {
+            City1 city = new City1();
+            city.setCode(qr.col(1).getString());
+            city.setName(qr.col(2).getString());
+            return city; 
+        }
+        
+        public void setCode(String value)
+        {
+        }
+
+        public void setName(String value)
+        {
+        }
+    }    
 	
 	
 	public void queryResultNav() throws Exception
