@@ -192,7 +192,6 @@ Call `Query.row()` to retrieve a builder to read values from the first result ro
     q.row().cols();               // returns the value of all columns, as Object[]
     q.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
     q.row().map();                // returns a Map<String,Object> mapping column name to value
-    q.row().read(City::read);     // returns the value returned by the reader function 	 
 
 (Note that the SQL query is actually run in the terminal operation of the builder chain).
    
@@ -222,7 +221,6 @@ Call `Query.rows()` to retrieve a builder to read values from all rows and retur
     q.rows().cols();                   // return values of all columns, as List<Object[]>
     q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
     q.rows().map();                    // return a List<Map<String,Object>>
-    q.rows().read(City::read);         // returns List<City>
      
 (Note that the SQL query is actually run in the terminal operation of the builder chain).
 
@@ -260,7 +258,7 @@ from the row:
     qr.cols(1,3,7);              // columns 1,3,7, as Object[] 
     qr.map();                    // returns a Map<String,Object>
 
-Now given this `QueryBuilder` API it is easy to create a function which obtains a `QueryResult` and return a complex
+Now given this `QueryBuilder` API it is easy to create a function which obtains a `QueryResult` and returns a complex
 value read from a result row:
 
     public class City {
@@ -271,26 +269,30 @@ value read from a result row:
              ...
              return city;  
          }
+         
+         public void setName(String name) { ...
     }    
 
-The builders returned by `Query.row()` and `Query.rows()` accept such a reader function and invoke the the function
+The builders returned by `Query.row()` and `Query.rows()` accept such a reader function and invoke it for the first row / all rows
 to return a single object / a list of objects:
 
     City city       = q.row().read(City::read); 	 
     List<City> city = q.rows().read(City::read); 	 
 
-Next we explain how to read values from a `QueryResult`,  how to move through its rows, and how to obtain a 
-`QueryResult`. 
 
-(In the following the variable `qr` denotes a `QueryResult` instance).
+#### <a name="queries-queryresultclass"></a>Self-managed iteration of a QueryResult 
 
-#### How to read values from a QueryResult
+If you want to navigate through a `QueryResult` yourself you can obtain the result by calling
+`Query.result()`. You should actively close the `QueryResult` once it is no longer used
+therefore it is best wrapped in a try-with-resources block:
 
-#### How to navigate through a QueryResult
+     Query q = ...
+     try (QueryResult qr = q.result()) {
+         // loop through result and read its rowss
+     }
 
 Given a `QueryResult` it is easy to run through its rows in a forward only manner:
 
-    QueryResult qr = ...
     while (qr.next()) {
         // read the result row
     }
@@ -303,19 +305,37 @@ by using the service objects returned by `QueryResult.position()` and `.move()`:
 	stmt.init().resultType(ResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
-	QueryResult qr = stmt.createQuery(sql).result();
-	
-	// read position
-    qr.position().isBeforeFirst() 
-    // also: .isAfterLast(), .isLast()  
+	try (QueryResult qr = stmt.createQuery(sql).result()) {
+		// read position
+	    qr.position().isBeforeFirst() 
+	    // also: .isAfterLast(), .isLast()  
 
-	// move current row
-    qr.move().first() 
-    qr.move().absolute(5) 
-    qr.move().relative(2)
-    // also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
+		// move current row
+	    qr.move().first() 
+	    qr.move().absolute(5) 
+	    qr.move().relative(2)
+	    // also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
+	}
   
 
+#### Update a QueryResult row
+    
+If your result is updatable, you can or update or delete the current row, or insert a new row:
+
+	// configure a updatable result	and retrieve the result
+	StaticStmt stmt = ....
+	stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+	QueryResult qr = stmt.createQuery(sql).result();
+	
+	// position row
+	... 
+	
+   	qr.col("status").setString("ok"); 
+    qr.row().update();
+    qr.row().refresh();
+    // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
+     
+     
 #### How to obtain a QueryResult
 
 You can obtain a `QueryResult` from a `Query`:
@@ -335,26 +355,6 @@ and then use the `.next()` method to loop over the result rows:
      }
      
 
-#### How to update a QueryResult
-    
-If your result is updatable, you can or update or delete the current row, or insert a new row:
-
-	// configure a scroll sensitive, updatable result	
-	StaticStmt stmt = ....
-	stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
-	
-	// qr is obtained from stmt
-	QueryResult qr = stmt.createQuery(sql).result();
-	
-	// position row
-	... 
-	
-   	qr.col("status").setString("ok"); 
-    qr.row().update();
-    qr.row().refresh();
-    // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
-     
-     
 ### <a name="queries-resultset"></a>Accessing the ResultSet  
       
 You still can obtain the `java.sql.ResultSet` of a query if you want to process it by yourself:

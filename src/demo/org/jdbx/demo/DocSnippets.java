@@ -138,7 +138,6 @@ public class DocSnippets
 		q.rows().cols();                   // return values of all columns, as List<Object[]>
 		q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
 		q.rows().map();                    // return a List<Map<String,Object>>
-		q.rows().read(City::read);        // returns List<City>
 		
 		q.rows(5);
 		q.skip(3).rows();
@@ -158,7 +157,10 @@ public class DocSnippets
         qr.col("sort").getInteger(); // "sort" column, as Integer
         qr.cols(1,3,7);              // columns 1,3,7, as Object[] 
         qr.map();                    // returns a Map<String,Object>
-	}
+
+		q.row().read(City::read);
+		q.rows().read(City::read);
+}
 
 	
     public static class City1 
