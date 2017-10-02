@@ -42,7 +42,7 @@ public class DocSnippets
 		pstmt.params("John", "Doe").update();
 		pstmt.params("Mary", "Jane").update();
 		pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
-		pstmt.init().resultType(ResultType.SCROLL_INSENSITIVE);
+		pstmt.init().resultType(ResultType.SCROLL_INSENSITIVE).resultHoldability(ResultHoldability.HOLD_OVER_COMMIT);
 	}
 	
 	
@@ -145,10 +145,45 @@ public class DocSnippets
 	}
 	
 	
+	public void queryResultNav() throws Exception
+	{
+		while (qr.next()) {
+		    // read the result row
+		}
+		
+		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+
+		// qr is obtained from stmt
+		qr = stmt.createQuery("sql").result();
+		qr.position().isBeforeFirst(); 
+		// also: .isAfterLast(), .isLast()  
+
+		qr.move().first() ;
+		qr.move().absolute(5); 
+		qr.move().relative(2);
+		// also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
+		 
+		qr.row().update();
+		qr.row().refresh();
+		// also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.		
+	}
+
+	
+	public void queryResultObtain() throws Exception
+	{
+		stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+
+	   	qr.col("status").setString("ok"); 
+	    qr.row().update();
+	    qr.row().refresh();
+	}
+	
+	
 	private StaticStmt stmt;
 	private PrepStmt pstmt;
 	private CallStmt cstmt;
 	private Connection con;
 	private DataSource ds;
 	private Query q;
+	private QueryResult qr;
 }
