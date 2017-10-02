@@ -177,7 +177,7 @@ public class QueryOneRow
 	/**
 	 * A Column implementation for columns accessed by index.
 	 */
-	public class IndexedCol extends GetResult
+	public class IndexedCol implements GetResult
 	{
 		private IndexedCol(int index)
 		{
@@ -223,11 +223,10 @@ public class QueryOneRow
 
 
 		/**
-		 * Returns an object.
-		 * @param map contains mapping from SQL type names to Java classes
+		 * Returns an object for an accessor.
 		 * @return the object
 		 */
-		@Override <T> T get(GetAccessors<T> accessor) throws JdbxException
+		@Override public <T> T get(GetAccessors<T> accessor) throws JdbxException
 		{
 			Check.notNull(accessor, "accessor");
 			return get(accessor.resultForIndex);
@@ -241,7 +240,7 @@ public class QueryOneRow
 	/**
 	 * A Column implementation for columns accessed by name.
 	 */
-	public class NamedCol extends GetResult
+	public class NamedCol implements GetResult
 	{
 		private NamedCol(String name)
 		{
@@ -286,7 +285,7 @@ public class QueryOneRow
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessor) throws JdbxException
+		@Override public <T> T get(GetAccessors<T> accessor) throws JdbxException
 		{
 			Check.notNull(accessor, "accessor");
 			return get(accessor.resultForName);

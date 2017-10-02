@@ -49,7 +49,7 @@ interface JdbcEnum
 		}
 
 
-		private E[] values_;
-		private E unknown_;
+		private final E[] values_;
+		private final E unknown_;
 	}
 }

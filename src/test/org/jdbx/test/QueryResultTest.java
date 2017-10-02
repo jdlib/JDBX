@@ -32,22 +32,24 @@ public class QueryResultTest extends JdbxTest
 {
 	@BeforeClass public static void beforeClass() throws JdbxException
 	{
-		Jdbx.update(con(), "CREATE TABLE STest (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
-		Jdbx.update(con(), "INSERT INTO STest (name) VALUES ('A'), ('B'), ('C'), ('D')");
+		Jdbx.update(con(), "CREATE TABLE QRTest (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
 	}
 
 
 	@Before public void before() throws JdbxException
 	{
 		stmt_ = new StaticStmt(con());
+		stmt_.update("DELETE FROM QRTest");
+		stmt_.update("INSERT INTO QRTest (name) VALUES ('A'), ('B'), ('C'), ('D')");
 	}
 	
 	
-	@Test public void testAdvanced()
+	@Test public void testScroll()
 	{
-		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
-		try (QueryResult result = stmt_.createQuery("SELECT name FROM STest ORDER BY name").result())
+		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE);
+		try (QueryResult result = stmt_.createQuery("SELECT name FROM QRTest ORDER BY name").result())
 		{
+			assertSame(ResultType.SCROLL_INSENSITIVE, result.getType());
 			assertTrue(result.position().isBeforeFirst());
 			assertTrue(result.move().absolute(2));
 			assertEquals("B", result.col().getString());
@@ -60,5 +62,20 @@ public class QueryResultTest extends JdbxTest
 	}
 
 
+	@Test public void testUpdate() throws Exception
+	{
+		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+		try (QueryResult result = stmt_.createQuery("SELECT name FROM QRTest").result())
+		{
+			assertSame(ResultConcurrency.CONCUR_UPDATABLE, result.getConcurrency());
+			
+			assertTrue(result.next());
+			result.col().setString("Z");
+			assertTrue(result.row().isUpdated());
+			result.row().update();
+		}
+	}
+
+	
 	private StaticStmt stmt_;
 }

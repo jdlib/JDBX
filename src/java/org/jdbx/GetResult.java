@@ -5,14 +5,14 @@ import java.io.InputStream;
 import java.sql.ResultSet;
 
 
-abstract class GetResult extends GetValue
+interface GetResult extends GetValue
 {
 	/**
 	 * Returns the value as a stream of ASCII characters.
 	 * @return the stream
      * @see ResultSet#getAsciiStream(int)
 	 */
-	public InputStream getAsciiStream() throws JdbxException
+	public default InputStream getAsciiStream() throws JdbxException
 	{
 		return get(GetAccessors.ASCIISTREAM);
 	}
@@ -24,7 +24,7 @@ abstract class GetResult extends GetValue
 	 * @return the stream
      * @see ResultSet#getBinaryStream(int)
 	 */
-	public InputStream getBinaryStream() throws JdbxException
+	public default InputStream getBinaryStream() throws JdbxException
 	{
 		return get(GetAccessors.BINARYTREAM);
 	}

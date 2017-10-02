@@ -15,6 +15,9 @@ public enum FetchDirection implements JdbcEnum
 	INVALID(-1);
 
 
+	public static final Map<FetchDirection> MAP = new Map<>(FetchDirection.class, INVALID);
+
+	
 	FetchDirection(int code)
 	{
 		code_ = code;
@@ -32,5 +35,4 @@ public enum FetchDirection implements JdbcEnum
 
 
 	private int code_;
-	public static final Map<FetchDirection> map = new Map<>(FetchDirection.class, INVALID);
 }

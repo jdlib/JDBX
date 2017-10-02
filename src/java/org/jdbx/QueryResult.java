@@ -27,10 +27,13 @@ import org.jdbx.function.CheckedFunction;
 import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.CheckedSupplier;
 import org.jdbx.function.GetForIndex;
+import org.jdbx.function.SetForIndex;
+import org.jdbx.function.SetForName;
 
 
 /**
- * QueryResult is a wrapper class for java.sql.ResultSet.
+ * QueryResult represents the result of a SQL query. 
+ * It is a wrapper class for java.sql.ResultSet.
  */
 public class QueryResult implements AutoCloseable
 {
@@ -202,7 +205,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Allows to access the value of a column which was specified by an index.
 	 */
-	public class IndexedColumn extends GetResult
+	public class IndexedColumn implements GetResult, SetValue
 	{
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
@@ -232,7 +235,7 @@ public class QueryResult implements AutoCloseable
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
+		@Override public <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
 			return get(accessors.resultForIndex);
@@ -253,6 +256,27 @@ public class QueryResult implements AutoCloseable
 		}
 
 
+		@Override public <T> void set(SetAccessors<T> accessors, T value) throws JdbxException
+		{
+			Check.notNull(accessors, "accessors");
+			set(accessors.resultForIndex, value);
+		}
+
+
+		public <T> void set(SetForIndex<ResultSet,T> setter, T value) throws JdbxException
+		{
+			Check.notNull(setter, "setter");
+			try
+			{
+				setter.set(resultSet_, index_, value);
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
+		}
+
+
 		private int index_;
 	}
 
@@ -260,7 +284,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Allows to access the value of a column which was specified by a name.
 	 */
-	public class NamedColumn extends GetResult
+	public class NamedColumn implements GetResult, SetValue
 	{
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
@@ -290,12 +314,33 @@ public class QueryResult implements AutoCloseable
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
+		@Override public <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
 			try
 			{
 				return accessors.resultForName.get(resultSet_, name_);
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
+		}
+
+
+		@Override public <T> void set(SetAccessors<T> accessors, T value) throws JdbxException
+		{
+			Check.notNull(accessors, "accessors");
+			set(accessors.resultForName, value);
+		}
+
+
+		public <T> void set(SetForName<ResultSet,T> setter, T value) throws JdbxException
+		{
+			Check.notNull(setter, "setter");
+			try
+			{
+				setter.set(resultSet_, name_, value);
 			}
 			catch (Exception e)
 			{
@@ -339,7 +384,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public FetchDirection getFetchDirection() throws JdbxException
 	{
-		return FetchDirection.map.forCode(toInt(ResultSet::getFetchDirection));
+		return FetchDirection.MAP.forCode(toInt(ResultSet::getFetchDirection));
 	}
 
 
@@ -361,7 +406,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public ResultConcurrency getConcurrency() throws JdbxException
 	{
-		return ResultConcurrency.map.forCode(toInt(ResultSet::getConcurrency));
+		return ResultConcurrency.MAP.forCode(toInt(ResultSet::getConcurrency));
 	}
 
 
@@ -371,7 +416,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public ResultHoldability getHoldability() throws JdbxException
 	{
-		return ResultHoldability.map.forCode(toInt(ResultSet::getHoldability));
+		return ResultHoldability.MAP.forCode(toInt(ResultSet::getHoldability));
 	}
 
 
@@ -381,7 +426,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public ResultType getType() throws JdbxException
 	{
-		return ResultType.map.forCode(toInt(ResultSet::getType));
+		return ResultType.MAP.forCode(toInt(ResultSet::getType));
 	}
 
 

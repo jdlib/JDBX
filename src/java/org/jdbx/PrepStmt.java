@@ -6,14 +6,12 @@ import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Statement;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.CheckedSupplier;
-import org.jdbx.function.DoForIndex;
 import org.jdbx.function.SetForIndex;
 
 
@@ -296,14 +294,14 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * Sets the value of the parameter with the given index..
+	 * Sets the value of the parameter with the given index.
 	 * @param index a parameter index, starting at 1.
 	 * @param value a parameter value
 	 * @return this
 	 */
 	public PrepStmt param(int index, Object value) throws JdbxException
 	{
-		param(index).set(value);
+		param(index).setObject(value);
 		return this;
 	}
 
@@ -351,7 +349,7 @@ public class PrepStmt extends Stmt
 	/**
 	 * A parameter object for a parameter index.
 	 */
-	public class IndexedParam implements SetIndexedParam<PreparedStatement>
+	public class IndexedParam implements SetParam<PreparedStatement>
 	{
 		private IndexedParam(int index)
 		{
@@ -359,30 +357,17 @@ public class PrepStmt extends Stmt
 		}
 
 
-		@Override public void set(Object value) throws JdbxException
-		{
-			set(value, PreparedStatement::setObject);
-		}
-
-
-		@Override public void set(Object value, SQLType type) throws JdbxException
-		{
-			Check.notNull(type, "type");
-			CheckedRunnable.unchecked(() -> getJdbcStmt().setObject(index_, value, type));
-		}
-
-
-		@Override public <T> void set(T value, SetForIndex<PreparedStatement,T> setter) throws JdbxException
+		@Override public <T> void set(SetForIndex<PreparedStatement,T> setter, T value) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
-			CheckedRunnable.unchecked(() -> setter.set(getJdbcStmt(), index_, value));
-		}
-
-
-		@Override public void apply(DoForIndex<PreparedStatement> runner) throws JdbxException
-		{
-			Check.notNull(runner, "runner");
-			CheckedRunnable.unchecked(() -> runner.accept(getJdbcStmt(), index_));
+			try
+			{
+				setter.set(getJdbcStmt(), index_, value);
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
 		}
 
 
@@ -393,7 +378,7 @@ public class PrepStmt extends Stmt
 	/**
 	 * A parameter object for a parameter name.
 	 */
-	public class NamedParam implements SetIndexedParam<PreparedStatement>
+	public class NamedParam implements SetParam<PreparedStatement>
 	{
 		private NamedParam(int[] indexes)
 		{
@@ -401,36 +386,21 @@ public class PrepStmt extends Stmt
 		}
 
 
-		@Override public void set(Object value) throws JdbxException
-		{
-			set(value, PreparedStatement::setObject);
-		}
-
-
-		@Override public void set(Object value, SQLType type) throws JdbxException
-		{
-			Check.notNull(type, "type");
-			for (int index : indexes_)
-				CheckedRunnable.unchecked(() -> getJdbcStmt().setObject(index, value, type));
-		}
-
-
-		@Override public <T> void set(T value, SetForIndex<PreparedStatement,T> setter) throws JdbxException
+		@Override public <T> void set(SetForIndex<PreparedStatement,T> setter, T value) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
-			for (int index : indexes_)
-				CheckedRunnable.unchecked(() -> setter.set(getJdbcStmt(), index, value));
+			try
+			{
+				for (int index : indexes_)
+					setter.set(getJdbcStmt(), index, value);
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
 		}
-
-
-		@Override public void apply(DoForIndex<PreparedStatement> runner) throws JdbxException
-		{
-			Check.notNull(runner, "runner");
-			for (int index : indexes_)
-				CheckedRunnable.unchecked(() -> runner.accept(getJdbcStmt(), index));
-		}
-
-
+		
+		
 		private int[] indexes_;
 	}
 

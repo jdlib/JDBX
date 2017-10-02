@@ -31,6 +31,12 @@ public enum ResultHoldability implements JdbcEnum
 	INVALID(-1);
 
 
+	/**
+	 * Maps codes to enums.
+	 */
+	public static final Map<ResultHoldability> MAP = new Map<>(ResultHoldability.class, INVALID);
+
+
 	ResultHoldability(int code)
 	{
 		code_ = code;
@@ -47,10 +53,4 @@ public enum ResultHoldability implements JdbcEnum
 
 
 	private int code_;
-
-
-	/**
-	 * Maps codes to enums.
-	 */
-	public static final Map<ResultHoldability> map = new Map<>(ResultHoldability.class, INVALID);
 }

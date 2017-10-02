@@ -87,7 +87,7 @@ public class CallStmtTest extends JdbxTest
 	@Test public void testQueryReturnResultSet() throws JdbxException
 	{
 		stmt_.init("call GetUserAsResult(?)");
-		stmt_.param(1).set(id_);
+		stmt_.param(1).setInteger(id_);
 		Object[] data = stmt_.createQuery().row().cols();
 		assertNotNull(data);
 		assertEquals(3, data.length);
@@ -120,7 +120,7 @@ public class CallStmtTest extends JdbxTest
 	@Test public void testExecuteReturnResultSet() throws JdbxException
 	{
 		stmt_.init("call GetUserAsResult(?)");
-		stmt_.param(1).set(id_);
+		stmt_.param(1).setInteger(id_);
 		Object[] data = stmt_.createExecute().run(r -> {
 			assertTrue(r.nextResultSet());
 			Object[] result = r.queryResult().row().cols();
@@ -139,7 +139,7 @@ public class CallStmtTest extends JdbxTest
 		stmt_.init("call GetUserName(?,?,?)");
 		stmt_.param(1).setDouble(1.1);
 		stmt_.clearParams();
-		stmt_.param(1).set(id_);
+		stmt_.param(1, id_);
 		stmt_.execute();
 		assertEquals("Paul", stmt_.param(2).getString());
 		assertEquals("Smith", stmt_.param(3).getString());

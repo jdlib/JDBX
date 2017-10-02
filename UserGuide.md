@@ -248,7 +248,7 @@ how to obtain a `QueryResult` and how to move through its rows. (In the followin
 
 `QueryResult` offers similar methods like the builder returned by `Query.row()` to extract values from the current result row:
 
-    QueryResult qr = ...		 // a QueryResult, positioned on a result row
+    QueryResult qr = ...         // a QueryResult, positioned on a result row
     qr.col()...                  // first column
     qr.col().getString();        // first column as String
     qr.col(3)...                 // column by index
@@ -263,22 +263,22 @@ how to obtain a `QueryResult` and how to move through its rows. (In the followin
 
 Given a `QueryResult` it is easy to run through its rows in a forward only manner:
 
-     QueryResult qr = ...
-     while (qr.next()) {
-     	// read the result row
-     }
+    QueryResult qr = ...
+    while (qr.next()) {
+        // read the result row
+    }
      
-If your result set is configured scrollable and/or updatable, you can ask for the position, move the cursor 
-or perform operations on the current row. Instead of cluttering the `QueryResult` interface
+If your result is scrollable and/or updatable, you can ask for the position, move the cursor 
+or perform update operations on the current row. Instead of cluttering the `QueryResult` interface
 with these methods (as done in `java.sql.ResultSet`) they are available in service objects returned by `QueryResult.position()`,
 `.move()` and `.row()`:
 
-	// configure a scroll sensitive result	
+	// configure a scroll sensitive, updatable result	
 	StaticStmt stmt = ....
 	stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
 	
 	// qr is obtained from stmt
-	ar = stmt.createQuery(sql).result();
+	qr = stmt.createQuery(sql).result();
     qr.position().isBeforeFirst() 
     // also: .isAfterLast(), .isLast()  
 

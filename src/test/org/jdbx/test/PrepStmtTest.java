@@ -64,13 +64,13 @@ public class PrepStmtTest extends JdbxTest
 
 		// insert a single record and remember it: use named parameters
 		pstmt_.init().namedParams().cmd("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
-		pstmt_.param("name").set("b");
+		pstmt_.param("name").setString("b");
 		pstmt_.param("type").setInt(15);
 		assertEquals(1, pstmt_.update());
 		
 		// insert two records using a batch
 		pstmt_.param(1, "c").param(2, 2).batch().add();
-		pstmt_.param(1).set("d");
+		pstmt_.param(1, "d");
 		pstmt_.param(2).setInt(3);
 		pstmt_.batch().add();
 		int updateCounts[] = pstmt_.batch().run();

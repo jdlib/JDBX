@@ -190,7 +190,7 @@ public class StmtOptions
 	 */
 	public FetchDirection getFetchDirection() throws JdbxException
 	{
-		return FetchDirection.map.forCode(stmt_.get(Statement::getFetchDirection));
+		return FetchDirection.MAP.forCode(stmt_.get(Statement::getFetchDirection));
 	}
 
 

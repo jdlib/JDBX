@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.CheckedSupplier;
-import org.jdbx.function.DoForIndex;
 import org.jdbx.function.DoForName;
 import org.jdbx.function.GetForIndex;
 import org.jdbx.function.GetForName;
@@ -203,6 +202,19 @@ public class CallStmt extends Stmt
 
 
 	/**
+	 * Sets the value of the parameter with the given index.
+	 * @param index a parameter index, starting at 1.
+	 * @param value a parameter value
+	 * @return this
+	 */
+	public CallStmt param(int index, Object value) throws JdbxException
+	{
+		param(index).setObject(value);
+		return this;
+	}
+
+	
+	/**
 	 * Returns a parameter object to set the value of a parameter by index.
 	 * @return the parameter object
 	 */
@@ -234,10 +246,9 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * A builder class to set parameter value.
+	 * A builder class to set parameter values.
 	 */
-	public class IndexedParam extends GetValue
-		implements RegisterOut<IndexedParam>, SetIndexedParam<CallableStatement>
+	public class IndexedParam implements GetValue, RegisterOut<IndexedParam>, SetParam<CallableStatement>
 	{
 		private IndexedParam(int index)
 		{
@@ -280,33 +291,6 @@ public class CallStmt extends Stmt
 		}
 		
 
-		@Override public void set(Object value) throws JdbxException
-		{
-			set(value, PreparedStatement::setObject);
-		}
-
-
-		@Override public void set(Object value, SQLType type) throws JdbxException
-		{
-			Check.notNull(type, "type");
-			CheckedRunnable.unchecked(() -> getJdbcStmt().setObject(index_, value, type));
-		}
-
-
-		@Override public <T> void set(T value, SetForIndex<CallableStatement,T> setter) throws JdbxException
-		{
-			Check.notNull(setter, "setter");
-			CheckedRunnable.unchecked(() -> setter.set(getJdbcStmt(), index_, value));
-		}
-
-
-		@Override public void apply(DoForIndex<CallableStatement> runner) throws JdbxException
-		{
-			Check.notNull(runner, "runner");
-			CheckedRunnable.unchecked(() -> runner.accept(getJdbcStmt(), index_));
-		}
-
-
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
@@ -335,6 +319,13 @@ public class CallStmt extends Stmt
 		}
 
 
+		@Override public <T> T get(GetAccessors<T> accessors) throws JdbxException
+		{
+			Check.notNull(accessors, "accessors");
+			return get(accessors.paramForIndex);
+		}
+
+
 		public <T> T get(GetForIndex<CallableStatement,T> getter) throws JdbxException
 		{
 			Check.notNull(getter, "getter");
@@ -349,13 +340,20 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
+		@Override public <T> void set(SetForIndex<PreparedStatement,T> setter, T value) throws JdbxException
 		{
-			Check.notNull(accessors, "accessors");
-			return get(accessors.paramForIndex);
+			Check.notNull(setter, "setter");
+			try
+			{
+				setter.set(getJdbcStmt(), index_, value);
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
 		}
 
-
+		
 		private int index_;
 	}
 
@@ -373,7 +371,7 @@ public class CallStmt extends Stmt
 	/**
 	 * A builder class to set parameter value.
 	 */
-	public class NamedParam extends GetValue implements RegisterOut<NamedParam>
+	public class NamedParam implements GetValue, RegisterOut<NamedParam>
 	{
 		private NamedParam(String name)
 		{
@@ -485,7 +483,7 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
+		@Override public <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
 			return get(accessors.paramForName);

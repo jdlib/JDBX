@@ -51,6 +51,12 @@ public enum ResultType implements JdbcEnum
 	INVALID(-1);
 
 
+	/**
+	 * Maps codes to enums.
+	 */
+	public static final Map<ResultType> MAP = new Map<>(ResultType.class, INVALID);
+
+
 	ResultType(int code)
 	{
 		code_ = code;
@@ -67,10 +73,4 @@ public enum ResultType implements JdbcEnum
 
 
 	private int code_;
-
-
-	/**
-	 * Maps codes to enums.
-	 */
-	public static final Map<ResultType> map = new Map<>(ResultType.class, INVALID);
 }

@@ -28,7 +28,7 @@ import org.jdbx.function.CheckedRunnable;
  * a column index, and at each get operation it reads the value
  * from the ResultSet and then increments the index.
  */
-public class ResultIterator extends GetResult implements AutoCloseable
+public class ResultIterator implements GetResult, AutoCloseable
 {
 	/**
 	 * Returns a ResultIterator for the result
@@ -191,7 +191,7 @@ public class ResultIterator extends GetResult implements AutoCloseable
 	}
 
 
-	@Override <T> T get(GetAccessors<T> accessors) throws JdbxException
+	@Override public <T> T get(GetAccessors<T> accessors) throws JdbxException
 	{
 		try
 		{

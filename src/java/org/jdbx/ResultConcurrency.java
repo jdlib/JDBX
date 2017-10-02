@@ -30,6 +30,12 @@ public enum ResultConcurrency implements JdbcEnum
 	INVALID(-1);
 
 
+	/**
+	 * Maps codes to enums.
+	 */
+	public static final Map<ResultConcurrency> MAP = new Map<>(ResultConcurrency.class, INVALID);
+
+
 	ResultConcurrency(int code)
 	{
 		code_ = code;
@@ -46,10 +52,4 @@ public enum ResultConcurrency implements JdbcEnum
 
 
 	private int code_;
-
-
-	/**
-	 * Maps codes to enums.
-	 */
-	public static final Map<ResultConcurrency> map = new Map<>(ResultConcurrency.class, INVALID);
 }
