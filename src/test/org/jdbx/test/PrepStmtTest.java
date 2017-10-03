@@ -20,7 +20,7 @@ package org.jdbx.test;
 import org.jdbx.JdbxException;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
-import org.jdbx.QResultCursor;
+import org.jdbx.QueryCursor;
 import org.jdbx.ResultIterator;
 import org.junit.After;
 import org.junit.Before;
@@ -90,7 +90,7 @@ public class PrepStmtTest extends JdbxTest
 	
 	public static class Dao
 	{
-		public static Dao read(QResultCursor cursor) throws JdbxException
+		public static Dao read(QueryCursor cursor) throws JdbxException
 		{
 			ResultIterator it 	= ResultIterator.of(cursor);
 			Dao dao 			= new Dao();

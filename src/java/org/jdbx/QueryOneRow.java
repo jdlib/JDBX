@@ -50,7 +50,7 @@ public class QueryOneRow
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader. If the result is empty, null is returned
 	 */
-	public <T> T read(CheckedFunction<QResultCursor,T> reader) throws JdbxException
+	public <T> T read(CheckedFunction<QueryCursor,T> reader) throws JdbxException
 	{
 		return read(reader, null);
 	}
@@ -63,7 +63,7 @@ public class QueryOneRow
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader, or emptyValue if the result is empty
 	 */
-	public <T> T read(CheckedFunction<QResultCursor,T> reader, T emptyValue) throws JdbxException
+	public <T> T read(CheckedFunction<QueryCursor,T> reader, T emptyValue) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		return query_.read(false, result -> {

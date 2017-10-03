@@ -172,7 +172,7 @@ public class DocSnippets
 	
     public static class City1 
     {
-        public static City1 read(QResultCursor qc) {
+        public static City1 read(QueryCursor qc) {
             City1 city = new City1();
             city.setCode(qc.col(1).getString());
             city.setName(qc.col(2).getString());
@@ -229,6 +229,6 @@ public class DocSnippets
 	private Connection con;
 	private DataSource ds;
 	private Query q;
-	private QResultCursor qc;
+	private QueryCursor qc;
 	private boolean jdbc;
 }

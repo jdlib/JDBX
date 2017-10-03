@@ -262,8 +262,8 @@ from the row:
     qc.cols(1,3,7);              // columns 1,3,7, as Object[] 
     qc.map();                    // returns a Map<String,Object>
 
-Now given this `QueryCursor` API it is easy to create a function which obtains a `QueryCursor` and returns a complex
-value read from a result row:
+Given this API it is easy to create a function which obtains a `QueryCursor` and returns a complex
+value constructed from row values:
 
     public class City {
          public static City read(QueryCursor qc) {
@@ -277,14 +277,14 @@ value read from a result row:
          public void setName(String name) { ...
     }    
 
-The builders returned by `Query.row()` and `Query.rows()` accept such a reader function and invoke it for the first row / all rows
+Now the builders returned by `Query.row()` and `Query.rows()` accept such a reader function and invoke it for the first row / all rows
 to return a single object / a list of objects:
 
     City city       = q.row().read(City::read); 	 
     List<City> city = q.rows().read(City::read); 	 
 
 
-#### Self-managed iteration of a QueryCursor 
+#### Self-managed QueryCursor navigation 
 
 If you want to navigate through a `QueryCursor` yourself you can obtain the cursor by calling
 `Query.cursor()`. You should actively close the `QueryCursor` once it is no longer used
@@ -301,15 +301,15 @@ Given a `QueryCursor` it is easy to run through its rows in a forward only manne
         // read the result row
     }
      
-If your result is scrollable you can ask for the position and freely move the current row,
+If your cursor is scrollable you can ask for the position and freely move the current row,
 by using the service objects returned by `QueryCursor.position()` and `.move()`:
 
-	// configure a scroll sensitive result	
+	// configure a scroll sensitive cursor	
 	StaticStmt stmt = ....
 	stmt.init().resultType(ResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
-	try (QueryCursor qc = stmt.createQuery(sql).result()) {
+	try (QueryCursor qc = stmt.createQuery(sql).cursor()) {
 	    // read position
 	    qc.position().isBeforeFirst() 
 	    // also: .isAfterLast(), .isLast()  
@@ -329,7 +329,7 @@ If your cursor is updatable, you can or update or delete the current row, or ins
 	// configure the result to be updatable
 	StaticStmt stmt = ....
 	stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
-	QueryCursor qc = stmt.createQuery(sql).result();
+	QueryCursor qc = stmt.createQuery(sql).cursor();
 	
 	// position row
 	... 

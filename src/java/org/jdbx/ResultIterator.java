@@ -39,7 +39,7 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * @return the new ResultIterator
 	 */
 	@SuppressWarnings("resource")
-	public static ResultIterator of(QResultCursor cursor)
+	public static ResultIterator of(QueryCursor cursor)
 	{
 		return new ResultIterator(cursor).setCloseResult(false);
 	}
@@ -61,10 +61,10 @@ public class ResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Creates a ResultIterator for a QResultCursor.
+	 * Creates a ResultIterator for a QueryCursor.
 	 * @param cursor the result
 	 */
-	public ResultIterator(QResultCursor cursor)
+	public ResultIterator(QueryCursor cursor)
 	{
 		resultSet_ = Check.notNull(cursor, "cursor").getJdbcResult();
 	}
