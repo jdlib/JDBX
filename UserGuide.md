@@ -344,7 +344,7 @@ If your result is updatable, you can or update or delete the current row, or ins
       
 You still can obtain the `java.sql.ResultSet` of a query if you want to process it by yourself:
  
-    ResultSet resultSet = q.resultSet();
+    ResultSet resultSet = qr.resultSet();
     while (resultSet.next())
         ... 
     
@@ -405,3 +405,4 @@ org.jdbx.demo package
 exceptions
 resultiterator
 queryresult config: setfetchdirection
+batch

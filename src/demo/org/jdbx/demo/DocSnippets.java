@@ -151,9 +151,6 @@ public class DocSnippets
 		
 		q.rows(5);
 		q.skip(3).rows();
-		
-		ResultSet resultSet = q.resultSet();
-		List<String> names  = Query.of(resultSet).rows().col("name").getString();
 	}
 	
 	
