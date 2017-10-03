@@ -20,7 +20,7 @@ package org.jdbx.demo;
 import java.sql.Connection;
 import javax.sql.DataSource;
 import org.jdbx.ExecuteResult;
-import org.jdbx.Query;
+import org.jdbx.QueryResult;
 import org.jdbx.StaticStmt;
 
 
@@ -57,8 +57,8 @@ public class StaticStmtDemo
 	 */
 	private void query(StaticStmt stmt)
 	{
-		// SQL query string is passed to StaticStmt.createQuery
-		int userCount = stmt.createQuery("SELECT count(* FROM Users").row().col().getInt();
+		// SQL query string is passed to StaticStmt.query()
+		int userCount = stmt.query("SELECT count(* FROM Users").row().col().getInt();
 	}
 
 
@@ -103,7 +103,7 @@ public class StaticStmtDemo
 			}
 			else
 			{
-				Query q = result.getQuery();
+				QueryResult q = result.getQuery();
 				// read values from query 
 			}
 		}

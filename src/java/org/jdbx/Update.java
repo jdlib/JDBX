@@ -121,7 +121,7 @@ public abstract class Update extends StmtRunnable
 	{
 		Check.notNull(keyType, "keyType");
 		return runGetAutoKeys((rs,r) -> {
-			r.value = Query.of(rs).rows().col().get(keyType);
+			r.value = QueryResult.of(rs).rows().col().get(keyType);
 		});
 	}
 

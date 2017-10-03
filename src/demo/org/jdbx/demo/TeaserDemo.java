@@ -102,6 +102,6 @@ public class TeaserDemo
 	 */
 	public List<City> newJdbxQueryBeanList(Connection con) throws JdbxException
 	{
-		return Jdbx.createQuery(con, "SELECT * FROM Cities ORDER BY name").rows().read(City::read);
+		return Jdbx.query(con, "SELECT * FROM Cities ORDER BY name").rows().read(City::read);
 	}
 }

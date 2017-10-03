@@ -21,12 +21,12 @@
 	
 
 
-   	ParamStatement pstmt = ...;
-   	pstmt.createQuery().rows().read(this::readRow);
+   	PprepStmt pstmt = ...;
+   	pstmt.query().rows().read(this::readRow);
 	    
 	// also has many abbreviations for standard read patterns    
-	ParamStatement pstmt = ...;
-	List<String> list = pstmt.createQuery().rows().col().getString();
+	PrepStmt pstmt = ...;
+	List<String> list = pstmt.query().rows().col().getString();
 	
 	in particular this reduces nested try-with-resources blocks to close resultsets
 

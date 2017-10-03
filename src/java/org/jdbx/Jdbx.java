@@ -12,17 +12,17 @@ import java.sql.ResultSet;
 public class Jdbx
 {
 	/**
-	 * Creates a Query.
+	 * Runs a query.
 	 * @param con a connection
 	 * @param sql a SQL command
 	 * @param params zero or more parameters
 	 * @return the Query
 	 */
-	public static Query createQuery(Connection con, String sql, Object... params)
+	public static QueryResult query(Connection con, String sql, Object... params)
 	{
 		Check.notNull(con, "con");
 		Check.notNull(sql, "sql");
-		return new FastQuery(new StmtProvider(con, sql, params));
+		return new FastQueryResult(new StmtProvider(con, sql, params));
 	}
 
 
@@ -87,18 +87,18 @@ public class Jdbx
 		}
 
 
-		public Query createQuery() throws JdbxException
+		public QueryResult query() throws JdbxException
 		{
 			checkNotUsed();
 			if (params_ == null)
 			{
 				stmt_ = new StaticStmt(con_);
-				return ((StaticStmt)stmt_).createQuery(sql_);
+				return ((StaticStmt)stmt_).query(sql_);
 			}
 			else
 			{
 				stmt_ = new PrepStmt(con_);
-				return ((PrepStmt)stmt_).init(sql_).params(params_).createQuery();
+				return ((PrepStmt)stmt_).init(sql_).params(params_).query();
 			}
 		}
 
@@ -131,9 +131,9 @@ public class Jdbx
 	}
 
 
-	private static class FastQuery extends Query
+	private static class FastQueryResult extends QueryResult
 	{
-		public FastQuery(StmtProvider provider)
+		public FastQueryResult(StmtProvider provider)
 		{
 			provider_ = provider;
 		}
@@ -141,7 +141,7 @@ public class Jdbx
 
 		@Override protected ResultSet runQueryImpl() throws Exception
 		{
-			return provider_.createQuery().runQuery();
+			return provider_.query().runQuery();
 		}
 
 

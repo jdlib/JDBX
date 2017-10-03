@@ -30,7 +30,7 @@ public class UpdateDemo
 		int count  		= stmt.createUpdate(sql1).returnGenCols().run(); // todo receive autokeys
 
 		String sql2		= "SELECT amount FROM Orders WHERE id = 1";
-		double amount 	= stmt.createQuery(sql2).row().col().getDouble();
+		double amount 	= stmt.query(sql2).row().col().getDouble();
 	}
 
 

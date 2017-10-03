@@ -42,7 +42,7 @@ import org.jdbx.function.GetForName;
  */
 public class QueryRows
 {
-	QueryRows(Query query, int max)
+	QueryRows(QueryResult query, int max)
 	{
 		query_ = query;
 		max_    = max;
@@ -559,6 +559,6 @@ public class QueryRows
 	}
 
 
-	private Query query_;
+	private QueryResult query_;
 	private int max_ = Integer.MAX_VALUE;
 }

@@ -39,25 +39,25 @@ public class SimpleDemo
 
 		// query without params - read a single int value
 		sql = "SELECT COUNT(*) FROM City";
-		int count =	Jdbx.createQuery(con, sql)
+		int count =	Jdbx.query(con, sql)
 			.row()				// only read first row
-			.col()					// get first column
-			.getInt();				// and return as int
+			.col()				// get first column
+			.getInt();			// and return as int
 
 
 		// query a list of string values
 		sql = "SELECT size, name FROM City ORDER BY size DESC";
-		List<String> names = Jdbx.createQuery(con, sql)
+		List<String> names = Jdbx.query(con, sql)
 			.rows()				// read all rows
-			.col("name")			// get column "name"
-			.getString();			// and return as string
+			.col("name")		// get column "name"
+			.getString();		// and return as string
 
 
 		// query a list of complex values using parameters
 		sql = "SELECT * FROM City WHERE country = ?";
-		List<City> cities = Jdbx.createQuery(con, sql, "fr")
+		List<City> cities = Jdbx.query(con, sql, "fr")
 			.rows()				// read all rows
-			.read(City::read);		// and create a city object for each row
+			.read(City::read);	// and create a city object for each row
 
 
 		// run a parameterless update

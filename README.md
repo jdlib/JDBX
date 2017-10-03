@@ -37,7 +37,7 @@ Perform a SQL select, create a bean object for every result row, return the bean
 *using JDBX:*
 
     public List<City> queryCities(Connection con) {
-        return Jdbx.createQuery(con, "SELECT * FROM Cities ORDER BY name").rows().value(City::read);
+        return Jdbx.query(con, "SELECT * FROM Cities ORDER BY name").rows().value(City::read);
     }
 
 

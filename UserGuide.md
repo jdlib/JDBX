@@ -7,7 +7,7 @@ JDBX User Guide
    * [PrepStmt](#stmts-prep)
    * [CallStmt](#stmts-call)
 3. [Running SQL queries](#queries)
-   * [Query class](#queries-queryclass)
+   * [QueryResult class](#queries-queryclass)
    * [Reading a single result row](#queries-singlerow)
    * [Reading all result rows](#queries-allrows)
    * [Skipping rows](#queries-skipping)
@@ -143,7 +143,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 	    
     // JDBX
     try (StaticStmt stmt = new StaticStmt(con)) {
-    	return stmt.createQuery(sql).rows().read(City::read);
+    	return stmt.query(sql).rows().read(City::read);
     }
      
 **Example 2:** Extract a single value from a result set which contains 0 or 1 rows
@@ -163,39 +163,39 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 	    
     // JDBX
     try (PrepStmt pstmt = new PrepStmt(con)) {
-    	return pstmt.init(sql).params("MUC").createQuery().row().col().getString();
+    	return pstmt.init(sql).params("MUC").query().row().col().getString();
     }
 
 
-### <a name="queries-queryclass">Query class
+### <a name="queries-queryresultclass">QueryResult class
 
 In order to execute a SQL query you need a `StaticStmt` or `PrepStmt`. 
 
-`StaticStmt.createQuery(String)` and `PrepStmt.createQuery()` return a `org.jdbx.Query` object
-which provides a builder API to run the query and extract values from the result set:
+`StaticStmt.query(String)` and `PrepStmt.query()` return a `org.jdbx.QueryResult` object
+which provides a builder API to extract values from the SQL result set:
 
-     Query q = stmt.createQuery(sql);
-     Query q = pstmt.init(sql).createQuery();
+     QueryResult qr = stmt.query(sql);
+     QueryResult qr = pstmt.init(sql).query();
      
-Because of its builder API you rarely will need to store a `Query` object in a variable but rather chain
-method calls until you receive the result of the query. In the following variable `q` represents
-a `Query` object obtained from a `StaticStmt` or `PrepStmt`.     
+Because of its builder API you rarely will need to store a `QueryResult` object in a variable but rather chain
+method calls until you receive the result of the query. In the following variable `qr` represents
+a `QueryResult` object obtained from a `StaticStmt` or `PrepStmt`.     
 
 
 ### <a name="queries-singlerow">Reading a single result row
 
-Call `Query.row()` to retrieve a builder to read values from the first result row:     
+Call `QueryResult.row()` to retrieve a builder to read values from the first result row:     
      
-    q.row()...     
-    q.row().col()...              // returns a builder to retrieve a value of the first column
-    q.row().col().getString();    // returns the value of the first column as String
-    q.row().col(3)...             // returns a builder to retrieve a value of the third column
-    q.row().col(3).getInteger();  // returns the value of the third column as Integer
-    q.row().col("sort")...        // returns a builder to retrieve a value of the "sort" column  
-    q.row().col("sort").getInt(); // returns the value of "sort" column as int
-    q.row().cols();               // returns the value of all columns, as Object[]
-    q.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
-    q.row().map();                // returns a Map<String,Object> mapping column name to value
+    qr.row()...     
+    qr.row().col()...              // returns a builder to retrieve a value of the first column
+    qr.row().col().getString();    // returns the value of the first column as String
+    qr.row().col(3)...             // returns a builder to retrieve a value of the third column
+    qr.row().col(3).getInteger();  // returns the value of the third column as Integer
+    qr.row().col("sort")...        // returns a builder to retrieve a value of the "sort" column  
+    qr.row().col("sort").getInt(); // returns the value of "sort" column as int
+    qr.row().cols();               // returns the value of all columns, as Object[]
+    qr.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
+    qr.row().map();                // returns a Map<String,Object> mapping column name to value
 
 (Note that the SQL query is actually run in the terminal operation of the builder chain).
    
@@ -203,53 +203,61 @@ If the result is empty, all the examples above will return a null value (or a de
 If you want rule out this case use `.row().required()`:
 
      // will throw an exception if the result contains no rows
-     q.row().required().col().getString()
+     qr.row().required().col().getString()
      
 You may also want detect the case when the result contains more than one row, using `.row().unique()`:
      
      // will throw an exception if the result contains more than one row
-     q.row().unique().col().getString()
+     qr.row().unique().col().getString()
 
 
 ### <a name="queries-allrows"></a>Reading all result rows
 
-Call `Query.rows()` to retrieve a builder to read values from all rows and return as `java.util.List`:
+Call `QueryResult.rows()` to retrieve a builder to read values from all rows and return as `java.util.List`:
 
-    q.rows()...
-    q.rows().col()...                  // return values of first column
-    q.rows().col().getString();        // return values of first column as List<String>
-    q.rows().col(3)...                 // return values of column by index
-    q.rows().col(3).getDouble();       // return values of third column, as List<Double>
-    q.rows().col("sort")...;           // return values of column by name 
-    q.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
-    q.rows().cols();                   // return values of all columns, as List<Object[]>
-    q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
-    q.rows().map();                    // return a List<Map<String,Object>>
+    qr.rows()...
+    qr.rows().col()...                  // return values of first column
+    qr.rows().col().getString();        // return values of first column as List<String>
+    qr.rows().col(3)...                 // return values of column by index
+    qr.rows().col(3).getDouble();       // return values of third column, as List<Double>
+    qr.rows().col("sort")...;           // return values of column by name 
+    qr.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
+    qr.rows().cols();                   // return values of all columns, as List<Object[]>
+    qr.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
+    qr.rows().map();                    // return a List<Map<String,Object>>
      
 (Note that the SQL query is actually run in the terminal operation of the builder chain).
 
 You may also limit the number of processed rows if this is not done within the SQL query itself:
 
-    q.rows(5)...
+    qr.rows(5)...
     
 
 ### <a name="queries-skipping"></a>Skipping rows
 
-Call `Query.skip(int)` if you want to skip a number of rows before you extract values 
-by calling `Query.row()`, `rows()` or `rows(int)`:
+Call `QueryResult.skip(int)` if you want to skip a number of rows before you extract values 
+by calling `QueryResult.row()`, `.rows()` or `.rows(int)`:
 
-    q.skip(3).rows()...   // all rows after the first three rows
+    qr.skip(3).rows()...   // all rows after the first three rows
 
 
+#### Turning a JDBC ResultSet into a QueryResult
+    
+If you have obtained a `java.sql.ResultSet` you can also turn it into a query object for easy value extraction:
+
+    java.sql.ResultSet resultSet = ...
+    List<String> names = QueryResult.of(resultSet).rows().col("name").getString();
+    
+     
 ### <a name="queries-querycursorclass"></a>QueryCursor class
 
-As shown above the `Query` class makes it easy to extract a column value or an array of column values from a result row
+As shown above the `QueryResult` class makes it easy to extract a column value or an array of column values from a result row
 using the various `col()` and `cols()` builder methods.
 
 For more complicated cases JDBX provides the `QueryCursor` class which replaces `java.sql.ResultSet` and allows
-you to read values from each row.
+you to navigate thought the result rows and read values from each row.
 
-When positioned on a result row, `QueryCursor` offers similar methods like the builder returned by `Query.row()` to extract values 
+When positioned on a result row, `QueryCursor` offers similar methods like the builder returned by `QueryResult.row()` to extract values 
 from the row:
 
     QueryCursor qc = ...         // a QueryCursor, positioned on a result row (as explained later)
@@ -277,7 +285,7 @@ value constructed from row values:
          public void setName(String name) { ...
     }    
 
-Now the builders returned by `Query.row()` and `Query.rows()` accept such a reader function and invoke it for the first row / all rows
+Now the builders returned by `QueryResult.row()` and `.rows()` accept such a reader function and invoke it for the first row / all rows
 to return a single object / a list of objects:
 
     City city       = q.row().read(City::read); 	 
@@ -287,7 +295,7 @@ to return a single object / a list of objects:
 #### Self-managed QueryCursor navigation 
 
 If you want to navigate through a `QueryCursor` yourself you can obtain the cursor by calling
-`Query.cursor()`. You should actively close the `QueryCursor` once it is no longer used
+`QueryResult.cursor()`. You should actively close the `QueryCursor` once it is no longer used
 therefore it is best wrapped in a try-with-resources block:
 
      Query q = ...
@@ -309,7 +317,7 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
 	stmt.init().resultType(ResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
-	try (QueryCursor qc = stmt.createQuery(sql).cursor()) {
+	try (QueryCursor qc = stmt.query(sql).cursor()) {
 	    // read position
 	    qc.position().isBeforeFirst() 
 	    // also: .isAfterLast(), .isLast()  
@@ -329,7 +337,7 @@ If your cursor is updatable, you can or update or delete the current row, or ins
 	// configure the result to be updatable
 	StaticStmt stmt = ....
 	stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
-	QueryCursor qc = stmt.createQuery(sql).cursor();
+	QueryCursor qc = stmt.query(sql).cursor();
 	
 	// position row
 	... 
@@ -348,14 +356,6 @@ You still can obtain the `java.sql.ResultSet` of a query cursor if you want to p
     while (resultSet.next())
         ... 
     
-#### Turning a ResultSet into a Query
-    
-The other way round, if you have a `java.sql.ResultSet` you can also turn it into a query object for easy value extraction:
-
-    ResultSet resultSet = ...
-    List<String> names  = Query.of(resultSet).rows().col("name").getString();
-    
-     
 ## <a name="updates"></a>4. Running DML or DDL updates
 
 JDBX - as JDBC - uses the term *Update* for DML (i.e. UPDATE, INSERT, DELETE) and DDL commands.

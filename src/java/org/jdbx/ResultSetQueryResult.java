@@ -20,9 +20,12 @@ package org.jdbx;
 import java.sql.ResultSet;
 
 
-class ResultSetQuery extends Query
+/**
+ * A QueryResult based on a JDBC ResultSet.
+ */
+class ResultSetQueryResult extends QueryResult
 {
-	public ResultSetQuery(ResultSet result)
+	public ResultSetQueryResult(ResultSet result)
 	{
 		result_ = Check.notNull(result, "result");
 	}

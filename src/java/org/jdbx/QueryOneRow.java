@@ -14,7 +14,7 @@ import org.jdbx.function.GetForName;
  */
 public class QueryOneRow
 {
-	QueryOneRow(Query query)
+	QueryOneRow(QueryResult query)
 	{
 		query_ = query;
 	}
@@ -296,7 +296,7 @@ public class QueryOneRow
 	}
 
 
-	private Query query_;
+	private QueryResult query_;
 	private boolean required_;
 	private boolean unique_;
 }

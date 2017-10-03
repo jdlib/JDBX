@@ -175,11 +175,11 @@ public class ExecuteResult
 	 * @throws JdbxException if the current result is not an {@link #isQuery() result set}
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public Query getQuery() throws JdbxException
+	public QueryResult getQuery() throws JdbxException
 	{
 		checkIsQuery();
 		ResultSet resultSet = CheckedFunction.unchecked(Statement::getResultSet, stmt_);
-		return Query.of(resultSet);
+		return QueryResult.of(resultSet);
 	}
 
 
@@ -202,10 +202,10 @@ public class ExecuteResult
 	 * @throws JdbxException if next() has not been called yet or if position after the last result
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public Query queryGeneratedKeys() throws JdbxException, SQLException
+	public QueryResult queryGeneratedKeys() throws JdbxException, SQLException
 	{
 		checkHasResult();
-		return Query.of(getGeneratedKeys());
+		return QueryResult.of(getGeneratedKeys());
 	}
 
 
