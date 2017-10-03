@@ -15,8 +15,8 @@ import org.jdbx.function.CheckedRunnable;
  * <pre><code>
  * ExecuteResult result = ...;
  * while (result.next()) {
- *     if (result.hasResultSet()) {
- *     	   ResultSet rs = result.getResultSet(); ...
+ *     if (result.isQuery()) {
+ *     	   Query q = result.getQuery(); ...
  *     }
  *     else {
  *         int count = result.getUpdateCount(); ...
@@ -112,7 +112,7 @@ public class ExecuteResult
 	 * @return true if the current result provides an update result
 	 * @throws JdbxException if next() has not been called yet or if position after the last result
 	 */
-	public boolean isUpdateResult() throws JdbxException
+	public boolean isUpdate() throws JdbxException
 	{
 		checkHasResult();
 		return status_ == Status.HAS_UPDATERESULT;
@@ -124,23 +124,23 @@ public class ExecuteResult
 	 * @return true if the current result provides a query result
 	 * @throws JdbxException if next() has not been called yet or if position after the last result
 	 */
-	public boolean isQueryResult() throws JdbxException
+	public boolean isQuery() throws JdbxException
 	{
 		checkHasResult();
 		return status_ == Status.HAS_QUERYRESULT;
 	}
 
 
-	private void checkIsUpdateResult() throws JdbxException
+	private void checkIsUpdate() throws JdbxException
 	{
-		if (!isUpdateResult())
+		if (!isUpdate())
 			throw JdbxException.illegalState("current result is not an update result");
 	}
 
 
-	private void checkIsQueryResult() throws JdbxException
+	private void checkIsQuery() throws JdbxException
 	{
-		if (!isQueryResult())
+		if (!isQuery())
 			throw JdbxException.illegalState("current result is not a query result");
 	}
 
@@ -148,11 +148,11 @@ public class ExecuteResult
 	/**
 	 * Returns the update count of the current update result.
 	 * @return the update count
-	 * @throws JdbxException if the current result is not an {@link #isUpdateResult() update result}
+	 * @throws JdbxException if the current result is not an {@link #isUpdate() update result}
 	 */
 	public int getUpdateCount() throws JdbxException
 	{
-		checkIsUpdateResult();
+		checkIsUpdate();
 		return (int)updateCount_;
 	}
 
@@ -160,37 +160,26 @@ public class ExecuteResult
 	/**
 	 * Returns the (large) update count of the current update result as long.
 	 * @return the update count
-	 * @throws JdbxException if the current result is not an {@link #isUpdateResult() update result}
+	 * @throws JdbxException if the current result is not an {@link #isUpdate() update result}
 	 */
 	public long getLargeUpdateCount() throws JdbxException
 	{
-		checkIsUpdateResult();
+		checkIsUpdate();
 		return updateCount_;
 	}
 
 
 	/**
-	 * Returns the ResultSet of the current result.
+	 * Returns the current result as query.
 	 * @return the result set
-	 * @throws JdbxException if the current result is not an {@link #isQueryResult() result set}
+	 * @throws JdbxException if the current result is not an {@link #isQuery() result set}
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public ResultSet getResultSet() throws JdbxException
+	public Query getQuery() throws JdbxException
 	{
-		checkIsQueryResult();
-		return CheckedFunction.unchecked(Statement::getResultSet, stmt_);
-	}
-
-
-	/**
-	 * Returns the ResultSet of the current result as Query object.
-	 * @return the query
-	 * @throws JdbxException if the current result is not an {@link #isQueryResult() result set}
-	 * @throws SQLException if the JDBC operation throws a SQLException
-	 */
-	public Query queryResult() throws JdbxException, SQLException
-	{
-		return Query.of(getResultSet());
+		checkIsQuery();
+		ResultSet resultSet = CheckedFunction.unchecked(Statement::getResultSet, stmt_);
+		return Query.of(resultSet);
 	}
 
 
@@ -263,11 +252,11 @@ public class ExecuteResult
 	 * @return true if moved to a result which is a ResultSet
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public boolean nextQueryResult() throws JdbxException, SQLException
+	public boolean nextQuery() throws JdbxException, SQLException
 	{
 		while (next())
 		{
-			if (isQueryResult())
+			if (isQuery())
 				return true;
 		}
 		return false;
@@ -279,11 +268,11 @@ public class ExecuteResult
 	 * @return true if moved to a result which is an update result
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public boolean nextUpdateResult() throws JdbxException, SQLException
+	public boolean nextUpdate() throws JdbxException, SQLException
 	{
 		while (next())
 		{
-			if (isUpdateResult())
+			if (isUpdate())
 				return true;
 		}
 		return false;

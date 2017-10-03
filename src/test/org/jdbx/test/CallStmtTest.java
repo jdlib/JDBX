@@ -107,7 +107,7 @@ public class CallStmtTest extends JdbxTest
 		stmt_.param("lastname").set("Beta");
 		stmt_.createExecute().run(r -> {
 			assertTrue(r.next());
-			assertTrue(r.isUpdateResult());
+			assertTrue(r.isUpdate());
 			return null;
 		});
 	}
@@ -122,8 +122,8 @@ public class CallStmtTest extends JdbxTest
 		stmt_.init("call GetUserAsResult(?)");
 		stmt_.param(1).setInteger(id_);
 		Object[] data = stmt_.createExecute().run(r -> {
-			assertTrue(r.nextQueryResult());
-			Object[] result = r.queryResult().row().cols();
+			assertTrue(r.nextQuery());
+			Object[] result = r.getQuery().row().required().cols();
 			assertFalse(r.next());
 			return result;
 		});
@@ -141,7 +141,7 @@ public class CallStmtTest extends JdbxTest
 		stmt_.clearParams();
 		stmt_.param(1, id_);
 		stmt_.execute();
-		assertEquals("Paul", stmt_.param(2).getString());
+		assertEquals("Paul",  stmt_.param(2).getString());
 		assertEquals("Smith", stmt_.param(3).getString());
 	}
 

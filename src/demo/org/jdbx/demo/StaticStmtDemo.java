@@ -18,9 +18,9 @@ package org.jdbx.demo;
 
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import javax.sql.DataSource;
 import org.jdbx.ExecuteResult;
+import org.jdbx.Query;
 import org.jdbx.StaticStmt;
 
 
@@ -96,15 +96,15 @@ public class StaticStmtDemo
 		ExecuteResult result = stmt.createExecute(sql).run();
 		while (result.next())
 		{
-			if (result.isUpdateResult())
+			if (result.isUpdate())
 			{
 				int updateCount = result.getUpdateCount();
 				// evaluate updateCount
 			}
 			else
 			{
-				ResultSet rs = result.getResultSet();
-				// evaluate result set
+				Query q = result.getQuery();
+				// read values from query 
 			}
 		}
 	}
