@@ -96,7 +96,7 @@ public class StaticStmtDemo
 		ExecuteResult result = stmt.createExecute(sql).run();
 		while (result.next())
 		{
-			if (result.isUpdateCount())
+			if (result.isUpdateResult())
 			{
 				int updateCount = result.getUpdateCount();
 				// evaluate updateCount

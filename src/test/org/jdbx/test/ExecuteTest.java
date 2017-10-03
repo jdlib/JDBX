@@ -44,9 +44,9 @@ public class ExecuteTest extends JdbxTest
 		{
 			ExecuteResult result = stmt.createExecute("SELECT * FROM ExecTest; SELECT * FROM ExecTest;").run();
 			assertTrue(result.next());
-			assertTrue(result.isResultSet());
+			assertTrue(result.isQueryResult());
 			assertTrue(result.next());
-			assertTrue(result.isResultSet());
+			assertTrue(result.isQueryResult());
 			assertFalse(result.next());
 		}
 	}
