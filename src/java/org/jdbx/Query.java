@@ -4,7 +4,6 @@ package org.jdbx;
 import java.sql.*;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
-import org.jdbx.function.CheckedSupplier;
 
 
 /**
@@ -54,18 +53,15 @@ public abstract class Query extends StmtRunnable
 	 */
 	public QueryResult result() throws JdbxException
 	{
-		return new QueryResult(resultSet());
-	}
-
-
-	/**
-	 * Executes the query and returns a ResultSet.
-	 * @return the result
-	 */
-	// TODO remove
-	public ResultSet resultSet() throws JdbxException
-	{
-		return CheckedSupplier.unchecked(this::runQuery);
+		try
+		{
+			ResultSet resultSet = runQuery();
+			return new QueryResult(resultSet);
+		}
+		catch (Exception e)
+		{
+			throw JdbxException.of(e);
+		}
 	}
 
 
