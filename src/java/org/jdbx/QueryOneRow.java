@@ -46,24 +46,24 @@ public class QueryOneRow
 
 	/**
 	 * Calls the reader function for the first result row.
-	 * @param reader receives a result and returns a value
+	 * @param reader receives a result cursor and returns a value constructed from the current result row 
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader. If the result is empty, null is returned
 	 */
-	public <T> T read(CheckedFunction<QueryResult,T> reader) throws JdbxException
+	public <T> T read(CheckedFunction<QResultCursor,T> reader) throws JdbxException
 	{
 		return read(reader, null);
 	}
 
 
 	/**
-	 * Calls the ResultSet reader for the first result row.
-	 * @param reader receives a result and returns a value
+	 * Calls the reader for the first result row.
+	 * @param reader receives a result cursor and returns a value constructed from the current cursor row
 	 * @param emptyValue the return value if the result is empty
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader, or emptyValue if the result is empty
 	 */
-	public <T> T read(CheckedFunction<QueryResult,T> reader, T emptyValue) throws JdbxException
+	public <T> T read(CheckedFunction<QResultCursor,T> reader, T emptyValue) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		return query_.read(false, result -> {

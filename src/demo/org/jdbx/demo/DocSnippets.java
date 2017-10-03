@@ -154,16 +154,16 @@ public class DocSnippets
 	}
 	
 	
-	public void queryResult() throws Exception
+	public void queryCursor() throws Exception
 	{
-        qr.col();                    // first column
-        qr.col().getString();        // first column as String
-        qr.col(3);                   // column by index
-        qr.col(3).getDouble();       // third column as double
-        qr.col("sort");              // column by name 
-        qr.col("sort").getInteger(); // "sort" column, as Integer
-        qr.cols(1,3,7);              // columns 1,3,7, as Object[] 
-        qr.map();                    // returns a Map<String,Object>
+        qc.col();                    // first column
+        qc.col().getString();        // first column as String
+        qc.col(3);                   // column by index
+        qc.col(3).getDouble();       // third column as double
+        qc.col("sort");              // column by name 
+        qc.col("sort").getInteger(); // "sort" column, as Integer
+        qc.cols(1,3,7);              // columns 1,3,7, as Object[] 
+        qc.map();                    // returns a Map<String,Object>
 
 		q.row().read(City::read);
 		q.rows().read(City::read);
@@ -172,10 +172,10 @@ public class DocSnippets
 	
     public static class City1 
     {
-        public static City1 read(QueryResult qr) {
+        public static City1 read(QResultCursor qc) {
             City1 city = new City1();
-            city.setCode(qr.col(1).getString());
-            city.setName(qr.col(2).getString());
+            city.setCode(qc.col(1).getString());
+            city.setName(qc.col(2).getString());
             return city; 
         }
         
@@ -189,37 +189,37 @@ public class DocSnippets
     }    
 	
 	
-	public void queryResultNav() throws Exception
+	public void queryCursorNav() throws Exception
 	{
-		while (qr.next()) {
+		while (qc.next()) {
 		    // read the result row
 		}
 		
 		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
-		qr = stmt.createQuery("sql").result();
-		qr.position().isBeforeFirst(); 
+		qc = stmt.createQuery("sql").cursor();
+		qc.position().isBeforeFirst(); 
 		// also: .isAfterLast(), .isLast()  
 
-		qr.move().first() ;
-		qr.move().absolute(5); 
-		qr.move().relative(2);
+		qc.move().first() ;
+		qc.move().absolute(5); 
+		qc.move().relative(2);
 		// also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
 		 
-		qr.row().update();
-		qr.row().refresh();
+		qc.row().update();
+		qc.row().refresh();
 		// also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.		
 	}
 
 	
-	public void queryResultObtain() throws Exception
+	public void queryCursorObtain() throws Exception
 	{
 		stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
 
-	   	qr.col("status").setString("ok"); 
-	    qr.row().update();
-	    qr.row().refresh();
+	   	qc.col("status").setString("ok"); 
+	    qc.row().update();
+	    qc.row().refresh();
 	}
 	
 	
@@ -229,6 +229,6 @@ public class DocSnippets
 	private Connection con;
 	private DataSource ds;
 	private Query q;
-	private QueryResult qr;
+	private QResultCursor qc;
 	private boolean jdbc;
 }

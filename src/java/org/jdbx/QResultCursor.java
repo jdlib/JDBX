@@ -32,31 +32,31 @@ import org.jdbx.function.SetForName;
 
 
 /**
- * QueryResult represents the result of a SQL query. 
+ * QResultCursor represents the result cursor of a SQL query. 
  * It is a wrapper class for java.sql.ResultSet.
  */
-public class QueryResult implements AutoCloseable
+public class QResultCursor implements AutoCloseable
 {
 	/**
-	 * Returns a QueryResult for the ResultSet
+	 * Returns a QResultCursor for the ResultSet
 	 * which does not close the ResultSet when it is closed.
 	 * Use this factory method to avoid compiler warnings
 	 * for unclosed resources when you don't want to close the ResultSet.
 	 * @param resultSet the wrapped result set
-	 * @return the new QueryResult
+	 * @return the new QResultCursor
 	 */
 	@SuppressWarnings("resource")
-	public static QueryResult of(ResultSet resultSet)
+	public static QResultCursor of(ResultSet resultSet)
 	{
-		return new QueryResult(resultSet).setCloseResult(false);
+		return new QResultCursor(resultSet).setCloseResult(false);
 	}
 
 
 	/**
-	 * Creates a new QueryResult which wraps a ResultSet.
+	 * Creates a new QResultCursor which wraps a ResultSet.
 	 * @param resultSet the result set
 	 */
-	public QueryResult(ResultSet resultSet)
+	public QResultCursor(ResultSet resultSet)
 	{
 		resultSet_ = Check.notNull(resultSet, "resultSet");
 	}
@@ -660,7 +660,7 @@ public class QueryResult implements AutoCloseable
 		 */
 		public boolean next() throws JdbxException
 		{
-			return QueryResult.this.next();
+			return QResultCursor.this.next();
 		}
 
 
@@ -701,7 +701,7 @@ public class QueryResult implements AutoCloseable
 	 * @exception JdbxException thrown if there is no next row
 	 * @return this
 	 */
-	public QueryResult nextRequired() throws JdbxException
+	public QResultCursor nextRequired() throws JdbxException
 	{
 		if (!next())
 			throw JdbxException.invalidResult("no next row");
@@ -850,7 +850,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Returns if the internal ResultSet should be closed when this QueryResult is closed.
+	 * Returns if the internal ResultSet should be closed when this QResultCursor is closed.
 	 */
 	public boolean isCloseResult()
 	{
@@ -859,12 +859,12 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Instructs the QueryResult if the internal ResultSet should be closed
-	 * when this QueryResult is closed.
+	 * Instructs the QResultCursor if the internal ResultSet should be closed
+	 * when this QResultCursor is closed.
 	 * @param flag the close flag
 	 * @return this
 	 */
-	public QueryResult setCloseResult(boolean flag)
+	public QResultCursor setCloseResult(boolean flag)
 	{
 		closeResult_ = flag;
 		return this;

@@ -41,22 +41,22 @@ public abstract class Query extends StmtRunnable
 	}
 
 
-	boolean applySkip(QueryResult result) throws SQLException
+	boolean applySkip(QResultCursor cursor) throws SQLException
 	{
-		return (skip_ <= 0) || result.skip(skip_);
+		return (skip_ <= 0) || cursor.skip(skip_);
 	}
 
 
 	/**
-	 * Executes the query and returns a QueryResult.
-	 * @return the result
+	 * Executes the query and returns the QResultCursor.
+	 * @return the cursor
 	 */
-	public QueryResult result() throws JdbxException
+	public QResultCursor cursor() throws JdbxException
 	{
 		try
 		{
 			ResultSet resultSet = runQuery();
-			return new QueryResult(resultSet);
+			return new QResultCursor(resultSet);
 		}
 		catch (Exception e)
 		{
@@ -97,10 +97,10 @@ public abstract class Query extends StmtRunnable
 
 
 	/**
-	 * Executes the query and passes the result to the consumer.
+	 * Executes the query and passes the result cursor to the consumer.
 	 * @param consumer a result consumer
 	 */
-	public void read(CheckedConsumer<QueryResult> consumer) throws JdbxException
+	public void read(CheckedConsumer<QResultCursor> consumer) throws JdbxException
 	{
 		read(result -> {
 			consumer.accept(result);
@@ -110,12 +110,12 @@ public abstract class Query extends StmtRunnable
 
 
 	/**
-	 * Executes the query and passes the result to the reader.
-	 * @param reader a reader which can return a value from a result
+	 * Executes the query and passes the result cursor to the reader.
+	 * @param reader a reader which can return a value from a result cursor
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader.
 	 */
-	public <T> T read(CheckedFunction<QueryResult,T> reader) throws JdbxException
+	public <T> T read(CheckedFunction<QResultCursor,T> reader) throws JdbxException
 	{
 		return read(skip_ > 0, reader);
 	}
@@ -125,22 +125,22 @@ public abstract class Query extends StmtRunnable
 	/**
 	 * Implementation method to read the result using a reader function.
 	 * We allow callers of this method to decide if they want to apply skipping themselves:
-	 * If skipping is done here, the ResultReader may invoke ResultSet.next()
+	 * If skipping is done here, the reader may invoke QResultCursor.next()
 	 * after an unsuccessful prior call to this method - unfortunately in this case
 	 * a JDBC driver is allowed to throw an exception instead of returning false.
 	 */
-	<R> R read(boolean applySkip, CheckedFunction<QueryResult,R> reader) throws JdbxException
+	<R> R read(boolean applySkip, CheckedFunction<QResultCursor,R> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 
 		Exception e1 = null, e2 = null;
 		R returnValue = null;
 
-		try (QueryResult result = new QueryResult(runQuery()))
+		try (QResultCursor cursor = new QResultCursor(runQuery()))
 		{
 			if (applySkip)
-				applySkip(result);
-			returnValue = reader.apply(result);
+				applySkip(cursor);
+			returnValue = reader.apply(cursor);
 		}
 		catch (Exception e)
 		{

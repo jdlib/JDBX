@@ -19,7 +19,7 @@ package org.jdbx.test;
 
 import org.jdbx.Jdbx;
 import org.jdbx.JdbxException;
-import org.jdbx.QueryResult;
+import org.jdbx.QResultCursor;
 import org.jdbx.ResultConcurrency;
 import org.jdbx.ResultType;
 import org.jdbx.StaticStmt;
@@ -28,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class QueryResultTest extends JdbxTest
+public class QResultCursorTest extends JdbxTest
 {
 	@BeforeClass public static void beforeClass() throws JdbxException
 	{
@@ -47,17 +47,17 @@ public class QueryResultTest extends JdbxTest
 	@Test public void testScroll()
 	{
 		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE);
-		try (QueryResult result = stmt_.createQuery("SELECT name FROM QRTest ORDER BY name").result())
+		try (QResultCursor cursor = stmt_.createQuery("SELECT name FROM QRTest ORDER BY name").cursor())
 		{
-			assertSame(ResultType.SCROLL_INSENSITIVE, result.getType());
-			assertTrue(result.position().isBeforeFirst());
-			assertTrue(result.move().absolute(2));
-			assertEquals("B", result.col().getString());
-			assertTrue(result.move().relative(2));
-			assertEquals("D", result.col().getString());
-			assertTrue(result.position().isLast());
-			result.move().afterLast();
-			assertTrue(result.position().isAfterLast());
+			assertSame(ResultType.SCROLL_INSENSITIVE, cursor.getType());
+			assertTrue(cursor.position().isBeforeFirst());
+			assertTrue(cursor.move().absolute(2));
+			assertEquals("B", cursor.col().getString());
+			assertTrue(cursor.move().relative(2));
+			assertEquals("D", cursor.col().getString());
+			assertTrue(cursor.position().isLast());
+			cursor.move().afterLast();
+			assertTrue(cursor.position().isAfterLast());
 		}
 	}
 
@@ -65,14 +65,14 @@ public class QueryResultTest extends JdbxTest
 	@Test public void testUpdate() throws Exception
 	{
 		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
-		try (QueryResult result = stmt_.createQuery("SELECT name FROM QRTest").result())
+		try (QResultCursor cursor = stmt_.createQuery("SELECT name FROM QRTest").cursor())
 		{
-			assertSame(ResultConcurrency.CONCUR_UPDATABLE, result.getConcurrency());
+			assertSame(ResultConcurrency.CONCUR_UPDATABLE, cursor.getConcurrency());
 			
-			assertTrue(result.next());
-			result.col().setString("Z");
-			assertTrue(result.row().isUpdated());
-			result.row().update();
+			assertTrue(cursor.next());
+			cursor.col().setString("Z");
+			assertTrue(cursor.row().isUpdated());
+			cursor.row().update();
 		}
 	}
 

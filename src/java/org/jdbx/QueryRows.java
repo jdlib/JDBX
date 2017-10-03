@@ -54,13 +54,13 @@ public class QueryRows
 	 * the ResultSet consumer for each row.
 	 * @param consumer a ResultSet consumer
 	 */
-	public void forEach(CheckedConsumer<QueryResult> consumer) throws JdbxException
+	public void forEach(CheckedConsumer<QResultCursor> consumer) throws JdbxException
 	{
 		Check.notNull(consumer, "consumer");
-		CheckedConsumer<QueryResult> c = result -> {
+		CheckedConsumer<QResultCursor> c = cursor -> {
 			int index = -1;
-			while ((++index < max_) && result.next())
-				consumer.accept(result);
+			while ((++index < max_) && cursor.next())
+				consumer.accept(cursor);
 		}; 
 		query_.read(c);
 	}
@@ -74,7 +74,7 @@ public class QueryRows
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> read(CheckedFunction<QueryResult,T> reader) throws JdbxException
+	public <T> List<T> read(CheckedFunction<QResultCursor,T> reader) throws JdbxException
 	{
 		return read(reader, new ArrayList<>());
 	}
@@ -89,16 +89,16 @@ public class QueryRows
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> read(CheckedFunction<QueryResult,T> reader, List<T> list) throws JdbxException
+	public <T> List<T> read(CheckedFunction<QResultCursor,T> reader, List<T> list) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");
-		return query_.read(false, result -> {
-			if (query_.applySkip(result))
+		return query_.read(false, cursor -> {
+			if (query_.applySkip(cursor))
 			{
 				int index = -1;
-				while ((++index < max_) && result.next())
-					list.add(reader.apply(result));
+				while ((++index < max_) && cursor.next())
+					list.add(reader.apply(cursor));
 			}
 			return list;
 		});

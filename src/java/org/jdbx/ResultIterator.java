@@ -35,13 +35,13 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * which does not close the Result when it is closed.
 	 * Use this factory method to avoid compiler warnings
 	 * for unclosed resources when you don't want to close the ResultSet.
-	 * @param result the result which is iterated
+	 * @param cursor the cursor which is iterated
 	 * @return the new ResultIterator
 	 */
 	@SuppressWarnings("resource")
-	public static ResultIterator of(QueryResult result)
+	public static ResultIterator of(QResultCursor cursor)
 	{
-		return new ResultIterator(result).setCloseResult(false);
+		return new ResultIterator(cursor).setCloseResult(false);
 	}
 
 
@@ -61,12 +61,12 @@ public class ResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Creates a ResultIterator for a QueryResult.
-	 * @param result the result
+	 * Creates a ResultIterator for a QResultCursor.
+	 * @param cursor the result
 	 */
-	public ResultIterator(QueryResult result)
+	public ResultIterator(QResultCursor cursor)
 	{
-		resultSet_ = Check.notNull(result, "result").getJdbcResult();
+		resultSet_ = Check.notNull(cursor, "cursor").getJdbcResult();
 	}
 
 
