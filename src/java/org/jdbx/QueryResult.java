@@ -92,6 +92,23 @@ public class QueryResult implements AutoCloseable
 	
 
 	/**
+	 * Returns the column values of the current row as array.
+	 * @return the value array
+	 */
+	public Object[] cols() throws JdbxException
+	{
+		try
+		{
+			return ResultUtil.readValues(resultSet_);
+		}
+		catch (Exception e)
+		{
+			throw JdbxException.of(e);
+		}
+	}
+
+	
+	/**
 	 * Returns column values of the current row as array.
 	 * @param indexes the column indexes, starting at 1.
 	 * @return the value array
