@@ -9,12 +9,12 @@ import org.jdbx.function.GetForName;
 
 
 /**
- * QueryOneRow is a builder class to
- * retrieve the single-row result of a query.
+ * QResultOneRow is a builder class to
+ * retrieve the single-row result of a query result.
  */
-public class QueryOneRow
+public class QResultOneRow
 {
-	QueryOneRow(QueryResult query)
+	QResultOneRow(QueryResult query)
 	{
 		query_ = query;
 	}
@@ -25,7 +25,7 @@ public class QueryOneRow
 	 * if the result is empty.
 	 * @return this
 	 */
-	public QueryOneRow required()
+	public QResultOneRow required()
 	{
 		required_ = true;
 		return this;
@@ -37,7 +37,7 @@ public class QueryOneRow
 	 * if the result contains more than one row.
 	 * @return this
 	 */
-	public QueryOneRow unique()
+	public QResultOneRow unique()
 	{
 		unique_ = true;
 		return this;

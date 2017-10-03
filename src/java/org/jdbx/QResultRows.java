@@ -37,12 +37,12 @@ import org.jdbx.function.GetForName;
 
 
 /**
- * QueryRows is a builder class to
+ * QResultRows is a builder class to
  * retrieve the multi-row result of a query.
  */
-public class QueryRows
+public class QResultRows
 {
-	QueryRows(QueryResult query, int max)
+	QResultRows(QueryResult query, int max)
 	{
 		query_ = query;
 		max_    = max;
