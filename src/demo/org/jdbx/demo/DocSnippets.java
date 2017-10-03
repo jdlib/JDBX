@@ -59,12 +59,13 @@ public class DocSnippets
 	}
 	
 	
-	public void queryRunningEx1() throws Exception
+	public List<City> queryRunningEx1() throws Exception
 	{
 		String sql = "SELECT * FROM Cities ORDER BY name";
-		 
-		// JDBC:
+
+		if (jdbc)
 		{
+			// JDBC:
 			Statement stmt = con.createStatement();                        
 			ResultSet result = stmt.executeQuery(sql);         
 			List<City> cities = new ArrayList<>();
@@ -72,31 +73,40 @@ public class DocSnippets
 			    City city = City.read(result); 
 			    cities.add(city);
 			}
+			return cities;
 		}
-		    
-		// JDBX
-		StaticStmt stmt = new StaticStmt(con);
-		List<City> cities = stmt.createQuery(sql).rows().read(City::read);
+		else {
+			// JDBX
+			try (StaticStmt stmt = new StaticStmt(con)) {
+				return stmt.createQuery(sql).rows().read(City::read);
+			}
+		}
 	}
 	
 	
-	public void queryRunningEx2() throws Exception
+	public String queryRunningEx2() throws Exception
 	{
 		String sql = "SELECT name FROM Cities WHERE code = ?";
 
-		// JDBC:    
+		if (jdbc)
 		{
-			PreparedStatement pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, "MUC");                        
-			ResultSet result = pstmt.executeQuery();
-			String name = null;         
-			if (result.next())
-			    name = result.getString(1);
+			// JDBC:    
+			try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+				pstmt.setString(1, "MUC");                        
+				ResultSet result = pstmt.executeQuery();
+				String name = null;         
+				if (result.next())
+				    name = result.getString(1);
+				return name;
+			}
 		}
-		    
-		// JDBX
-		PrepStmt pstmt = new PrepStmt(con);
-		String name = pstmt.init(sql).params("MUC").createQuery().row().col().getString();
+		else
+		{
+			// JDBX
+			try (PrepStmt pstmt = new PrepStmt(con)) {
+				return pstmt.init(sql).params("MUC").createQuery().row().col().getString();
+			}
+		}
 	}
 	
 	
@@ -223,4 +233,5 @@ public class DocSnippets
 	private DataSource ds;
 	private Query q;
 	private QueryResult qr;
+	private boolean jdbc;
 }

@@ -12,8 +12,6 @@ JDBX User Guide
    * [Reading all result rows](#queries-allrows)
    * [Skipping rows](#queries-skipping)
    * [QueryResult class](#queries-queryresultclass)
-   * [Accessing the ResultSet](#queries-resultset)
-   * [Turning a ResultSet into a Query](#queries-result-toquery)
 4. [Running DML or DDL updates](#updates)
    * [Update class](#updates-updateclass)
    * [Run the update](#updates-run)
@@ -123,27 +121,30 @@ be executed multiple times using different parameter values. Example:
 ## <a name="queries"></a>3. Running SQL queries
 
 In JDBC executing a query returns a `java.sql.ResultSet`. Given the `ResultSet` you will loop over its rows, extract 
-values from the rows and extract its values in appropriate form.
+values from the rows and use these values in appropriate form.
 
 JDBX uses the builder pattern and functional programming to avoid most of the boilerplate code needed in JDBC.
 
-**Example 1:** Read all rows from a result set and convert each row into a bean
+**Example 1:** Read all rows from a result set and convert each row into a data object
 
     Connection con = ...
     String sql = "SELECT * FROM Cities ORDER BY name";
      
     // JDBC:             
-    Statement stmt = con.createStatement();                        
-    ResultSet result = stmt.executeQuery(sql);         
-    List<City> cities = new ArrayList<>();
-    while (result.next()) {
-        City city = City.read(result); 
-        cities.add(city);
+     try (Statement stmt = con.createStatement()) {                        
+        ResultSet result = stmt.executeQuery(sql);         
+        List<City> cities = new ArrayList<>();
+        while (result.next()) {
+            City city = City.read(result); 
+            cities.add(city);
+        }
+        return cities;
     }
 	    
     // JDBX
-    StaticStmt stmt = new StaticStmt(con);
-    List<City> cities = stmt.createQuery(sql).rows().read(City::read);
+    try (StaticStmt stmt = new StaticStmt(con)) {
+    	return stmt.createQuery(sql).rows().read(City::read);
+    }
      
 **Example 2:** Extract a single value from a result set which contains 0 or 1 rows
 
@@ -151,16 +152,19 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
     String sql = "SELECT name FROM Cities WHERE code = ?";
     
     // JDBC:             
-    PreparedStatement pstmt = con.prepareStatement(sql);
-    pstmt.setString(1, "MUC");                        
-    ResultSet result = pstmt.executeQuery();
-    String name = null;         
-    if (result.next())
-        name = result.getString(1); 
+    try (PreparedStatement pstmt = con.prepareStatement(sql)) {
+        pstmt.setString(1, "MUC");                        
+        ResultSet result = pstmt.executeQuery();
+        String name = null;         
+        if (result.next())
+            name = result.getString(1);
+        return name;
+    } 
 	    
     // JDBX
-    PrepStmt pstmt = new PrepStmt(con);
-    String name = pstmt.init(sql).params("MUC").createQuery().row().col().getString();
+    try (PrepStmt pstmt = new PrepStmt(con)) {
+    	return pstmt.init(sql).params("MUC").createQuery().row().col().getString();
+    }
 
 
 ### <a name="queries-queryclass">Query class
@@ -306,11 +310,11 @@ by using the service objects returned by `QueryResult.position()` and `.move()`:
 	
 	// and run the query
 	try (QueryResult qr = stmt.createQuery(sql).result()) {
-		// read position
+	    // read position
 	    qr.position().isBeforeFirst() 
 	    // also: .isAfterLast(), .isLast()  
 
-		// move current row
+	    // move current row
 	    qr.move().first() 
 	    qr.move().absolute(5) 
 	    qr.move().relative(2)
@@ -322,7 +326,7 @@ by using the service objects returned by `QueryResult.position()` and `.move()`:
     
 If your result is updatable, you can or update or delete the current row, or insert a new row:
 
-	// configure a updatable result	and retrieve the result
+	// configure the result to be updatable
 	StaticStmt stmt = ....
 	stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
 	QueryResult qr = stmt.createQuery(sql).result();
@@ -336,26 +340,7 @@ If your result is updatable, you can or update or delete the current row, or ins
     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
      
      
-#### How to obtain a QueryResult
-
-You can obtain a `QueryResult` from a `Query`:
-
-     Query q = ...     
-     QueryResult qr = q.result();
-     
-or from a `ResultSet` object:
-      
-     ResultSet resultSet = ...
-     QueryResult qr = QueryResult.of(resultSet);
-     
-and then use the `.next()` method to loop over the result rows: 
-     
-     while (qr.next()) {
-         ...       
-     }
-     
-
-### <a name="queries-resultset"></a>Accessing the ResultSet  
+#### Accessing the ResultSet  
       
 You still can obtain the `java.sql.ResultSet` of a query if you want to process it by yourself:
  
@@ -363,7 +348,7 @@ You still can obtain the `java.sql.ResultSet` of a query if you want to process 
     while (resultSet.next())
         ... 
     
-### <a name="queries-result-toquery"></a>Turning a ResultSet into a Query
+#### Turning a ResultSet into a Query
     
 The other way round, if you have a `java.sql.ResultSet` you can also turn it into a query object for easy value extraction:
 
@@ -384,7 +369,7 @@ Updates can be executed by either using a `StaticStmt` or a `PrepStmt`:
 which provides a builder API to configure and run the update:
 
      Update u = stmt.createUpdate(sql);
-     Update u = pstmt.createUpdate();
+     Update u = pstmt.init(sql).createUpdate();
      
 Because of its builder API you will rarely need to store an `Update` object in a variable but rather chain
 method calls. In the following the variable `u` represents
@@ -393,7 +378,7 @@ an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.c
 
 ### <a name="updates-run">Run the update
 
-If you just want to run an update command and are not interested in auto-generated values you simply call
+If you just want to run an update command and are not interested in auto-generated values you can simply call
 `Update.run()` or `Update.runLarge()` which will return the number of affected records as `ìnt` or `long` value.
 
 	int updateCount = u.run();
