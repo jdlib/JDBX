@@ -679,6 +679,19 @@ public class QueryResult implements AutoCloseable
 	}
 
 
+	/**
+	 * Moves the cursor to the next row.
+	 * @exception JdbxException thrown if there is no next row
+	 * @return this
+	 */
+	public QueryResult nextRequired() throws JdbxException
+	{
+		if (!next())
+			throw JdbxException.invalidResult("no next row");
+		return this; 
+	}
+
+	
 	//----------------------------------
 	// helper
 	//----------------------------------
