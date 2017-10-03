@@ -120,8 +120,8 @@ be executed multiple times using different parameter values. Example:
 
 ## <a name="queries"></a>3. Running SQL queries
 
-In JDBC executing a query returns a `java.sql.ResultSet`. Given the `ResultSet` you will loop over its rows, extract 
-values from the rows and use these values in appropriate form.
+In JDBC executing a query returns a `java.sql.ResultSet`. Given the `ResultSet` you will loop over its rows and extract 
+values from the rows in appropriate form.
 
 JDBX uses the builder pattern and functional programming to avoid most of the boilerplate code needed in JDBC.
 
@@ -131,7 +131,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
     String sql = "SELECT * FROM Cities ORDER BY name";
      
     // JDBC:             
-     try (Statement stmt = con.createStatement()) {                        
+    try (Statement stmt = con.createStatement()) {                        
         ResultSet result = stmt.executeQuery(sql);         
         List<City> cities = new ArrayList<>();
         while (result.next()) {
@@ -141,9 +141,9 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
         return cities;
     }
 	    
-    // JDBX
+    // JDBX:
     try (StaticStmt stmt = new StaticStmt(con)) {
-    	return stmt.query(sql).rows().read(City::read);
+        return stmt.query(sql).rows().read(City::read);
     }
      
 **Example 2:** Extract a single value from a result set which contains 0 or 1 rows
@@ -161,7 +161,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
         return name;
     } 
 	    
-    // JDBX
+    // JDBX:
     try (PrepStmt pstmt = new PrepStmt(con)) {
     	return pstmt.init(sql).params("MUC").query().row().col().getString();
     }
@@ -177,9 +177,16 @@ which provides a builder API to extract values from the SQL result set:
      QueryResult qr = stmt.query(sql);
      QueryResult qr = pstmt.init(sql).query();
      
+If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a `QueryResult` object for easy value extraction:
+
+    java.sql.ResultSet resultSet = ...
+    List<String> names = QueryResult.of(resultSet).rows().col("name").getString();
+     
 Because of its builder API you rarely will need to store a `QueryResult` object in a variable but rather chain
 method calls until you receive the result of the query. In the following variable `qr` represents
 a `QueryResult` object obtained from a `StaticStmt` or `PrepStmt`.     
+
+Also note that the actual JDBC query is usually not run until you invoke the terminal method of the builder chain.
 
 
 ### <a name="queries-singlerow">Reading a single result row
@@ -197,8 +204,6 @@ Call `QueryResult.row()` to retrieve a builder to read values from the first res
     qr.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
     qr.row().map();                // returns a Map<String,Object> mapping column name to value
 
-(Note that the SQL query is actually run in the terminal operation of the builder chain).
-   
 If the result is empty, all the examples above will return a null value (or a default value for primitive terminals like `getInt()`).
 If you want rule out this case use `.row().required()`:
 
@@ -226,8 +231,6 @@ Call `QueryResult.rows()` to retrieve a builder to read values from all rows and
     qr.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
     qr.rows().map();                    // return a List<Map<String,Object>>
      
-(Note that the SQL query is actually run in the terminal operation of the builder chain).
-
 You may also limit the number of processed rows if this is not done within the SQL query itself:
 
     qr.rows(5)...
@@ -241,14 +244,6 @@ by calling `QueryResult.row()`, `.rows()` or `.rows(int)`:
     qr.skip(3).rows()...   // all rows after the first three rows
 
 
-#### Turning a JDBC ResultSet into a QueryResult
-    
-If you have obtained a `java.sql.ResultSet` you can also turn it into a query object for easy value extraction:
-
-    java.sql.ResultSet resultSet = ...
-    List<String> names = QueryResult.of(resultSet).rows().col("name").getString();
-    
-     
 ### <a name="queries-querycursorclass"></a>QueryCursor class
 
 As shown above the `QueryResult` class makes it easy to extract a column value or an array of column values from a result row
