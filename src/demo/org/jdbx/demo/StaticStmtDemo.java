@@ -78,8 +78,8 @@ public class StaticStmtDemo
 			.createUpdate("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')")	// the cmd
 			.returnCols("id") // contains the auto generated key
 			.runGetAutoKey(Integer.class) // and we want it as integer
-			.checkCount(1) // assert that 1 one record was inserted
-			.checkHasValue(); // assert that an id was generated and return the value
+			.requireCount(1) // assert that 1 one record was inserted
+			.requireValue(); // assert that an id was generated and return the value
 	}
 
 

@@ -80,8 +80,8 @@ public class PrepStmtDemo
 			.params("John", "Doe") // set parameters
 			.createUpdate() // we want to run the cmd as updating cmd
 			.runGetAutoKey(Integer.class) // we want the generated key as integer
-			.checkCount(1) // assert that 1 one record was inserted
-			.checkHasValue(); // assert that an id was generated and return the value
+			.requireCount(1) // assert that 1 one record was inserted
+			.requireValue(); // assert that an id was generated and return the value
 	}
 
 
@@ -115,7 +115,7 @@ public class PrepStmtDemo
 		{
 			pstmt.init().returnCols("id").cmd("INSERT INTO Cities (name) VALUES (?)");
 			for (String name : names)
-				ids.add(pstmt.param(1, name).createUpdate().runGetAutoKey(Integer.class).checkCount(1).checkHasValue());
+				ids.add(pstmt.param(1, name).createUpdate().runGetAutoKey(Integer.class).requireCount(1).requireValue());
 		}
 		return ids;
 	}

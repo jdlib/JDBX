@@ -182,9 +182,9 @@ If you have obtained a `java.sql.ResultSet` from somewhere else you can also tur
     java.sql.ResultSet resultSet = ...
     List<String> names = Query.of(resultSet).rows().col("name").getString();
      
-Because of its builder API you rarely will need to store a `Query` object in a variable but rather chain
-method calls until you receive the result of the query. In the following variable `q` represents
-a `Query` object obtained from a `StaticStmt` or `PrepStmt`.     
+In the following variable `q` represents a `Query` object obtained from a `StaticStmt` or `PrepStmt`.     
+But because of its builder API you rarely will need to store a `Query` object in a local variable but rather chain
+method calls until you receive the result of the query.      
 
 Also note that the actual JDBC query is usually not run until you invoke the terminal method of the builder chain.
 
@@ -353,7 +353,7 @@ You still can obtain the `java.sql.ResultSet` of a query cursor if you want to p
     
 ## <a name="updates"></a>4. Running DML or DDL updates
 
-JDBX - as JDBC - uses the term *Update* for DML (i.e. UPDATE, INSERT, DELETE) and DDL commands.
+JDBX - as JDBC - uses the term *update* for DML (i.e. UPDATE, INSERT, DELETE) and DDL commands.
 Running a DML command can return the number of affected records and the auto-generated values of primary key columns.
 
 ### <a name="updates-updateclass">Update class
@@ -364,11 +364,11 @@ Updates can be executed by either using a `StaticStmt` or a `PrepStmt`:
 which provides a builder API to configure and run the update:
 
      Update u = stmt.createUpdate(sql);
-     Update u = pstmt.init(sql).createUpdate();
+     Update u = pstmt.init(sql).params("1", "2").createUpdate();
      
-Because of its builder API you will rarely need to store an `Update` object in a variable but rather chain
-method calls. In the following the variable `u` represents
-an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`     
+In the following the variable `u` represents an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`.          
+But because of its builder API you will rarely need to store an `Update` object in a local variable but rather chain
+method calls to retrieve the result. 
      
 
 ### <a name="updates-run">Run the update
@@ -378,11 +378,27 @@ If you just want to run an update command and are not interested in auto-generat
 
 	int updateCount = u.run();
 	// or: long largeUpdateCount = u.runLarge();
-
+	
+`StaticStmt` and `PrepStmt` provide a short-cut method named `update` to run the update and return the `int` update count:
+   	
+   	String sql      = ... 
+   	StaticStmt stmt = ...
+	int updateCount = stmt.update(sql);
+	
+	// or: 
+   	PrepStmt ptmt   = ...
+   	int updateCount = pstmt.update();
 
 ### <a name="updates-autogen">Run an Update and read auto-generated primary key values
 
-TODO
+If you are interested in the update count *and* in any auto-generated values of primary key columms you need to
+
+   1. configure the `StaticStmt` or `PrepStmt` to return auto-generated primary key values
+   2. invoke an appropriate method on the `Update` object to return the count and the key values represented
+      as an `org.jdbx.UpdateResult` object    
+
+
+
 
 
 TODO Execute

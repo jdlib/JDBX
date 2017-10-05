@@ -8,15 +8,15 @@ import org.jdbx.function.CheckedSupplier;
 
 class PrepStmtUpdate extends Update
 {
-	public PrepStmtUpdate(CheckedSupplier<PreparedStatement> supplier)
+	public PrepStmtUpdate(CheckedSupplier<PreparedStatement> stmtSupplier)
 	{
-		supplier_ = supplier;
+		stmtSupplier_ = stmtSupplier;
 	}
 
 
 	@Override protected long runUpdateImpl(boolean large) throws Exception
 	{
-		PreparedStatement pstmt = supplier_.get();
+		PreparedStatement pstmt = stmtSupplier_.get();
 		return large ?
 			pstmt.executeLargeUpdate() :
 			pstmt.executeUpdate();
@@ -25,7 +25,7 @@ class PrepStmtUpdate extends Update
 
 	@Override protected ResultSet getGeneratedKeys() throws Exception
 	{
-		return supplier_.get().getGeneratedKeys();
+		return stmtSupplier_.get().getGeneratedKeys();
 	}
 
 
@@ -36,9 +36,9 @@ class PrepStmtUpdate extends Update
 
 	@Override protected String toDescription()
 	{
-		return supplier_.toString();
+		return stmtSupplier_.toString();
 	}
 
 
-	private CheckedSupplier<PreparedStatement> supplier_;
+	private CheckedSupplier<PreparedStatement> stmtSupplier_;
 }

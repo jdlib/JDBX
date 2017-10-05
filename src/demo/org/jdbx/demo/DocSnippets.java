@@ -223,6 +223,21 @@ public class DocSnippets
 	}
 	
 	
+	public void updateClass() throws Exception
+	{
+		String sql = null; 
+		u = stmt.createUpdate(sql);
+		u = pstmt.init(sql).createUpdate();
+	}
+	
+	
+	public void updateRun() throws Exception
+	{
+		int updateCount = u.run();
+		long largeUpdateCount = u.runLarge();
+	}
+	
+	
 	private StaticStmt stmt;
 	private PrepStmt pstmt;
 	private CallStmt cstmt;
@@ -230,5 +245,6 @@ public class DocSnippets
 	private DataSource ds;
 	private Query q;
 	private QueryCursor qc;
+	private Update u;
 	private boolean jdbc;
 }

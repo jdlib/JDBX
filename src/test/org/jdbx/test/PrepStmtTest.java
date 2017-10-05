@@ -59,8 +59,8 @@ public class PrepStmtTest extends JdbxTest
 		assertTrue(pstmt_.isInitialized());
 		pstmt_.params("a", 1);
 		Integer idA = pstmt_.createUpdate().runGetAutoKey(Integer.class)
-			.checkCount(1)
-			.checkHasValue();
+			.requireCount(1)
+			.requireValue();
 
 		// insert a single record and remember it: use named parameters
 		pstmt_.init().namedParams().cmd("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");

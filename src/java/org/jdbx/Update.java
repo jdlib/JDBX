@@ -24,7 +24,7 @@ import java.util.List;
 
 
 /**
- * Update is a builder class to configure and run a SQL or DDL command
+ * Update is a builder class to configure and run a DML or DDL command
  * which updates or changes the database.
  */
 public abstract class Update extends StmtRunnable
@@ -39,12 +39,12 @@ public abstract class Update extends StmtRunnable
 		/**
 		 * Reads the auto generated keys and stores the result
 		 * into the value of the UpdateResult.
-		 * @param generatedKeys a result-set containing the auto generated keys
+		 * @param generatedKeys a Query representing the auto generated keys
 		 * @param result the UpdateResult storing the update count and the value describing the auto generated keys.
 		 * @see Statement#getGeneratedKeys()
 		 * @throws Exception if an error occurs
 		 */
-		public void read(ResultSet generatedKeys, UpdateResult<V> result) throws Exception;
+		public void read(Query generatedKeys, UpdateResult<V> result) throws Exception;
 	}
 
 
@@ -104,9 +104,8 @@ public abstract class Update extends StmtRunnable
 	public <V> UpdateResult<V> runGetAutoKey(Class<V> keyType) throws JdbxException
 	{
 		Check.notNull(keyType, "keyType");
-		return runGetAutoKeys((rs,r) -> {
-			if (rs.next())
-				r.value = rs.getObject(1, keyType);
+		return runGetAutoKeys((q,result) -> {
+			result.value = q.row().col().get(keyType);
 		});
 	}
 
@@ -120,8 +119,8 @@ public abstract class Update extends StmtRunnable
 	public <V> UpdateResult<List<V>> runGetAutoKeys(Class<V> keyType) throws JdbxException
 	{
 		Check.notNull(keyType, "keyType");
-		return runGetAutoKeys((rs,r) -> {
-			r.value = Query.of(rs).rows().col().get(keyType);
+		return runGetAutoKeys((q,result) -> {
+			result.value = q.rows().col().get(keyType);
 		});
 	}
 
@@ -141,7 +140,9 @@ public abstract class Update extends StmtRunnable
 		try
 		{
 			result.count = (int)runUpdate(false);
-			reader.read(getGeneratedKeys(), result);
+			try (ResultSet rs = getGeneratedKeys()) { 
+				reader.read(Query.of(rs), result);
+			}
 		}
 		catch (Exception e)
 		{

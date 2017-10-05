@@ -40,8 +40,8 @@ public class CallStmtTest extends JdbxTest
 			id_ = stmt.createUpdate("INSERT INTO CallUser VALUES (DEFAULT, 'Paul', 'Smith')")
 				.returnGenCols()
 				.runGetAutoKey(Integer.class)
-				.checkCount(1)
-				.checkHasValue();
+				.requireCount(1)
+				.requireValue();
 
 			stmt.update(
 				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50))" +

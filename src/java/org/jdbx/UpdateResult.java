@@ -19,8 +19,7 @@ package org.jdbx;
 
 /**
  * UpdateResult is returned by various {@link Update} methods.
- * It stores the update count and the value of 
- * automatically generated keys.
+ * It stores the update count and a value representing automatically generated keys.
  * @param <V> the type of the result value.
  */
 public class UpdateResult<V>
@@ -57,24 +56,39 @@ public class UpdateResult<V>
 
 	/**
 	 * Checks if the count stored in the result matches the expected count.
-	 * @param expectedCount the expected count
+	 * @param expected the expected count
 	 * @return this
 	 * @throws JdbxException if the counts do not match
 	 */
-	public UpdateResult<V> checkCount(int expectedCount) throws JdbxException
+	public UpdateResult<V> requireCount(int expected) throws JdbxException
 	{
-		if (this.count != expectedCount)
-			throw JdbxException.invalidResult("expected update count " + expectedCount + ", but was " + this.count);
+		if (this.count != expected)
+			throw JdbxException.invalidResult("expected update count " + expected + ", but was " + this.count);
 		return this;
 	}
 
 
 	/**
+	 * Checks if the count stored in the result falls in the expected count interval.
+	 * @param minExpected the minimum expected count
+	 * @param maxExpected the maximum expected count
+	 * @return this
+	 * @throws JdbxException if the counts do not match
+	 */
+	public UpdateResult<V> requireCount(int minExpected, int maxExpected) throws JdbxException
+	{
+		if ((this.count < minExpected) || (this.count > maxExpected))
+			throw JdbxException.invalidResult("expected update count in [" + minExpected + ',' + maxExpected + "], but was " + this.count);
+		return this;
+	}
+
+	
+	/**
 	 * Checks that the value is not null
-	 * @return the value
+	 * @return the {@link #value value} of the update result
 	 * @throws JdbxException if the value is null
 	 */
-	public V checkHasValue() throws JdbxException
+	public V requireValue() throws JdbxException
 	{
 		if (this.value == null)
 			throw JdbxException.invalidResult("expected non-null value");
