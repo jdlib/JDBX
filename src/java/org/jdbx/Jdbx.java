@@ -18,11 +18,11 @@ public class Jdbx
 	 * @param params zero or more parameters
 	 * @return the Query
 	 */
-	public static QueryResult query(Connection con, String sql, Object... params)
+	public static Query query(Connection con, String sql, Object... params)
 	{
 		Check.notNull(con, "con");
 		Check.notNull(sql, "sql");
-		return new FastQueryResult(new StmtProvider(con, sql, params));
+		return new FastQuery(new StmtProvider(con, sql, params));
 	}
 
 
@@ -87,18 +87,18 @@ public class Jdbx
 		}
 
 
-		public QueryResult query() throws JdbxException
+		public Query query() throws JdbxException
 		{
 			checkNotUsed();
 			if (params_ == null)
 			{
 				stmt_ = new StaticStmt(con_);
-				return ((StaticStmt)stmt_).query(sql_);
+				return ((StaticStmt)stmt_).createQuery(sql_);
 			}
 			else
 			{
 				stmt_ = new PrepStmt(con_);
-				return ((PrepStmt)stmt_).init(sql_).params(params_).query();
+				return ((PrepStmt)stmt_).init(sql_).params(params_).createQuery();
 			}
 		}
 
@@ -131,9 +131,9 @@ public class Jdbx
 	}
 
 
-	private static class FastQueryResult extends QueryResult
+	private static class FastQuery extends Query
 	{
-		public FastQueryResult(StmtProvider provider)
+		public FastQuery(StmtProvider provider)
 		{
 			provider_ = provider;
 		}

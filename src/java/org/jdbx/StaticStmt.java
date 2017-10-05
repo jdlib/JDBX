@@ -163,20 +163,20 @@ public class StaticStmt extends Stmt
 
 
 	/**
-	 * Returns a QueryResult builder to execute the given SQL query command.
+	 * Returns a Query builder to execute the given SQL query command.
 	 * @param sql a SQL command
-	 * @return the QueryResult
+	 * @return the Query
 	 */
-	public QueryResult query(String sql)
+	public Query createQuery(String sql)
 	{
 		Check.notNull(sql, "sql");
-		return new StaticQueryResult(sql);
+		return new StaticQuery(sql);
 	}
 
 
-	private class StaticQueryResult extends QueryResult
+	private class StaticQuery extends Query
 	{
-		public StaticQueryResult(String sql)
+		public StaticQuery(String sql)
 		{
 			sql_ = sql;
 		}

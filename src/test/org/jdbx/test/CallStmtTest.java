@@ -82,13 +82,13 @@ public class CallStmtTest extends JdbxTest
 
 	/**
 	 * Calls a stored procedure which returns a result set.
-	 * The result set is accessed via {@link CallStmt#query()}.
+	 * The result set is accessed via {@link CallStmt#createQuery()}.
 	 */
 	@Test public void testQueryReturnResultSet() throws JdbxException
 	{
 		stmt_.init("call GetUserAsResult(?)");
 		stmt_.param(1).setInteger(id_);
-		Object[] data = stmt_.query().row().cols();
+		Object[] data = stmt_.createQuery().row().cols();
 		assertNotNull(data);
 		assertEquals(3, data.length);
 		assertEquals(id_, data[0]);

@@ -80,7 +80,7 @@ public class PrepStmtTest extends JdbxTest
 
 		// read a row by id
 		pstmt_.init("SELECT * FROM PTests WHERE id = ?");
-		Dao dao = pstmt_.params(idA).query().row().read(Dao::read);
+		Dao dao = pstmt_.params(idA).createQuery().row().read(Dao::read);
 		assertNotNull(dao);
 		assertEquals(idA, 	dao.id);
 		assertEquals("a", 	dao.name);

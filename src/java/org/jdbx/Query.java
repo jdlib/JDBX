@@ -7,27 +7,29 @@ import org.jdbx.function.CheckedFunction;
 
 
 /**
- * QueryResult is a builder class to extract values from a JDBC result set.
+ * Query is a builder class to run a SQL query and extract values from the JDBC result set.
+ * Note that actual query on JDBC level may actually not be run until
+ * a terminal operation of the builder method chain is executed. 
  */
-public abstract class QueryResult extends StmtRunnable
+public abstract class Query extends StmtRunnable
 {
 	/**
 	 * Returns a Query object for an existing ResultSet.
 	 * @param resultSet a ResultSet
 	 * @return the Query
 	 */
-	public static QueryResult of(ResultSet resultSet)
+	public static Query of(ResultSet resultSet)
 	{
-		return new ResultSetQueryResult(resultSet);
+		return new ResultSetQuery(resultSet);
 	}
 
 
 	/**
-	 * Instructs the query to skip the first n rows.
+	 * Instructs the query to skip the first n rows from the result.
 	 * @param n a number of rows
 	 * @return this
 	 */
-	public QueryResult skip(int n)
+	public Query skip(int n)
 	{
 		skip_ = Math.max(0, n);
 		return this;
@@ -47,7 +49,8 @@ public abstract class QueryResult extends StmtRunnable
 
 
 	/**
-	 * Executes the query and returns the QueryCursor.
+	 * Executes the query and returns the result in form of a QueryCursor.
+	 * You should actively close the cursor once it is no longer used. 
 	 * @return the cursor
 	 */
 	public QueryCursor cursor() throws JdbxException
@@ -68,9 +71,9 @@ public abstract class QueryResult extends StmtRunnable
 	 * Returns a builder to access the first row of the result set.
 	 * @return the builder
 	 */
-	public QResultOneRow row()
+	public QueryOneRow row()
 	{
-		return new QResultOneRow(this);
+		return new QueryOneRow(this);
 	}
 
 
@@ -78,7 +81,7 @@ public abstract class QueryResult extends StmtRunnable
 	 * Returns a builder to access all rows of the result set.
 	 * @return the builder
 	 */
-	public QResultRows rows()
+	public QueryRows rows()
 	{
 		return rows(Integer.MAX_VALUE);
 	}
@@ -89,9 +92,9 @@ public abstract class QueryResult extends StmtRunnable
 	 * @param max the maximum number of rows
 	 * @return the builder
 	 */
-	public QResultRows rows(int max)
+	public QueryRows rows(int max)
 	{
-		return new QResultRows(this, max);
+		return new QueryRows(this, max);
 	}
 
 

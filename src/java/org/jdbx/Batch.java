@@ -99,7 +99,7 @@ public abstract class Batch
 	{
 		Check.notNull(keyType, "keyType");
 		return runGetAutoKeys((rs,r) -> {
-			r.value = QueryResult.of(rs).rows().col().get(keyType);
+			r.value = Query.of(rs).rows().col().get(keyType);
 		});
 	}
 

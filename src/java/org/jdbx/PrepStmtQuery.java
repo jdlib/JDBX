@@ -6,9 +6,9 @@ import java.sql.ResultSet;
 import org.jdbx.function.CheckedSupplier;
 
 
-class PrepStmtQueryResult extends QueryResult
+class PrepStmtQuery extends Query
 {
-	public PrepStmtQueryResult(CheckedSupplier<PreparedStatement> supplier)
+	public PrepStmtQuery(CheckedSupplier<PreparedStatement> supplier)
 	{
 		supplier_ = supplier;
 	}

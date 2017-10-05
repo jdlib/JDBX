@@ -62,17 +62,17 @@ public class ExecuteResult
 	}
 
 
-	ExecuteResult(Statement stmt, boolean hasResultSet)
+	ExecuteResult(Statement stmt, boolean hasQuery)
 	{
-		stmt_ 			= Check.notNull(stmt, "stmt");
-		hasQueryResult_	= hasResultSet;
-		status_			= Status.BEFORE_FIRST;
+		stmt_ 		= Check.notNull(stmt, "stmt");
+		hasQuery_	= hasQuery;
+		status_		= Status.BEFORE_FIRST;
 	}
 
 
-	private void initNext(boolean hasResultSet) throws JdbxException
+	private void initNext(boolean hasQuery) throws JdbxException
 	{
-		if (hasQueryResult_ = hasResultSet)
+		if (hasQuery_ = hasQuery)
 		{
 			status_ = Status.HAS_QUERYRESULT;
 			updateCount_ = -1;
@@ -171,15 +171,15 @@ public class ExecuteResult
 
 	/**
 	 * Returns the current result as query.
-	 * @return the result set
+	 * @return the query
 	 * @throws JdbxException if the current result is not an {@link #isQuery() result set}
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public QueryResult getQuery() throws JdbxException
+	public Query getQuery() throws JdbxException
 	{
 		checkIsQuery();
 		ResultSet resultSet = CheckedFunction.unchecked(Statement::getResultSet, stmt_);
-		return QueryResult.of(resultSet);
+		return Query.of(resultSet);
 	}
 
 
@@ -202,10 +202,10 @@ public class ExecuteResult
 	 * @throws JdbxException if next() has not been called yet or if position after the last result
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public QueryResult queryGeneratedKeys() throws JdbxException, SQLException
+	public Query queryGeneratedKeys() throws JdbxException, SQLException
 	{
 		checkHasResult();
-		return QueryResult.of(getGeneratedKeys());
+		return Query.of(getGeneratedKeys());
 	}
 
 
@@ -231,7 +231,7 @@ public class ExecuteResult
 		checkNotLast();
 		Check.valid(current);
 		if (status_ == Status.BEFORE_FIRST)
-			initNext(hasQueryResult_);
+			initNext(hasQuery_);
 		else
 		{
 			try
@@ -280,7 +280,7 @@ public class ExecuteResult
 
 
 	private Statement stmt_;
-	private boolean hasQueryResult_;
+	private boolean hasQuery_;
 	private long updateCount_;
 	private Status status_ = Status.BEFORE_FIRST;
 }
