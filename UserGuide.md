@@ -15,7 +15,8 @@ JDBX User Guide
 4. [Running DML or DDL updates](#updates)
    * [Run the update](#updates-run)
    * [Update class](#updates-updateclass)
-   * [Run updates and read auto-generated primary key values](#updates-autogen)
+   * [Read returned columns values](#updates-readcols)
+   * [Returning large update counts](#updates-large)
 5. [Executing arbitrary SQL commands](#execute)
 6. [Running a single command](#single-cmd)
 
@@ -353,7 +354,7 @@ You still can obtain the `java.sql.ResultSet` of a query cursor if you want to p
     
 ## <a name="updates"></a>4. Running DML or DDL updates
 
-JDBX - as JDBC - uses the term *update* for DML commands (i.e. UPDATE, INSERT, DELETE), DDL commands and all SQL commands which
+JDBX - as JDBC - uses the term *update* for running DML commands (i.e. UPDATE, INSERT, DELETE), DDL commands and all SQL commands which
 return nothing. 
 
 Running an update command returns the number of affected records and optionally the values of changed columns, e.g.
@@ -364,7 +365,7 @@ most important the auto-generated values of primary key columns.
 Updates are executed by either using a `StaticStmt` or a `PrepStmt`.
 
 If you just want to run an update command and are not interested in returned column values then call
-`StaticStmt.update(String)` and `PrepStmt.update()`. The return value is the number of affected records:
+`StaticStmt.update(String)` or `PrepStmt.update()`:
 
    	String sql      = ... 
    	StaticStmt stmt = ...
@@ -374,15 +375,15 @@ If you just want to run an update command and are not interested in returned col
    	PrepStmt ptmt   = ...
    	pstmt.update();
    	
-Both calls return the update result as object of class `org.jdbx.UpdateResult`. The method `UpdateResult.count()` 
-returns the update count, i.e. the number of affected records:
+Both calls return the update result as an `org.jdbx.UpdateResult` object. The method `UpdateResult.count()` 
+gives the update count, i.e. the number of affected records:
 
 	String sql   = "INSERT INTO ...";
 	int inserted = stmt.update(sql).count();
 	if (inserted != 1)
 	    throw new IllegalStateException("insert failed");
 
-Testing the update count can be shortened by writing: 
+Testing the update count can be shortened by calling `UpdateResult.requireCount`: 
 
 	stmt.update(sql).requireCount(1); // throws an exception if the update count is not 1
 	
@@ -396,28 +397,28 @@ The `Update` class provides a builder API to configure and then run the update t
      Update u = stmt.createUpdate(sql);
      Update u = pstmt.init(sql).params("1", "2").createUpdate();
      
-In the following the variable `u` represents an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`.          
-But because of its builder API you will rarely need to store an `Update` object in a local variable but rather chain
+Because of its builder API you will rarely need to store an `Update` object in a local variable but rather chain
 method calls to retrieve the result. 
 
-### <a name="updates-autogen">Read returned columns values
 
-If you are interested to read returned column values, e.g. auto-generated primary key valuesyou need to
+### <a name="updates-readcols">Read returned columns values
+
+If you are interested to read returned column values, e.g. auto-generated primary key values, you need to
 
    1. specify the columns which should be returned
    2. invoke an appropriate method on the `Update` object to read the returned column values and
-      store them in the final `UpdateResult`    
+      store them in the `UpdateResult`    
 
 For `StaticStmt` steps 1) and 2) are done by configuring the `Update` object:
   
     StaticStmt stmt = ...
     UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
-        .returnAutoKeyCols()        // step 1: tell the Update to return auto-generated key value
+        .returnAutoKeyCols()        // step 1: tell the Update to return the auto-generated key value
         .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key value as Integer 
     int inserted  = result.count();
     Integer newId = result.value();
     
-The convenience method `UpdateResult.requiredValue` tests if the column value stored in the result is not null and returns the value.
+The convenience method `UpdateResult.requireValue` tests if the column value stored in the result is not null and returns the value.
 This allows to write:  
         
     Integer newId = stmt.createUpdate("INSERT INTO ...")
@@ -426,13 +427,13 @@ This allows to write:
         .requireCount(1)  // could throw an Exception
         .requireValue();  // could throw an Exception
 
-For step 1 there are alternative ways to specify the returned columns, for instance by using column indexes or names
+For step 1 there are alternative ways to specify the returned columns, for instance by using column indexes or names:
 
     stmt.createUpdate(sql).returnCols(1, 5, 7)...   
     stmt.createUpdate(sql).returnCols("id", "timestamp")...
     
 For step 2 there are alternative ways to retrieve the returned column values. If multiple records are affected, and you want
-to retrieve one column value from each row you can call `Update.runGetCols(Class)` to retrieve the values as `java.util.List`:
+to retrieve one column value from each row you can call `Update.runGetCols(Class<T>)` to retrieve the values as `java.util.List<T>`:
 
     List<Integer> newIds = stmt.createUpdate("INSERT INTO Names (name) VALUES ('Peter'), ('Paul')") 
         .returnAutoKeyCols()
@@ -447,13 +448,38 @@ For `PrepStmt` step 1) must be done during the initialization phase:
     PrepStmt pstmt = ...
     pstmt.init().returnAutoKeyCols().cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
     Integer newId  = pstmt.params("John", "Doe").createUpdate()
-    	.runGetCol(Integer.class)
-    	.requireValue();
+        .runGetCol(Integer.class)
+        .requireValue();
+        
+### <a name="updates-large">Returning large update counts
+
+Since version 4.2 JDBC has an API for large update counts, represented as `long` values. Since not all
+JDBC drivers support this feature JDBX gives optional access to large count values:       
+
+    long updated = stmt.createUpdate("UPDATE MegaTable SET timestamp = NOW()") 
+        .returnLargeCount()  // configures the Update 
+        .run()               // runs the Update and returns the UpdateResult
+        .largeCount();       // returns the update count as long   
+        
 
 ## <a name="execute"></a>5. Executing arbitrary SQL commands
 
-TODO Execute
-	
+JDBX - as JDBC - uses the term *execute* for running SQL commands with yet unknown result type - update or query - or which can return multiple
+update and query results.
+
+You can execute a command by calling `StaticStmt.execute(String sql)` or `PrepStmt.execute()` on a initialized `PrepStmt`.
+Both methods return a `org.jdbx.ExecuteResult` which allows you to loop through the individual results, detect if they are
+update or query results and evalute the `UpdateResult` or `QueryResult`.  
+
+	String sql = ...
+	StaticStmt stmt = ...
+	ExecuteResult result = stmt.execute(sql);
+	while (result.next()) {
+		if (result.isQuery())
+			// process result.getQueryResult() 
+		else
+			// process result.getUpdateResult()
+	}  	
 
 ## <a name="single-cmd"></a>6. Running a single command
         

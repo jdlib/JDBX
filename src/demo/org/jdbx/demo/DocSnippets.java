@@ -247,7 +247,7 @@ public class DocSnippets
 	}
 	
 	
-	public void updateAutoGen() throws Exception
+	public void updateReturnCols() throws Exception
 	{
         UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
             .returnAutoKeyCols()        // step 1: tell the Update to return auto-generated key value
@@ -269,6 +269,27 @@ public class DocSnippets
         	.createUpdate()
             .runGetCol(Integer.class)
             .requireValue();
+	}
+
+
+	public void updateAutoGen() throws Exception
+	{
+	    long updated = stmt.createUpdate("UPDATE MegaTable SET timestamp = NOW()") 
+	        .returnLargeCount()  // configures the Update 
+	        .run()               // runs the Update and returns the UpdateResult
+	        .largeCount();       // returns the count as long
+	}   
+
+
+	public void execute() throws Exception
+	{
+		ExecuteResult result = stmt.execute(sql);
+		while (result.next()) {
+			if (result.isQuery())
+				result.getQuery();
+			else
+				result.getUpdateResult();
+		}
 	}
 	
 	

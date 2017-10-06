@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.List;
+import org.jdbx.function.GetReturnCols;
 
 
 /**
@@ -30,25 +31,6 @@ import java.util.List;
 public abstract class Update extends StmtRunnable
 {
 	/**
-	 * A functional interface for a service which reads the returned column value
-	 * when executing an update command.
-	 */
-	@FunctionalInterface
-	public static interface AutoKeysReader<V>
-	{
-		/**
-		 * Reads the returned column values as a value of type V 
-		 * @param updateCount the update count
-		 * @param result a Query representing the returned column values
-		 * @return the value representing the returned column values 
-		 * @see Statement#getGeneratedKeys()
-		 * @throws Exception if an error occurs
-		 */
-		public V read(long updateCount, Query result) throws Exception;
-	}
-
-
-	/**
 	 * Instructs the Update to retrieve the update count as long value.
 	 * The count is always reported as {@link UpdateResult#count() long value} but
 	 * by default is on the JDBC level retrieved as int value.  
@@ -56,7 +38,7 @@ public abstract class Update extends StmtRunnable
 	 * @see Statement#executeLargeUpdate(String)
 	 * @return this.
 	 */
-	public Update large()
+	public Update returnLargeCount()
 	{
 		large_ = true;
 		return this;
@@ -90,15 +72,15 @@ public abstract class Update extends StmtRunnable
 
 
 	/**
-	 * Runs the command and returns a single auto generated key.
-	 * @param keyType the type of the generated key
-	 * @param <V> the type of the value returned by the AutoKeysReader
-	 * @return an UpdateResult holding the update count and the key value
+	 * Runs the command and returns the value of the first returned column.
+	 * @param colType the type of the column
+	 * @param <V> the type of the column
+	 * @return an UpdateResult holding the update count and the column value
 	 */
-	public <V> UpdateResult<V> runGetCol(Class<V> keyType) throws JdbxException
+	public <V> UpdateResult<V> runGetCol(Class<V> colType) throws JdbxException
 	{
-		Check.notNull(keyType, "keyType");
-		return runGetCols((c,q) -> q.row().col().get(keyType));
+		Check.notNull(colType, "colType");
+		return runGetCols((c,q) -> q.row().col().get(colType));
 	}
 
 
@@ -108,33 +90,32 @@ public abstract class Update extends StmtRunnable
 	 * @param <V> the type of the value returned by the AutoKeysReader
 	 * @return an UpdateResult holding the update count and the key list
 	 */
-	public <V> UpdateResult<List<V>> runGetCols(Class<V> keyType) throws JdbxException
+	public <V> UpdateResult<List<V>> runGetCols(Class<V> colType) throws JdbxException
 	{
-		Check.notNull(keyType, "keyType");
-		return runGetCols((c,q) ->  q.rows().col().get(keyType));
+		Check.notNull(colType, "colType");
+		return runGetCols((c,q) ->  q.rows().col().get(colType));
 	}
 
 
 	/**
 	 * Runs the command and passes the result-set of the generated keys to the reader.
-	 * @param reader a AutoKeysReader. It should read the keys and place it in appropriate form into the result object.
+	 * @param reader a reader functions. It read the keys from the update result-set and returns it as object of type V.
 	 * @param <V> the type of the value returned by the AutoKeysReader
-	 * @return an UpdateResult holding the update count and the key list
+	 * @return an UpdateResult holding the update count and the column values
 	 */
-	public <V> UpdateResult<V> runGetCols(AutoKeysReader<V> reader) throws JdbxException
+	public <V> UpdateResult<V> runGetCols(GetReturnCols<V> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
-		UpdateResult<V> result = new UpdateResult<>();
+		UpdateResult<V> result = null;
 
 		Exception ex = null;
 		try
 		{
 			long count = (int)runUpdate(false);
-			V value;
 			try (ResultSet rs = getGeneratedKeys()) { 
-				value = reader.read(count, Query.of(rs));
+				V value = reader.read(count, Query.of(rs));
+				result  = new UpdateResult<>(count, value);
 			}
-			return new UpdateResult<>(count, value);
 		}
 		catch (Exception e)
 		{
@@ -161,10 +142,10 @@ public abstract class Update extends StmtRunnable
 	protected abstract long runUpdateImpl(boolean large) throws Exception;
 
 
+	/**
+	 * May only be called by {@link #runGetCols()}
+	 */
 	protected abstract ResultSet getGeneratedKeys() throws Exception;
-
-
-	protected abstract void cleanup() throws Exception;
 
 
 	private void cleanup(Exception e1) throws JdbxException
@@ -181,6 +162,12 @@ public abstract class Update extends StmtRunnable
 		if ((e1 != null) || (e2 != null))
 			throw JdbxException.combine(e1, e2);
 	}
+
+
+	/**
+	 * Release any JDBC resources opened by the implementation.
+	 */
+	protected abstract void cleanup() throws Exception;
 
 
 	@Override protected final String getRunnableType()

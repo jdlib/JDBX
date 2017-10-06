@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.jdbx.function.CheckedFunction;
 import org.jdbx.function.CheckedRunnable;
+import org.jdbx.function.GetReturnCols;
 
 
 /**
@@ -16,7 +17,8 @@ import org.jdbx.function.CheckedRunnable;
  * ExecuteResult result = ...;
  * while (result.next()) {
  *     if (result.isQuery()) {
- *     	   Query q = result.getQuery(); ...
+ *     	   Query q = result.getQuery(); 
+ *         // process query result
  *     }
  *     else {
  *         int count = result.getUpdateCount(); ...
@@ -69,6 +71,11 @@ public class ExecuteResult
 		status_		= Status.BEFORE_FIRST;
 	}
 
+	
+	//-------------------------------
+	// navigation
+	//-------------------------------
+	
 
 	private void initNext(boolean hasQuery) throws JdbxException
 	{
@@ -92,6 +99,72 @@ public class ExecuteResult
 	}
 
 
+	/**
+	 * Moves to the next result. All open result sets are closed.
+	 * @return true if there is a next result
+	 */
+	public boolean next() throws JdbxException
+	{
+		return next(Current.CLOSE_ALL_RESULTS);
+	}
+
+
+	/**
+	 * Moves to the next result.
+	 * @param current determines what happens to previously obtained ResultSets
+	 * @return true if there is a next result
+	 */
+	public boolean next(Current current) throws JdbxException
+	{
+		checkNotLast();
+		Check.valid(current);
+		if (status_ == Status.BEFORE_FIRST)
+			initNext(hasQuery_);
+		else
+		{
+			try
+			{
+				initNext(stmt_.getMoreResults(current.getCode()));
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
+		}
+		return (status_ == Status.HAS_QUERYRESULT) || (status_ == Status.HAS_UPDATERESULT);
+	}
+
+
+	/**
+	 * Moves to the next result until the result is a query result.
+	 * @return true if moved to a result which is a ResultSet
+	 */
+	public boolean nextQuery() throws JdbxException
+	{
+		while (next())
+		{
+			if (isQuery())
+				return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * Moves to the next result until the result is an update result.
+	 * @return true if moved to a result which is an update result
+	 */
+	public boolean nextUpdate() throws JdbxException
+	{
+		while (next())
+		{
+			if (isUpdate())
+				return true;
+		}
+		return false;
+	}
+
+
 	private void checkHasResult() throws JdbxException
 	{
 		if (status_ == Status.BEFORE_FIRST)
@@ -105,6 +178,11 @@ public class ExecuteResult
 		if (status_ == Status.AFTER_LAST)
 			throw JdbxException.illegalState("no more results");
 	}
+	
+	
+	//-------------------------------
+	// update results
+	//-------------------------------
 
 
 	/**
@@ -119,8 +197,53 @@ public class ExecuteResult
 	}
 
 
+	private void checkIsUpdate() throws JdbxException
+	{
+		if (!isUpdate())
+			throw JdbxException.illegalState("current result is not an update result");
+	}
+
+	
+	public UpdateResult<Void> getUpdateResult() throws JdbxException
+	{
+		checkIsUpdate();
+		return new UpdateResult<>(updateCount_);
+	}
+	
+
+	public <V> UpdateResult<V> getUpdateResult(Class<V> colType) throws JdbxException
+	{
+		Check.notNull(colType, "colType");
+		return getUpdateResult((c,q) -> q.row().col().get(colType));
+	}
+
+
+	public <V> UpdateResult<V> getUpdateResult(GetReturnCols<V> reader) throws JdbxException
+	{
+		Check.notNull(reader, "reader");
+		checkIsUpdate();
+
+		try
+		{
+			try (ResultSet rs = stmt_.getGeneratedKeys()) { 
+				V value = reader.read(updateCount_, Query.of(rs));
+				return new UpdateResult<>(updateCount_, value);
+			}
+		}
+		catch (Exception e)
+		{
+			throw JdbxException.of(e);
+		}
+	}
+	
+	
+	//-------------------------------
+	// query results
+	//-------------------------------
+
+
 	/**
-	 * Returns if the current result provides query result.
+	 * Returns if the current result provides a query result.
 	 * @return true if the current result provides a query result
 	 * @throws JdbxException if next() has not been called yet or if position after the last result
 	 */
@@ -131,41 +254,10 @@ public class ExecuteResult
 	}
 
 
-	private void checkIsUpdate() throws JdbxException
-	{
-		if (!isUpdate())
-			throw JdbxException.illegalState("current result is not an update result");
-	}
-
-
 	private void checkIsQuery() throws JdbxException
 	{
 		if (!isQuery())
 			throw JdbxException.illegalState("current result is not a query result");
-	}
-
-
-	/**
-	 * Returns the update count of the current update result.
-	 * @return the update count
-	 * @throws JdbxException if the current result is not an {@link #isUpdate() update result}
-	 */
-	public int getUpdateCount() throws JdbxException
-	{
-		checkIsUpdate();
-		return (int)updateCount_;
-	}
-
-
-	/**
-	 * Returns the (large) update count of the current update result as long.
-	 * @return the update count
-	 * @throws JdbxException if the current result is not an {@link #isUpdate() update result}
-	 */
-	public long getLargeUpdateCount() throws JdbxException
-	{
-		checkIsUpdate();
-		return updateCount_;
 	}
 
 
@@ -180,102 +272,6 @@ public class ExecuteResult
 		checkIsQuery();
 		ResultSet resultSet = CheckedFunction.unchecked(Statement::getResultSet, stmt_);
 		return Query.of(resultSet);
-	}
-
-
-	/**
-	 * Returns the generated keys of the current result.
-	 * @return the result set containing the generated keys
-	 * @throws JdbxException if next() has not been called yet or if position after the last result
-	 * @throws SQLException if the JDBC operation throws a SQLException
-	 */
-	public ResultSet getGeneratedKeys() throws JdbxException, SQLException
-	{
-		checkHasResult();
-		return stmt_.getGeneratedKeys();
-	}
-
-
-	/**
-	 * Returns the generated keys of the current result wrapped in a Query object.
-	 * @return the query
-	 * @throws JdbxException if next() has not been called yet or if position after the last result
-	 * @throws SQLException if the JDBC operation throws a SQLException
-	 */
-	public Query queryGeneratedKeys() throws JdbxException, SQLException
-	{
-		checkHasResult();
-		return Query.of(getGeneratedKeys());
-	}
-
-
-	/**
-	 * Moves to the next result. All open result sets are closed.
-	 * @return true if there is a next result
-	 * @throws SQLException if the JDBC operation throws a SQLException
-	 */
-	public boolean next() throws JdbxException
-	{
-		return next(Current.CLOSE_ALL_RESULTS);
-	}
-
-
-	/**
-	 * Moves to the next result.
-	 * @param current determines what happens to previously obtained ResultSets
-	 * @return true if there is a next result
-	 * @throws SQLException if the JDBC operation throws a SQLException
-	 */
-	public boolean next(Current current) throws JdbxException
-	{
-		checkNotLast();
-		Check.valid(current);
-		if (status_ == Status.BEFORE_FIRST)
-			initNext(hasQuery_);
-		else
-		{
-			try
-			{
-				initNext(stmt_.getMoreResults(current.getCode()));
-			}
-			catch (SQLException e)
-			{
-				throw JdbxException.of(e);
-			}
-		}
-		return (status_ == Status.HAS_QUERYRESULT) || (status_ == Status.HAS_UPDATERESULT);
-	}
-
-
-	/**
-	 * Moves to the next result until the result is a query result.
-	 * @return true if moved to a result which is a ResultSet
-	 * @throws SQLException if the JDBC operation throws a SQLException
-	 */
-	public boolean nextQuery() throws JdbxException, SQLException
-	{
-		while (next())
-		{
-			if (isQuery())
-				return true;
-		}
-		return false;
-	}
-
-
-	/**
-	 * Moves to the next result until the result is an update result.
-	 * @return true if moved to a result which is an update result
-	 * @throws SQLException if the JDBC operation throws a SQLException
-	 */
-	public boolean nextUpdate() throws JdbxException, SQLException
-	{
-		while (next())
-		{
-			if (isUpdate())
-				return true;
-		}
-		return false;
 	}
 
 

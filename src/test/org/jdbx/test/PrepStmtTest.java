@@ -66,7 +66,7 @@ public class PrepStmtTest extends JdbxTest
 		pstmt_.init().namedParams().cmd("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
 		pstmt_.param("name").setString("b");
 		pstmt_.param("type").setInt(15);
-		assertEquals(1, pstmt_.update());
+		assertEquals(1, pstmt_.update().count());
 		
 		// insert two records using a batch
 		pstmt_.param(1, "c").param(2, 2).batch().add();

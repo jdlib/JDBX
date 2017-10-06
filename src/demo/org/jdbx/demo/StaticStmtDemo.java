@@ -98,7 +98,7 @@ public class StaticStmtDemo
 		{
 			if (result.isUpdate())
 			{
-				int updateCount = result.getUpdateCount();
+				result.getUpdateResult();
 				// evaluate updateCount
 			}
 			else

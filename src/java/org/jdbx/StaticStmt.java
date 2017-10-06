@@ -386,6 +386,16 @@ public class StaticStmt extends Stmt
 	}
 
 
+	/**
+	 * Executes a SQL command and returns the result
+	 * @return the ExecuteResult
+	 */
+	public ExecuteResult execute(String sql)
+	{
+		return createExecute(sql).run();
+	}
+
+	
 	//------------------------------
 	// batch
 	//------------------------------
