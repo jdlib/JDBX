@@ -112,7 +112,6 @@ public class DocSnippets
 	
 	public void queryClass() throws Exception
 	{
-		String sql = null;
 		q = stmt.query(sql);
 		q = pstmt.init(sql).params("a", "b").query();
 	}
@@ -223,34 +222,57 @@ public class DocSnippets
 	}
 	
 	
-	public void updateClass() throws Exception
+	public void update() throws Exception
 	{
-		String sql = null; 
-		u = stmt.createUpdate(sql);
-		u = pstmt.init(sql).createUpdate();
+		stmt.update(sql);
+		pstmt.update();
 	}
 	
 	
 	public void updateRun() throws Exception
 	{
-		long count = u.run().count();
+		int count;
 		
    		count = stmt.update(null).count();
    	   	count = pstmt.update().count();
+   	   	
+   	   	stmt.update(null).requireCount(1);
 	}
 	
 
-	public void updateAutoGen() throws Exception
+	public void updateClass() throws Exception
 	{
-        UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
-        	.returnAutoKeyCols()            // step 1 
-	        .runGetCol(Integer.class);  // step 2
-        Integer id 		= result.value(); 
-        int updateCount = result.count();
-		
+		u = stmt.createUpdate(sql);
+		u = pstmt.init(sql).createUpdate();
 	}
 	
 	
+	public void updateAutoGen() throws Exception
+	{
+        UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
+            .returnAutoKeyCols()        // step 1: tell the Update to return auto-generated key value
+            .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key value as Integer 
+        int inserted  = result.count();
+        Integer newId = result.value(); 
+
+        newId = stmt.createUpdate("INSERT INTO ...")
+            .returnAutoKeyCols()
+            .runGetCol(Integer.class)
+            .requireCount(1)  // could throw an Exception
+            .requireValue();  // could throw an Exception
+        
+        stmt.createUpdate(sql).returnCols(1, 5, 7);   
+        stmt.createUpdate(sql).returnCols("id", "timestamp");
+
+        newId = pstmt.init().returnAutoKeyCols().cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
+        	.params("John", "Doe")
+        	.createUpdate()
+            .runGetCol(Integer.class)
+            .requireValue();
+	}
+	
+	
+	private String sql;
 	private StaticStmt stmt;
 	private PrepStmt pstmt;
 	private CallStmt cstmt;

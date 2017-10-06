@@ -16,7 +16,6 @@
  */
 package org.jdbx;
 
-
 /**
  * ReturnCols represents the columns which should be returned
  * when a INSERT command is executed.
@@ -33,7 +32,7 @@ public class ReturnCols
 	public static interface Builder<I extends Builder<I>>
 	{
 		/**
-		 * The columns defined by the ReturnCols object should be returned.
+		 * The columns defined by the ReturnCols object are returned.
 		 * @param cols the ReturnCols object or null if no columns should be returned
 		 * @return this
 		 */
@@ -41,8 +40,7 @@ public class ReturnCols
 
 		
 		/**
-		 * The columns which contain auto generated keys should be returned.
-		 * @return this
+		 * The columns which contain auto generated keys (decided by the JDBC driver/database) are returned.
 		 */
 		public default I returnAutoKeyCols()
 		{
@@ -51,7 +49,7 @@ public class ReturnCols
 
 
 		/**
-		 * Defines the indexes of the columns which should be returned.
+		 * Defines the indexes of the columns which are returned.
 		 * @param colIndexes the indexes
 		 * @return this
 		 */
