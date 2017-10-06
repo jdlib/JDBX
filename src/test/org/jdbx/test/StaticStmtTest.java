@@ -59,41 +59,41 @@ public class StaticStmtTest extends JdbxTest
 		int count;
 
 		sql   = "SELECT COUNT(*) FROM STest";
-		count = stmt_.createQuery(sql).row ().col().getInt();
+		count = stmt_.query(sql).row ().col().getInt();
 		assertEquals(0, count);
 
 		sql   = "INSERT INTO STest (name) VALUES ('A'), ('B'), ('C'), ('D')";
-		count = stmt_.update(sql);
+		count = stmt_.update(sql).count();
 		assertEquals(4, count);
 
 		sql   = "SELECT count(*) FROM STest";
-		count = stmt_.createQuery(sql).row().col().getInt();
+		count = stmt_.query(sql).row().col().getInt();
 		assertEquals(4, count);
 
 		sql   = "SELECT * FROM STest ORDER BY name DESC";
-		List<String> names = stmt_.createQuery(sql).rows().col("NAME").getString();
+		List<String> names = stmt_.query(sql).rows().col("NAME").getString();
 		assertEquals(4, names.size());
 		assertEquals("D", names.get(0));
 		assertEquals("C", names.get(1));
 		assertEquals("B", names.get(2));
 		assertEquals("A", names.get(3));
 
-		names = stmt_.createQuery(sql).skip(1).rows(2).col(2 /*=name*/).getString();
+		names = stmt_.query(sql).skip(1).rows(2).col(2 /*=name*/).getString();
 		assertEquals(2, names.size());
 		assertEquals("C", names.get(0));
 		assertEquals("B", names.get(1));
 
-		Map<String,Object> map = stmt_.createQuery(sql).row().map();
+		Map<String,Object> map = stmt_.query(sql).row().map();
 		assertEquals(2, map.size());
 		assertEquals("D", map.get("NAME"));
 		assertTrue(map.get("ID") instanceof Integer);
 
-		Object[] array = stmt_.createQuery(sql).row().cols();
+		Object[] array = stmt_.query(sql).row().cols();
 		assertEquals(2, array.length);
 		assertTrue(array[0] instanceof Integer);
 		assertEquals("D", array[1]);
 
-		List<Dao> users = stmt_.createQuery(sql).rows().read(Dao::new);
+		List<Dao> users = stmt_.query(sql).rows().read(Dao::new);
 		assertEquals(4, users.size());
 		Dao userD = users.get(0);
 		assertNotNull(userD.id);
@@ -109,22 +109,22 @@ public class StaticStmtTest extends JdbxTest
 		sql = "INSERT INTO STest (name) VALUES ('A'), ('B')";
 		UpdateResult<List<Integer>> result = stmt_.createUpdate(sql)
 			.returnCols("ID")
-			.runGetAutoKeys(Integer.class);
-		assertEquals(2, result.count);
-		assertEquals(2, result.value.size());
-		int idA = result.value.get(0).intValue();
-		int idB = result.value.get(1).intValue();
+			.runGetCols(Integer.class);
+		assertEquals(2, result.count());
+		assertEquals(2, result.value().size());
+		int idA = result.value().get(0).intValue();
+		int idB = result.value().get(1).intValue();
 		assertEquals(idA + 1, idB);
 
 		sql 	= "UPDATE STest SET name = 'BB' WHERE name = 'B'";
-		count	= stmt_.update(sql);
+		count	= stmt_.update(sql).count();
 		assertEquals(1, count);
 	}
 
 
 	@Test public void testExecute() throws JdbxException
 	{
-		stmt_.createExecute("INSERT INTO STest (name) VALUES ('A')").returnGenCols().run(r -> {
+		stmt_.createExecute("INSERT INTO STest (name) VALUES ('A')").returnAutoKeyCols().run(r -> {
 			assertTrue(r.next());
 			assertTrue(r.isUpdate());
 			assertEquals(1, r.getUpdateCount());

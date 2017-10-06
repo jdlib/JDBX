@@ -61,10 +61,10 @@ public class SimpleDemo
 
 
 		// run a parameterless update
-		count = Jdbx.update(con, "UPDATE Status SET flag = 'T' WHERE flag = 'F'");
+		count = Jdbx.update(con, "UPDATE Status SET flag = 'T' WHERE flag = 'F'").count();
 
 
 		// run a parameterized insert
-		count = Jdbx.update(con, "INSERT INTO Status (flag) VALUES (?)", "F");
+		count = Jdbx.update(con, "INSERT INTO Status (flag) VALUES (?)", "F").count();
 	}
 }

@@ -58,7 +58,7 @@ public class PrepStmtTest extends JdbxTest
 		pstmt_.init().returnCols(1).cmd("INSERT INTO PTests VALUES (DEFAULT, ?, ?)");
 		assertTrue(pstmt_.isInitialized());
 		pstmt_.params("a", 1);
-		Integer idA = pstmt_.createUpdate().runGetAutoKey(Integer.class)
+		Integer idA = pstmt_.createUpdate().runGetCol(Integer.class)
 			.requireCount(1)
 			.requireValue();
 
@@ -80,7 +80,7 @@ public class PrepStmtTest extends JdbxTest
 
 		// read a row by id
 		pstmt_.init("SELECT * FROM PTests WHERE id = ?");
-		Dao dao = pstmt_.params(idA).createQuery().row().read(Dao::read);
+		Dao dao = pstmt_.params(idA).query().row().read(Dao::read);
 		assertNotNull(dao);
 		assertEquals(idA, 	dao.id);
 		assertEquals("a", 	dao.name);

@@ -58,7 +58,7 @@ public class StaticStmtDemo
 	private void query(StaticStmt stmt)
 	{
 		// SQL query string is passed to StaticStmt.query()
-		int userCount = stmt.createQuery("SELECT count(* FROM Users").row().col().getInt();
+		int userCount = stmt.query("SELECT count(* FROM Users").row().col().getInt();
 	}
 
 
@@ -71,13 +71,13 @@ public class StaticStmtDemo
 		// SQL command string is passed to StaticStmt.update or StaticStmt.createUpdate
 
 		// simply getting the update count
-		int updated = stmt.update("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')");
+		int updated = stmt.update("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')").count();
 
 	    // updating, and returning generated keys
 		Integer newUserId = stmt
 			.createUpdate("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')")	// the cmd
 			.returnCols("id") // contains the auto generated key
-			.runGetAutoKey(Integer.class) // and we want it as integer
+			.runGetCol(Integer.class) // and we want it as integer
 			.requireCount(1) // assert that 1 one record was inserted
 			.requireValue(); // assert that an id was generated and return the value
 	}

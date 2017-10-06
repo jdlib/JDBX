@@ -31,7 +31,7 @@ public class DocSnippets
 
 	public void stmtsStaticStmt()
 	{
-		int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
+		long count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')").count();
 		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.READ_ONLY);
 	}
 
@@ -78,7 +78,7 @@ public class DocSnippets
 		else {
 			// JDBX
 			try (StaticStmt stmt = new StaticStmt(con)) {
-				return stmt.createQuery(sql).rows().read(City::read);
+				return stmt.query(sql).rows().read(City::read);
 			}
 		}
 	}
@@ -104,7 +104,7 @@ public class DocSnippets
 		{
 			// JDBX
 			try (PrepStmt pstmt = new PrepStmt(con)) {
-				return pstmt.init(sql).params("MUC").createQuery().row().col().getString();
+				return pstmt.init(sql).params("MUC").query().row().col().getString();
 			}
 		}
 	}
@@ -113,8 +113,8 @@ public class DocSnippets
 	public void queryClass() throws Exception
 	{
 		String sql = null;
-		q = stmt.createQuery(sql);
-		q = pstmt.init(sql).params("a", "b").createQuery();
+		q = stmt.query(sql);
+		q = pstmt.init(sql).params("a", "b").query();
 	}
 	
 	
@@ -198,7 +198,7 @@ public class DocSnippets
 		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
-		qc = stmt.createQuery("sql").cursor();
+		qc = stmt.query("sql").cursor();
 		qc.position().isBeforeFirst(); 
 		// also: .isAfterLast(), .isLast()  
 
@@ -233,8 +233,21 @@ public class DocSnippets
 	
 	public void updateRun() throws Exception
 	{
-		int updateCount = u.run();
-		long largeUpdateCount = u.runLarge();
+		long count = u.run().count();
+		
+   		count = stmt.update(null).count();
+   	   	count = pstmt.update().count();
+	}
+	
+
+	public void updateAutoGen() throws Exception
+	{
+        UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
+        	.returnAutoKeyCols()            // step 1 
+	        .runGetCol(Integer.class);  // step 2
+        Integer id 		= result.value(); 
+        int updateCount = result.count();
+		
 	}
 	
 	

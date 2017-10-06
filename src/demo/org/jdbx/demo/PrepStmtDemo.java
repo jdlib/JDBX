@@ -68,7 +68,7 @@ public class PrepStmtDemo
 		pstmt.init("UPDATE Colors SET used = 1 WHERE name = ?");
 
 		// simply getting the update count
-		int updated = pstmt.params("red").update();
+		int updated = pstmt.params("red").update().count();
 
 
 		// 2. initialize and instruct the statement to return generated keys.
@@ -79,7 +79,7 @@ public class PrepStmtDemo
 		Integer newUserId = pstmt
 			.params("John", "Doe") // set parameters
 			.createUpdate() // we want to run the cmd as updating cmd
-			.runGetAutoKey(Integer.class) // we want the generated key as integer
+			.runGetCol(Integer.class) // we want the generated key as integer
 			.requireCount(1) // assert that 1 one record was inserted
 			.requireValue(); // assert that an id was generated and return the value
 	}
@@ -115,7 +115,7 @@ public class PrepStmtDemo
 		{
 			pstmt.init().returnCols("id").cmd("INSERT INTO Cities (name) VALUES (?)");
 			for (String name : names)
-				ids.add(pstmt.param(1, name).createUpdate().runGetAutoKey(Integer.class).requireCount(1).requireValue());
+				ids.add(pstmt.param(1, name).createUpdate().runGetCol(Integer.class).requireCount(1).requireValue());
 		}
 		return ids;
 	}

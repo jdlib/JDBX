@@ -414,7 +414,7 @@ public class PrepStmt extends Stmt
 	 * Returns a Query builder to execute the current SQL command.
 	 * @return the Queryt
 	 */
-	public Query createQuery() throws JdbxException
+	public Query query() throws JdbxException
 	{
 		checkInitialized();
 		return new PrepStmtQuery(this::getJdbcStmt);
@@ -440,9 +440,9 @@ public class PrepStmt extends Stmt
 
 	/**
 	 * Executes an update operation for the current SQL command.
-	 * @return the number of affected records.
+	 * @return the update result
 	 */
-	public int update() throws JdbxException
+	public UpdateResult<Void> update() throws JdbxException
 	{
 		return createUpdate().run();
 	}

@@ -13,8 +13,8 @@ JDBX User Guide
    * [Skipping rows](#queries-skipping)
    * [QueryCursor class](#queries-querycursorclass)
 4. [Running DML or DDL updates](#updates)
-   * [Update class](#updates-updateclass)
    * [Run the update](#updates-run)
+   * [Update class](#updates-updateclass)
    * [Run updates and read auto-generated primary key values](#updates-autogen)
 5. [Running a single command](#single-cmd)
 
@@ -96,7 +96,7 @@ Contrary to `java.sql.PreparedStatement` you can also re-initialize the command.
     pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
     ...
      
-     
+    
 Like in `StaticStmt` you can use the builder returned by the `init()` method to configure the `PrepStmt`.
       
     pstmt.init()
@@ -143,7 +143,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 	    
     // JDBX:
     try (StaticStmt stmt = new StaticStmt(con)) {
-        return stmt.createQuery(sql).rows().read(City::read);
+        return stmt.query(sql).rows().read(City::read);
     }
      
 **Example 2:** Extract a single value from a result set which contains 0 or 1 rows
@@ -163,7 +163,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 	    
     // JDBX:
     try (PrepStmt pstmt = new PrepStmt(con)) {
-    	return pstmt.init(sql).params("MUC").createQuery().row().col().getString();
+    	return pstmt.init(sql).params("MUC").query().row().col().getString();
     }
 
 
@@ -171,11 +171,11 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 
 In order to execute a SQL query you need a `StaticStmt` or `PrepStmt`. 
 
-`StaticStmt.createQuery(String)` and `PrepStmt.createQuery()` return a `org.jdbx.Query` object
+`StaticStmt.query(String)` and `PrepStmt.query()` return a `org.jdbx.Query` object
 which provides a builder API to run the query and extract values from the result:
 
-     Query q = stmt.createQuery(sql);
-     Query q = pstmt.init(sql).params("a", "b").createQuery();
+     Query q = stmt.query(sql);
+     Query q = pstmt.init(sql).params("a", "b").query();
      
 If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a `Query` object for easy value extraction:
 
@@ -312,7 +312,7 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
 	stmt.init().resultType(ResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
-	try (QueryCursor qc = stmt.createQuery(sql).cursor()) {
+	try (QueryCursor qc = stmt.query(sql).cursor()) {
 	    // read position
 	    qc.position().isBeforeFirst() 
 	    // also: .isAfterLast(), .isLast()  
@@ -324,7 +324,6 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
 	    // also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
 	}
   
-
 #### Update a QueryCursor row
     
 If your cursor is updatable, you can or update or delete the current row, or insert a new row:
@@ -332,7 +331,7 @@ If your cursor is updatable, you can or update or delete the current row, or ins
 	// configure the result to be updatable
 	StaticStmt stmt = ....
 	stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
-	QueryCursor qc = stmt.createQuery(sql).cursor();
+	QueryCursor qc = stmt.query(sql).cursor();
 	
 	// position row
 	... 
@@ -353,34 +352,18 @@ You still can obtain the `java.sql.ResultSet` of a query cursor if you want to p
     
 ## <a name="updates"></a>4. Running DML or DDL updates
 
-JDBX - as JDBC - uses the term *update* for DML (i.e. UPDATE, INSERT, DELETE) and DDL commands.
+JDBX - as JDBC - uses the term *update* for DML (i.e. UPDATE, INSERT, DELETE), DDL commands and in general SQL commands which
+return nothing.
 Running a DML command can return the number of affected records and the auto-generated values of primary key columns.
 
-### <a name="updates-updateclass">Update class
+Updates are executed by either using a `StaticStmt` or a `PrepStmt`.
 
-Updates can be executed by either using a `StaticStmt` or a `PrepStmt`:
-
-`StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` return a `org.jdbx.Update` object
-which provides a builder API to configure and run the update:
-
-     Update u = stmt.createUpdate(sql);
-     Update u = pstmt.init(sql).params("1", "2").createUpdate();
-     
-In the following the variable `u` represents an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`.          
-But because of its builder API you will rarely need to store an `Update` object in a local variable but rather chain
-method calls to retrieve the result. 
-     
 
 ### <a name="updates-run">Run the update
 
-If you just want to run an update command and are not interested in auto-generated values you can simply call
-`Update.run()` or `Update.runLarge()` which will return the number of affected records as `ìnt` or `long` value.
+If you just want to run an update command and are not interested in auto-generated key values then call
+`StaticStmt.update(String)` and `PrepStmt.update()`. The return value is the number of affected records:
 
-	int updateCount = u.run();
-	// or: long largeUpdateCount = u.runLarge();
-	
-`StaticStmt` and `PrepStmt` provide a short-cut method named `update` to run the update and return the `int` update count:
-   	
    	String sql      = ... 
    	StaticStmt stmt = ...
 	int updateCount = stmt.update(sql);
@@ -389,13 +372,46 @@ If you just want to run an update command and are not interested in auto-generat
    	PrepStmt ptmt   = ...
    	int updateCount = pstmt.update();
 
-### <a name="updates-autogen">Run an Update and read auto-generated primary key values
 
-If you are interested in the update count *and* in any auto-generated values of primary key columms you need to
+### <a name="updates-updateclass">Update class
 
-   1. configure the `StaticStmt` or `PrepStmt` to return auto-generated primary key values
+If you want to retrieve auto-generated key values or need a `long` update count, then call
+`StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` return a `org.jdbx.Update` object
+which provides a builder API to configure and run the update:
+    
+     Update u = stmt.createUpdate(sql);
+     Update u = pstmt.init(sql).params("1", "2").createUpdate();
+     
+In the following the variable `u` represents an `Update` object obtained via `StaticStmt.createUpdate(String)` or `PrepStmt.createUpdate()`.          
+But because of its builder API you will rarely need to store an `Update` object in a local variable but rather chain
+method calls to retrieve the result. 
+
+`Update.run()` or `Update.runLarge()` which will return the number of affected records as `ìnt` or `long` value.
+(The `update` methods in the statement classes are just shortcuts which create the `Update` object and invoke its `run`method.
+
+	int updateCount = u.run();
+	// or: long largeUpdateCount = u.runLarge();
+	
+### <a name="updates-autogen">Read auto-generated primary key values
+
+If you are interested in in any auto-generated values of primary key columms you need to
+
+   1. specify that auto-generated primary key values should returned
    2. invoke an appropriate method on the `Update` object to return the count and the key values represented
       as an `org.jdbx.UpdateResult` object    
+
+For `StaticStmt` steps 1) and 2) are done by configuring the `Update` object:
+  
+    StaticStmt stmt = ...
+    UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
+        .returnAutoKeyCols()            // step 1
+        .runGetAutoKey(Integer.class);  // step 2
+    Integer id      = result.value; 
+    int updateCount = result.count;
+        
+
+   
+Step 1 requires proper initialization of the `StaticStmt` or `PrepStmt`:
 
 
 

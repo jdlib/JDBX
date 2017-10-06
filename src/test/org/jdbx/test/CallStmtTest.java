@@ -38,8 +38,8 @@ public class CallStmtTest extends JdbxTest
 			stmt.update("CREATE TABLE CallUser (id INT IDENTITY PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50))");
 
 			id_ = stmt.createUpdate("INSERT INTO CallUser VALUES (DEFAULT, 'Paul', 'Smith')")
-				.returnGenCols()
-				.runGetAutoKey(Integer.class)
+				.returnAutoKeyCols()
+				.runGetCol(Integer.class)
 				.requireCount(1)
 				.requireValue();
 
@@ -82,13 +82,13 @@ public class CallStmtTest extends JdbxTest
 
 	/**
 	 * Calls a stored procedure which returns a result set.
-	 * The result set is accessed via {@link CallStmt#createQuery()}.
+	 * The result set is accessed via {@link CallStmt#query()}.
 	 */
 	@Test public void testQueryReturnResultSet() throws JdbxException
 	{
 		stmt_.init("call GetUserAsResult(?)");
 		stmt_.param(1).setInteger(id_);
-		Object[] data = stmt_.createQuery().row().cols();
+		Object[] data = stmt_.query().row().cols();
 		assertNotNull(data);
 		assertEquals(3, data.length);
 		assertEquals(id_, data[0]);

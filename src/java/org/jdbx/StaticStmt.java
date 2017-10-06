@@ -167,7 +167,7 @@ public class StaticStmt extends Stmt
 	 * @param sql a SQL command
 	 * @return the Query
 	 */
-	public Query createQuery(String sql)
+	public Query query(String sql)
 	{
 		Check.notNull(sql, "sql");
 		return new StaticQuery(sql);
@@ -226,7 +226,7 @@ public class StaticStmt extends Stmt
 	 * @param sql a SQL command
 	 * @return the number of affected records.
 	 */
-	public int update(String sql) throws JdbxException
+	public UpdateResult<Void> update(String sql) throws JdbxException
 	{
 		return createUpdate(sql).run();
 	}

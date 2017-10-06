@@ -23,6 +23,9 @@ package org.jdbx;
  */
 public class ReturnCols
 {
+	public static final ReturnCols AUTOGEN = new ReturnCols();
+	
+	
 	/**
 	 * A Builder interface to define which columns should be reported.
 	 * @param <I> the concrete builder implementation
@@ -41,9 +44,9 @@ public class ReturnCols
 		 * The columns which contain auto generated keys should be returned.
 		 * @return this
 		 */
-		public default I returnGenCols()
+		public default I returnAutoKeyCols()
 		{
-			return returnCols(new ReturnCols());
+			return returnCols(AUTOGEN);
 		}
 
 
@@ -75,6 +78,7 @@ public class ReturnCols
 	 */
 	public ReturnCols()
 	{
+		this(null, null);
 	}
 
 
@@ -84,8 +88,7 @@ public class ReturnCols
 	 */
 	public ReturnCols(int[] indexes)
 	{
-		Check.notNull(indexes, "indexes");
-		indexes_ = indexes;
+		this(Check.notNull(indexes, "indexes"), null);
 	}
 
 
@@ -95,11 +98,17 @@ public class ReturnCols
 	 */
 	public ReturnCols(String[] names)
 	{
-		Check.notNull(names, "names");
-		names_ = names;
+		this(null, Check.notNull(names, "names"));
 	}
 
 
+	private ReturnCols(int[] indexes, String[] names)
+	{
+		indexes_ 	= indexes;
+		names_ 		= names;
+	}
+
+	
 	/**
 	 * Returns the indexes of the columns which should be returned.
 	 * @return the indexes or null if this ReturnCols object is not index based
@@ -120,6 +129,6 @@ public class ReturnCols
 	}
 
 
-	private int[] indexes_;
-	private String[] names_;
+	private final int[] indexes_;
+	private final String[] names_;
 }

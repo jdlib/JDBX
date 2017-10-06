@@ -73,7 +73,7 @@ public class TeaserDemo
 		{
 			pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
 			pstmt.params(firstName, lastName);
-			return pstmt.createUpdate().runGetAutoKey(Integer.class).requireCount(1).requireValue();
+			return pstmt.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
 		}
 	}
 

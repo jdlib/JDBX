@@ -48,7 +48,7 @@ public class Jdbx
 	 * @param params zero or more parameters
 	 * @return the update count
 	 */
-	public static int update(Connection con, String sql, Object... params) throws JdbxException
+	public static UpdateResult<Void> update(Connection con, String sql, Object... params) throws JdbxException
 	{
 		return createUpdate(con, sql, params).run();
 	}
@@ -93,12 +93,12 @@ public class Jdbx
 			if (params_ == null)
 			{
 				stmt_ = new StaticStmt(con_);
-				return ((StaticStmt)stmt_).createQuery(sql_);
+				return ((StaticStmt)stmt_).query(sql_);
 			}
 			else
 			{
 				stmt_ = new PrepStmt(con_);
-				return ((PrepStmt)stmt_).init(sql_).params(params_).createQuery();
+				return ((PrepStmt)stmt_).init(sql_).params(params_).query();
 			}
 		}
 

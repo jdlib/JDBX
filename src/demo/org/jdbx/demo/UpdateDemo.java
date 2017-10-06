@@ -27,10 +27,10 @@ public class UpdateDemo
 	public static void stmt(StaticStmt stmt) throws JdbxException
 	{
 		String sql1 	= "INSERT INTO X VALUES('a', 'b')";
-		int count  		= stmt.createUpdate(sql1).returnGenCols().run(); // todo receive autokeys
+		int count  		= stmt.createUpdate(sql1).returnAutoKeyCols().run().count(); // todo receive autokeys
 
 		String sql2		= "SELECT amount FROM Orders WHERE id = 1";
-		double amount 	= stmt.createQuery(sql2).row().col().getDouble();
+		double amount 	= stmt.query(sql2).row().col().getDouble();
 	}
 
 

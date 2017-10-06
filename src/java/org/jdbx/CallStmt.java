@@ -503,7 +503,7 @@ public class CallStmt extends Stmt
 	 * Executes the current SQL query command and returns a Query. 
 	 * @return the query object
 	 */
-	public Query createQuery() throws JdbxException
+	public Query query() throws JdbxException
 	{
 		checkInitialized();
 		return new PrepStmtQuery(this::getJdbcStmt);

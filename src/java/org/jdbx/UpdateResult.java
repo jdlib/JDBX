@@ -17,9 +17,12 @@
 package org.jdbx;
 
 
+import java.util.Objects;
+
+
 /**
  * UpdateResult is returned by various {@link Update} methods.
- * It stores the update count and a value representing automatically generated keys.
+ * It stores the update count and a value representing returned columns.
  * @param <V> the type of the result value.
  */
 public class UpdateResult<V>
@@ -29,6 +32,7 @@ public class UpdateResult<V>
 	 */
 	public UpdateResult()
 	{
+		this(0);
 	}
 
 
@@ -36,9 +40,9 @@ public class UpdateResult<V>
 	 * Creates a new UpdateResult and initializes the count.
 	 * @param count the update count
 	 */
-	public UpdateResult(int count)
+	public UpdateResult(long count)
 	{
-		this.count = count;
+		this(count, null);
 	}
 
 
@@ -47,23 +51,44 @@ public class UpdateResult<V>
 	 * @param count the update count
 	 * @param value the value
 	 */
-	public UpdateResult(int count, V value)
+	public UpdateResult(long count, V value)
 	{
-		this.count = count;
-		this.value = value;
+		count_ = count;
+		value_ = value;
 	}
 
 
+	/**
+	 * Returns the number of affected records.
+	 */
+	public int count()
+	{
+		return (int)count_;
+	}
+	
+	
+	/**
+	 * Returns the number of affected records as long.
+	 * Unless you actively activate large updates, the returned value will also 
+	 * be in the int range.
+	 * @see Update#large()
+	 */
+	public long largeCount()
+	{
+		return (int)count_;
+	}
+
+	
 	/**
 	 * Checks if the count stored in the result matches the expected count.
 	 * @param expected the expected count
 	 * @return this
 	 * @throws JdbxException if the counts do not match
 	 */
-	public UpdateResult<V> requireCount(int expected) throws JdbxException
+	public UpdateResult<V> requireCount(long expected) throws JdbxException
 	{
-		if (this.count != expected)
-			throw JdbxException.invalidResult("expected update count " + expected + ", but was " + this.count);
+		if (count_ != expected)
+			throw JdbxException.invalidResult("expected update count " + expected + ", but was " + count_);
 		return this;
 	}
 
@@ -77,11 +102,20 @@ public class UpdateResult<V>
 	 */
 	public UpdateResult<V> requireCount(int minExpected, int maxExpected) throws JdbxException
 	{
-		if ((this.count < minExpected) || (this.count > maxExpected))
-			throw JdbxException.invalidResult("expected update count in [" + minExpected + ',' + maxExpected + "], but was " + this.count);
+		if ((count_ < minExpected) || (count_ > maxExpected))
+			throw JdbxException.invalidResult("expected update count in [" + minExpected + ',' + maxExpected + "], but was " + count_);
 		return this;
 	}
 
+	
+	/**
+	 * Returns the value of the update result.
+	 */
+	public V value()
+	{
+		return value_;
+	}
+	
 	
 	/**
 	 * Checks that the value is not null
@@ -90,21 +124,31 @@ public class UpdateResult<V>
 	 */
 	public V requireValue() throws JdbxException
 	{
-		if (this.value == null)
+		if (value_ == null)
 			throw JdbxException.invalidResult("expected non-null value");
-		return this.value;
+		return value_;
 	}
 
 
 	/**
+	 * Checks that the actual result value equals the expected value.
+	 * @throws JdbxException if the actual and expected value are not equal
+	 */
+	public UpdateResult<V> requireValue(V expected) throws JdbxException
+	{
+		if (!Objects.equals(expected, value_))
+			throw JdbxException.invalidResult("expected value '" + expected + "' but was '" + value_ + "'");
+		return this;
+	}
+
+	
+	/**
 	 * The number of records that were affected by the SQL command.
 	 */
-	public int count;
+	private final long count_;
 
 	/**
-	 * The value created from the auto generated keys result set.
+	 * The value created from the returned column values.
 	 */
-	public V value;
+	private final V value_;
 }
-
-

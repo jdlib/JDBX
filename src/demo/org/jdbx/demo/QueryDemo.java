@@ -66,21 +66,21 @@ public class QueryDemo
 	public static void stmt(StaticStmt stmt) throws JdbxException
 	{
 		String sql1 	= "SELECT count(*) FROM Orders";
-		int count  		= stmt.createQuery(sql1).row().col().getInt();
+		int count  		= stmt.query(sql1).row().col().getInt();
 
 		String sql2		= "SELECT amount FROM Orders WHERE id = 1";
-		double amount 	= stmt.createQuery(sql2).row().col().getDouble(0.0);
+		double amount 	= stmt.query(sql2).row().col().getDouble(0.0);
 	}
 
 
 	public static void run(PrepStmt pstmt) throws Exception
 	{
-		BigDecimal amount 	= pstmt.params(4235).createQuery().row().col().getBigDecimal();
+		BigDecimal amount 	= pstmt.params(4235).query().row().col().getBigDecimal();
 
 		pstmt.param(1, "a");
-		List<Double> list 	= pstmt.createQuery().rows().col().getDouble();
+		List<Double> list 	= pstmt.query().rows().col().getDouble();
 
-		List<Date> dates 	= pstmt.createQuery().skip(2).rows(5).col().getSqlDate();
+		List<Date> dates 	= pstmt.query().skip(2).rows(5).col().getSqlDate();
 	}
 
 
