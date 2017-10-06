@@ -167,14 +167,14 @@ public class StaticStmt extends Stmt
 	 * @param sql a SQL command
 	 * @return the Query
 	 */
-	public Query query(String sql)
+	public QueryResult query(String sql)
 	{
 		Check.notNull(sql, "sql");
 		return new StaticQuery(sql);
 	}
 
 
-	private class StaticQuery extends Query
+	private class StaticQuery extends QueryResult
 	{
 		public StaticQuery(String sql)
 		{

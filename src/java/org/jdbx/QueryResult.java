@@ -11,14 +11,14 @@ import org.jdbx.function.CheckedFunction;
  * Note that actual query on JDBC level may actually not be run until
  * a terminal operation of the builder method chain is executed. 
  */
-public abstract class Query extends StmtRunnable
+public abstract class QueryResult extends StmtRunnable
 {
 	/**
 	 * Returns a Query object for an existing ResultSet.
 	 * @param resultSet a ResultSet
 	 * @return the Query
 	 */
-	public static Query of(ResultSet resultSet)
+	public static QueryResult of(ResultSet resultSet)
 	{
 		return new ResultSetQuery(resultSet);
 	}
@@ -29,7 +29,7 @@ public abstract class Query extends StmtRunnable
 	 * @param n a number of rows
 	 * @return this
 	 */
-	public Query skip(int n)
+	public QueryResult skip(int n)
 	{
 		skip_ = Math.max(0, n);
 		return this;
@@ -71,9 +71,9 @@ public abstract class Query extends StmtRunnable
 	 * Returns a builder to access the first row of the result set.
 	 * @return the builder
 	 */
-	public QueryOneRow row()
+	public QResultOneRow row()
 	{
-		return new QueryOneRow(this);
+		return new QResultOneRow(this);
 	}
 
 
@@ -81,7 +81,7 @@ public abstract class Query extends StmtRunnable
 	 * Returns a builder to access all rows of the result set.
 	 * @return the builder
 	 */
-	public QueryRows rows()
+	public QResultRows rows()
 	{
 		return rows(Integer.MAX_VALUE);
 	}
@@ -92,9 +92,9 @@ public abstract class Query extends StmtRunnable
 	 * @param max the maximum number of rows
 	 * @return the builder
 	 */
-	public QueryRows rows(int max)
+	public QResultRows rows(int max)
 	{
-		return new QueryRows(this, max);
+		return new QResultRows(this, max);
 	}
 
 

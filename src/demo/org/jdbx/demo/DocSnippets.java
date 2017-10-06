@@ -32,7 +32,7 @@ public class DocSnippets
 	public void stmtsStaticStmt()
 	{
 		long count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')").count();
-		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.READ_ONLY);
+		stmt.init().resultType(QResultType.SCROLL_SENSITIVE).resultConcurrency(QResultConcurrency.READ_ONLY);
 	}
 
 
@@ -43,8 +43,8 @@ public class DocSnippets
 		pstmt.params("Mary", "Jane").update();
 		pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
 		pstmt.init()
-	        .resultType(ResultType.SCROLL_INSENSITIVE)
-	        .resultHoldability(ResultHoldability.HOLD_OVER_COMMIT)
+	        .resultType(QResultType.SCROLL_INSENSITIVE)
+	        .resultHoldability(QResultHoldability.HOLD_OVER_COMMIT)
 	        .cmd("SELECT * FROM Cities WHERE name LIKE ?");
 	}
 	
@@ -194,7 +194,7 @@ public class DocSnippets
 		    // read the result row
 		}
 		
-		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+		stmt.init().resultType(QResultType.SCROLL_SENSITIVE).resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
 		qc = stmt.query("sql").cursor();
@@ -214,7 +214,7 @@ public class DocSnippets
 	
 	public void queryCursorObtain() throws Exception
 	{
-		stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+		stmt.init().resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 
 	   	qc.col("status").setString("ok"); 
 	    qc.row().update();
@@ -299,7 +299,7 @@ public class DocSnippets
 	private CallStmt cstmt;
 	private Connection con;
 	private DataSource ds;
-	private Query q;
+	private QueryResult q;
 	private QueryCursor qc;
 	private Update u;
 	private boolean jdbc;

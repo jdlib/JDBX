@@ -2,7 +2,7 @@ package org.jdbx.function;
 
 
 import java.sql.Statement;
-import org.jdbx.Query;
+import org.jdbx.QueryResult;
 
 
 /*
@@ -20,5 +20,5 @@ public interface GetReturnCols<V>
 	 * @see Statement#getGeneratedKeys()
 	 * @throws Exception if an error occurs
 	 */
-	public V read(long updateCount, Query result) throws Exception;
+	public V read(long updateCount, QueryResult result) throws Exception;
 }

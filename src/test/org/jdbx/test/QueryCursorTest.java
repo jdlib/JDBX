@@ -20,8 +20,8 @@ package org.jdbx.test;
 import org.jdbx.Jdbx;
 import org.jdbx.JdbxException;
 import org.jdbx.QueryCursor;
-import org.jdbx.ResultConcurrency;
-import org.jdbx.ResultType;
+import org.jdbx.QResultConcurrency;
+import org.jdbx.QResultType;
 import org.jdbx.StaticStmt;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -46,10 +46,10 @@ public class QueryCursorTest extends JdbxTest
 	
 	@Test public void testScroll()
 	{
-		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE);
+		stmt_.init().resultType(QResultType.SCROLL_INSENSITIVE);
 		try (QueryCursor cursor = stmt_.query("SELECT name FROM QRTest ORDER BY name").cursor())
 		{
-			assertSame(ResultType.SCROLL_INSENSITIVE, cursor.getType());
+			assertSame(QResultType.SCROLL_INSENSITIVE, cursor.getType());
 			assertTrue(cursor.position().isBeforeFirst());
 			assertTrue(cursor.move().absolute(2));
 			assertEquals("B", cursor.col().getString());
@@ -64,10 +64,10 @@ public class QueryCursorTest extends JdbxTest
 
 	@Test public void testUpdate() throws Exception
 	{
-		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE).resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+		stmt_.init().resultType(QResultType.SCROLL_INSENSITIVE).resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 		try (QueryCursor cursor = stmt_.query("SELECT name FROM QRTest").cursor())
 		{
-			assertSame(ResultConcurrency.CONCUR_UPDATABLE, cursor.getConcurrency());
+			assertSame(QResultConcurrency.CONCUR_UPDATABLE, cursor.getConcurrency());
 			
 			assertTrue(cursor.next());
 			cursor.col().setString("Z");

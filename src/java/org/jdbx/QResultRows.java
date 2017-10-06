@@ -40,9 +40,9 @@ import org.jdbx.function.GetForName;
  * QResultRows is a builder class to
  * retrieve the multi-row result of a query.
  */
-public class QueryRows
+public class QResultRows
 {
-	QueryRows(Query query, int max)
+	QResultRows(QueryResult query, int max)
 	{
 		query_ = query;
 		max_    = max;
@@ -559,6 +559,6 @@ public class QueryRows
 	}
 
 
-	private Query query_;
+	private QueryResult query_;
 	private int max_ = Integer.MAX_VALUE;
 }

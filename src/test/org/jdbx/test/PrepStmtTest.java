@@ -21,7 +21,7 @@ import org.jdbx.JdbxException;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 import org.jdbx.QueryCursor;
-import org.jdbx.ResultIterator;
+import org.jdbx.QResultIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -92,7 +92,7 @@ public class PrepStmtTest extends JdbxTest
 	{
 		public static Dao read(QueryCursor cursor) throws JdbxException
 		{
-			ResultIterator it 	= ResultIterator.of(cursor);
+			QResultIterator it 	= QResultIterator.of(cursor);
 			Dao dao 			= new Dao();
 			dao.id   			= it.getInteger();
 			dao.name			= it.getString();

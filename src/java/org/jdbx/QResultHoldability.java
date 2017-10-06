@@ -24,7 +24,7 @@ import java.sql.ResultSet;
  * ResultConcurrency is an Enum for the JDBC constants
  * ResultSet.HOLD_CURSORS_OVER_COMMIT and ResultSet.CLOSE_CURSORS_AT_COMMIT.
  */
-public enum ResultHoldability implements JdbcEnum
+public enum QResultHoldability implements JdbcEnum
 {
 	HOLD_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT),
 	CLOSE_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT),
@@ -34,10 +34,10 @@ public enum ResultHoldability implements JdbcEnum
 	/**
 	 * Maps codes to enums.
 	 */
-	public static final Map<ResultHoldability> MAP = new Map<>(ResultHoldability.class, INVALID);
+	public static final Map<QResultHoldability> MAP = new Map<>(QResultHoldability.class, INVALID);
 
 
-	ResultHoldability(int code)
+	QResultHoldability(int code)
 	{
 		code_ = code;
 	}

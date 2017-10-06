@@ -18,7 +18,7 @@ public class Jdbx
 	 * @param params zero or more parameters
 	 * @return the Query
 	 */
-	public static Query query(Connection con, String sql, Object... params)
+	public static QueryResult query(Connection con, String sql, Object... params)
 	{
 		Check.notNull(con, "con");
 		Check.notNull(sql, "sql");
@@ -87,7 +87,7 @@ public class Jdbx
 		}
 
 
-		public Query query() throws JdbxException
+		public QueryResult query() throws JdbxException
 		{
 			checkNotUsed();
 			if (params_ == null)
@@ -131,7 +131,7 @@ public class Jdbx
 	}
 
 
-	private static class FastQuery extends Query
+	private static class FastQuery extends QueryResult
 	{
 		public FastQuery(StmtProvider provider)
 		{

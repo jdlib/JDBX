@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 /**
  * ResultType is an Enum for the JDBC constants which define the ResultSet type.
  */
-public enum ResultType implements JdbcEnum
+public enum QResultType implements JdbcEnum
 {
     /**
      * The enum indicating the type for a <code>QueryCursor</code> object
@@ -54,10 +54,10 @@ public enum ResultType implements JdbcEnum
 	/**
 	 * Maps codes to enums.
 	 */
-	public static final Map<ResultType> MAP = new Map<>(ResultType.class, INVALID);
+	public static final Map<QResultType> MAP = new Map<>(QResultType.class, INVALID);
 
 
-	ResultType(int code)
+	QResultType(int code)
 	{
 		code_ = code;
 	}

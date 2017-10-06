@@ -28,7 +28,7 @@ import org.jdbx.function.CheckedRunnable;
  * a column index, and at each get operation it reads the value
  * from the ResultSet and then increments the index.
  */
-public class ResultIterator implements GetResult, AutoCloseable
+public class QResultIterator implements GetResult, AutoCloseable
 {
 	/**
 	 * Returns a ResultIterator for the result
@@ -39,9 +39,9 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * @return the new ResultIterator
 	 */
 	@SuppressWarnings("resource")
-	public static ResultIterator of(QueryCursor cursor)
+	public static QResultIterator of(QueryCursor cursor)
 	{
-		return new ResultIterator(cursor).setCloseResult(false);
+		return new QResultIterator(cursor).setCloseResult(false);
 	}
 
 
@@ -54,9 +54,9 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * @return the new ResultIterator
 	 */
 	@SuppressWarnings("resource")
-	public static ResultIterator of(ResultSet resultSet)
+	public static QResultIterator of(ResultSet resultSet)
 	{
-		return new ResultIterator(resultSet).setCloseResult(false);
+		return new QResultIterator(resultSet).setCloseResult(false);
 	}
 
 
@@ -64,7 +64,7 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * Creates a ResultIterator for a QueryCursor.
 	 * @param cursor the result
 	 */
-	public ResultIterator(QueryCursor cursor)
+	public QResultIterator(QueryCursor cursor)
 	{
 		resultSet_ = Check.notNull(cursor, "cursor").getJdbcResult();
 	}
@@ -74,7 +74,7 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * Creates a ResultIterator for a ResultSet.
 	 * @param resultSet the ResultSet
 	 */
-	public ResultIterator(ResultSet resultSet)
+	public QResultIterator(ResultSet resultSet)
 	{
 		resultSet_ = Check.notNull(resultSet, "resultSet");
 	}
@@ -219,7 +219,7 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * @param flag the close flag
 	 * @return this
 	 */
-	public ResultIterator setCloseResult(boolean flag)
+	public QResultIterator setCloseResult(boolean flag)
 	{
 		closeResult_ = flag;
 		return this;

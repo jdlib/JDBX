@@ -421,9 +421,9 @@ public class QueryCursor implements AutoCloseable
 	 * Returns the concurrency of the ResultSet.
 	 * @return the concurrency as enum value
 	 */
-	public ResultConcurrency getConcurrency() throws JdbxException
+	public QResultConcurrency getConcurrency() throws JdbxException
 	{
-		return ResultConcurrency.MAP.forCode(toInt(ResultSet::getConcurrency));
+		return QResultConcurrency.MAP.forCode(toInt(ResultSet::getConcurrency));
 	}
 
 
@@ -431,9 +431,9 @@ public class QueryCursor implements AutoCloseable
 	 * Returns the holdability of the ResultSet.
 	 * @return the holdability as enum value
 	 */
-	public ResultHoldability getHoldability() throws JdbxException
+	public QResultHoldability getHoldability() throws JdbxException
 	{
-		return ResultHoldability.MAP.forCode(toInt(ResultSet::getHoldability));
+		return QResultHoldability.MAP.forCode(toInt(ResultSet::getHoldability));
 	}
 
 
@@ -441,9 +441,9 @@ public class QueryCursor implements AutoCloseable
 	 * Returns the type of the ResultSet.
 	 * @return the type as enum value
 	 */
-	public ResultType getType() throws JdbxException
+	public QResultType getType() throws JdbxException
 	{
-		return ResultType.MAP.forCode(toInt(ResultSet::getType));
+		return QResultType.MAP.forCode(toInt(ResultSet::getType));
 	}
 
 

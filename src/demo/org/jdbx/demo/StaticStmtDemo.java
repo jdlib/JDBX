@@ -20,7 +20,7 @@ package org.jdbx.demo;
 import java.sql.Connection;
 import javax.sql.DataSource;
 import org.jdbx.ExecuteResult;
-import org.jdbx.Query;
+import org.jdbx.QueryResult;
 import org.jdbx.StaticStmt;
 
 
@@ -103,7 +103,7 @@ public class StaticStmtDemo
 			}
 			else
 			{
-				Query q = result.getQuery();
+				QueryResult q = result.getQuery();
 				// read values from query 
 			}
 		}

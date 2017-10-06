@@ -226,7 +226,7 @@ public class ExecuteResult
 		try
 		{
 			try (ResultSet rs = stmt_.getGeneratedKeys()) { 
-				V value = reader.read(updateCount_, Query.of(rs));
+				V value = reader.read(updateCount_, QueryResult.of(rs));
 				return new UpdateResult<>(updateCount_, value);
 			}
 		}
@@ -267,11 +267,11 @@ public class ExecuteResult
 	 * @throws JdbxException if the current result is not an {@link #isQuery() result set}
 	 * @throws SQLException if the JDBC operation throws a SQLException
 	 */
-	public Query getQuery() throws JdbxException
+	public QueryResult getQuery() throws JdbxException
 	{
 		checkIsQuery();
 		ResultSet resultSet = CheckedFunction.unchecked(Statement::getResultSet, stmt_);
-		return Query.of(resultSet);
+		return QueryResult.of(resultSet);
 	}
 
 

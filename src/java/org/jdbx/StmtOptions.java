@@ -221,13 +221,13 @@ public class StmtOptions
 	 * You can set the holdability when you initialize the JDBX statement.
 	 * @return the holdability
 	 */
-	public ResultHoldability getResultHoldability()
+	public QResultHoldability getResultHoldability()
 	{
 		return holdability_;
 	}
 
 
-	protected boolean initResultHoldability(ResultHoldability value)
+	protected boolean initResultHoldability(QResultHoldability value)
 	{
 		boolean changed = changed(holdability_, value);
 		holdability_ = value;
@@ -240,13 +240,13 @@ public class StmtOptions
 	 * You can set the concurrency when you initialize the JDBX statement.
 	 * @return the concurrency
 	 */
-	public ResultConcurrency getResultConcurrency()
+	public QResultConcurrency getResultConcurrency()
 	{
 		return concurrency_;
 	}
 
 
-	protected boolean initResultConcurrency(ResultConcurrency value)
+	protected boolean initResultConcurrency(QResultConcurrency value)
 	{
 		boolean changed = changed(concurrency_, value);
 		concurrency_ = value;
@@ -259,13 +259,13 @@ public class StmtOptions
 	 * You can set the result type when you initialize the JDBX statement.
 	 * @return the result type
 	 */
-	public ResultType getResultType()
+	public QResultType getResultType()
 	{
 		return resultSetType_;
 	}
 
 
-	protected boolean initResultType(ResultType value)
+	protected boolean initResultType(QResultType value)
 	{
 		boolean changed = changed(resultSetType_, value);
 		resultSetType_ = value;
@@ -281,7 +281,7 @@ public class StmtOptions
 
 
 	protected Stmt stmt_;
-	private ResultType resultSetType_ = ResultType.FORWARD_ONLY;
-	private ResultConcurrency concurrency_ = ResultConcurrency.READ_ONLY;
-	private ResultHoldability holdability_ = ResultHoldability.CLOSE_AT_COMMIT;
+	private QResultType resultSetType_ = QResultType.FORWARD_ONLY;
+	private QResultConcurrency concurrency_ = QResultConcurrency.READ_ONLY;
+	private QResultHoldability holdability_ = QResultHoldability.CLOSE_AT_COMMIT;
 }

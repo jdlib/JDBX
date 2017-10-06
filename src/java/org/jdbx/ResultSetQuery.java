@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 /**
  * A QueryResult based on a JDBC ResultSet.
  */
-class ResultSetQuery extends Query
+class ResultSetQuery extends QueryResult
 {
 	public ResultSetQuery(ResultSet result)
 	{

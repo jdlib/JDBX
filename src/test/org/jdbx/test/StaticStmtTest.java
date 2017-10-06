@@ -22,8 +22,8 @@ import java.util.Map;
 import org.jdbx.JdbxException;
 import org.jdbx.QueryCursor;
 import org.jdbx.Jdbx;
-import org.jdbx.ResultConcurrency;
-import org.jdbx.ResultIterator;
+import org.jdbx.QResultConcurrency;
+import org.jdbx.QResultIterator;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
 import org.junit.After;
@@ -138,9 +138,9 @@ public class StaticStmtTest extends JdbxTest
 	@Test public void testOptions() throws JdbxException
 	{
 		assertTrue(stmt_.isInitialized());
-		assertEquals(ResultConcurrency.READ_ONLY, stmt_.options().getResultConcurrency());
-		stmt_.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
-		assertEquals(ResultConcurrency.CONCUR_UPDATABLE, stmt_.options().getResultConcurrency());
+		assertEquals(QResultConcurrency.READ_ONLY, stmt_.options().getResultConcurrency());
+		stmt_.init().resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+		assertEquals(QResultConcurrency.CONCUR_UPDATABLE, stmt_.options().getResultConcurrency());
 		stmt_.update("INSERT INTO STest (name) VALUES ('A'), ('B')");
 	}
 
@@ -160,7 +160,7 @@ public class StaticStmtTest extends JdbxTest
 	{
 		public Dao(QueryCursor cursor) throws JdbxException
 		{
-			ResultIterator it = ResultIterator.of(cursor);
+			QResultIterator it = QResultIterator.of(cursor);
 			id		= it.getInteger();
 			name	= it.getString();
 		}

@@ -13,9 +13,9 @@ class InitBase<P extends InitBase<P>>
 		}
 		else
 		{
-			resultSetType_ 	= ResultType.FORWARD_ONLY;
-			concurrency_ 	= ResultConcurrency.READ_ONLY;
-			holdability_ 	= ResultHoldability.CLOSE_AT_COMMIT;
+			resultSetType_ 	= QResultType.FORWARD_ONLY;
+			concurrency_ 	= QResultConcurrency.READ_ONLY;
+			holdability_ 	= QResultHoldability.CLOSE_AT_COMMIT;
 		}
 	}
 
@@ -29,7 +29,7 @@ class InitBase<P extends InitBase<P>>
 
 
 	@SuppressWarnings("unchecked")
-	public P resultType(ResultType value)
+	public P resultType(QResultType value)
 	{
 		Check.valid(value);
 		if (resultSetType_ != value);
@@ -42,7 +42,7 @@ class InitBase<P extends InitBase<P>>
 
 
 	@SuppressWarnings("unchecked")
-	public P resultConcurrency(ResultConcurrency value)
+	public P resultConcurrency(QResultConcurrency value)
 	{
 		Check.valid(value);
 		if (concurrency_ != value)
@@ -55,7 +55,7 @@ class InitBase<P extends InitBase<P>>
 
 
 	@SuppressWarnings("unchecked")
-	public P resultHoldability(ResultHoldability value)
+	public P resultHoldability(QResultHoldability value)
 	{
 		Check.valid(value);
 		if (holdability_ != value)
@@ -73,9 +73,9 @@ class InitBase<P extends InitBase<P>>
 	}
 
 
-	protected ResultType resultSetType_;
-	protected ResultConcurrency concurrency_;
-	protected ResultHoldability holdability_;
+	protected QResultType resultSetType_;
+	protected QResultConcurrency concurrency_;
+	protected QResultHoldability holdability_;
 	protected boolean optionsChanged_;
 }
 

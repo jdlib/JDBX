@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 /**
  * ResultConcurrency is an Enum for the JDBC constants ResultSet.CONCUR_*.
  */
-public enum ResultConcurrency implements JdbcEnum
+public enum QResultConcurrency implements JdbcEnum
 {
 	READ_ONLY(ResultSet.CONCUR_READ_ONLY),
 	CONCUR_UPDATABLE(ResultSet.CONCUR_UPDATABLE),
@@ -33,10 +33,10 @@ public enum ResultConcurrency implements JdbcEnum
 	/**
 	 * Maps codes to enums.
 	 */
-	public static final Map<ResultConcurrency> MAP = new Map<>(ResultConcurrency.class, INVALID);
+	public static final Map<QResultConcurrency> MAP = new Map<>(QResultConcurrency.class, INVALID);
 
 
-	ResultConcurrency(int code)
+	QResultConcurrency(int code)
 	{
 		code_ = code;
 	}

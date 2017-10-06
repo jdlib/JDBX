@@ -20,7 +20,7 @@ package org.jdbx.test;
 import java.sql.ParameterMetaData;
 import org.jdbx.CallStmt;
 import org.jdbx.JdbxException;
-import org.jdbx.ResultType;
+import org.jdbx.QResultType;
 import org.jdbx.StaticStmt;
 import org.junit.After;
 import org.junit.Before;
@@ -162,9 +162,9 @@ public class CallStmtTest extends JdbxTest
 
 	@Test public void testOptions() throws Exception
 	{
-		assertSame(ResultType.FORWARD_ONLY, stmt_.options().getResultType());
-		stmt_.init().resultType(ResultType.SCROLL_SENSITIVE).cmd("call GetUserAsResult(?)");
-		assertSame(ResultType.SCROLL_SENSITIVE, stmt_.options().getResultType());
+		assertSame(QResultType.FORWARD_ONLY, stmt_.options().getResultType());
+		stmt_.init().resultType(QResultType.SCROLL_SENSITIVE).cmd("call GetUserAsResult(?)");
+		assertSame(QResultType.SCROLL_SENSITIVE, stmt_.options().getResultType());
 	}
 
 
