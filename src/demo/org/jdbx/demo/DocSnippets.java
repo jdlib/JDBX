@@ -15,6 +15,56 @@ import org.jdbx.*;
 @SuppressWarnings({"unused","resource"})
 public class DocSnippets
 {
+	public List<City> readmeEx1Jdbc() throws SQLException 
+	{
+		List<City> list = new ArrayList<>();
+	    try (Statement stmt = con.createStatement()) {
+	        ResultSet result = stmt.executeQuery("SELECT * FROM Cities ORDER BY name");
+	        while (result.next())
+	            list.add(City.read(result));
+	    }
+	    return list;
+	}
+	
+	
+	public List<City> readmeEx2Jdbc() throws SQLException 
+	{
+		return Jdbx.query(con, "SELECT * FROM Cities ORDER BY name").rows().read(City::read);
+	}
+
+	
+	public Integer readmeEx2Jdbc(Connection con, String firstName, String lastName) 
+	{
+	    try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO Users VALUES (DEFAULT, ?, ?)",
+	        new String[] { "id" })) {
+	        pstmt.setString(1, firstName);
+	        pstmt.setString(2, lastName);
+	        if (pstmt.executeUpdate() != 1)
+	            throw new IllegalStateException("insert failed");
+	        Integer id = null;
+	        ResultSet result = pstmt.getGeneratedKeys();
+	        if (result.next())
+	            id = result.getObject(1, Integer.class);
+	        if (id == null)
+	            throw new IllegalStateException("id not returned");
+	        return id;
+	    }
+	    catch (SQLException e) {
+	        throw new IllegalStateException("sql error", e);
+	    }
+	}
+	
+	
+	public Integer readmeEx2Jdbx(Connection con, String firstName, String lastName) 
+	{
+		try (PrepStmt pstmt = new PrepStmt(con)) {
+			pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+			pstmt.params(firstName, lastName);
+			return pstmt.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
+		}
+	}
+
+	
 	public void stmtsCreatingClosing()
 	{
 		new StaticStmt(con); 

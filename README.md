@@ -37,7 +37,7 @@ Perform a SQL select, create a bean object for every result row, return the bean
 *using JDBX:*
 
     public List<City> queryCities(Connection con) {
-        return Jdbx.query(con, "SELECT * FROM Cities ORDER BY name").rows().value(City::read);
+        return Jdbx.query(con, "SELECT * FROM Cities ORDER BY name").rows().read(City::read);
     }
 
 
@@ -73,7 +73,7 @@ Perform a parameterized INSERT, return the auto generated primary key, convert a
         try (PrepStmt pstmt = new PrepStmt(con)) {
             pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
             pstmt.params(firstName, lastName);
-            return pstmt.createUpdate().runGetAutoKey(Integer.class).checkCount(1).checkHasValue();
+            return pstmt.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
         }
     }
 	

@@ -477,10 +477,10 @@ update or query results and evaluate the `UpdateResult` or `QueryResult`.
 	StaticStmt stmt = ...
 	ExecuteResult result = stmt.execute(sql);
 	while (result.next()) {
-		if (result.isQuery())
-			// process result.getQueryResult() 
-		else
-			// process result.getUpdateResult()
+	    if (result.isQuery())
+		    // process result.getQueryResult() 
+	    else
+	        // process result.getUpdateResult()
 	}  	
 
 When doing updates the update result may return column values from the update. If you want to obtain these column values,
@@ -490,7 +490,7 @@ TODO
 
 All JDBX statement classes - like their counterparts in JDBC - allow to group SQL commands in batches to improve
 roundtrip performance. Instead of directly incorporating batch related methods into the statement interface,
-all JDBX statements know a `batch()` which returns a service object to add or clear commands and run the batch:   
+all JDBX statements know a `batch()` method which returns a service object to add or clear commands and run the batch:   
 
 
 
@@ -500,11 +500,11 @@ JDBC reports database errors as **checked** exceptions using `java.sql.SQLExcept
 
 JDBX has a fundamental stance to favor unchecked exceptions and therefore introduces an own **unchecked** exception class
 `org.jdbx.JdbxException` which can be thrown by its operations. Especially any `SQLException` thrown by
-the underlying JDBC operations is wrapped into a JdbxException and reported as its exception cause.  
+the underlying JDBC operations is wrapped into a `JdbxException` and reported as its exception cause.  
 
 For easier exception handling a `JdbxExeption` contains a enum `JdbxExeption.Reason` to classify the exception
 context. If based on a `SQLException` it also contains a enum `JdbxExeption.SqlExType` to classify the 
-the SQLException.
+the `SQLException`.
 
 ## <a name="single-cmd"></a>8. Running a single command
         
@@ -519,7 +519,7 @@ to avoid explicit creation and closing of statement objects.
     // run a parameterized INSERT: creates a PrepStmt internally and returns the UpdateResult 
     Jdbx.update(con, "INSERT INTO Status (flag) VALUES (?)", "F").requireCount(1);
  
-But if you a running a couple of SQL commands it is more efficient to create a statement yourself and reuse it.   
+But if you a running a couple of SQL commands it is more efficient to create a statement and reuse it.   
  
 
 TODO
