@@ -21,7 +21,12 @@ import java.sql.ResultSet;
 
 
 /**
- * ResultConcurrency is an Enum for the JDBC constants ResultSet.CONCUR_*.
+ * QResultConcurrency is an Enum for the JDBC constants ResultSet.CONCUR_*.
+ * Given a JDBX statement object, you can change the result concurrency as follows:
+ * <p><code>stmt.options().resultConcurrency(QResultConcurrency.nnn)</code>
+ *  
+ * @see InitBase#resultConcurrency(QResultConcurrency)
+ * @see Stmt#options() 
  */
 public enum QResultConcurrency implements JdbcEnum
 {

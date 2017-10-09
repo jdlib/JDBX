@@ -23,7 +23,7 @@ import org.jdbx.function.CheckedRunnable;
 
 
 /**
- * ResultIterator is a lightweight wrapper around a ResultSet.
+ * QResultIterator is a lightweight wrapper around a QueryCursor.
  * It allows easy reading of subsequent columns - it maintains
  * a column index, and at each get operation it reads the value
  * from the ResultSet and then increments the index.
@@ -31,12 +31,12 @@ import org.jdbx.function.CheckedRunnable;
 public class QResultIterator implements GetResult, AutoCloseable
 {
 	/**
-	 * Returns a ResultIterator for the result
+	 * Returns a QResultIterator for the result
 	 * which does not close the Result when it is closed.
 	 * Use this factory method to avoid compiler warnings
 	 * for unclosed resources when you don't want to close the ResultSet.
 	 * @param cursor the cursor which is iterated
-	 * @return the new ResultIterator
+	 * @return the new QResultIterator
 	 */
 	@SuppressWarnings("resource")
 	public static QResultIterator of(QueryCursor cursor)
@@ -46,12 +46,12 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Returns a ResultIterator for the ResultSet
+	 * Returns a QResultIterator for the ResultSet
 	 * which does not close the ResultSet when it is closed.
 	 * Use this factory method when you want to avoid compiler warnings
 	 * for unclosed resources.
 	 * @param resultSet the resultSet which is iterated
-	 * @return the new ResultIterator
+	 * @return the new QResultIterator
 	 */
 	@SuppressWarnings("resource")
 	public static QResultIterator of(ResultSet resultSet)
@@ -61,7 +61,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Creates a ResultIterator for a QueryCursor.
+	 * Creates a QResultIterator for a QueryCursor.
 	 * @param cursor the result
 	 */
 	public QResultIterator(QueryCursor cursor)
@@ -71,7 +71,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Creates a ResultIterator for a ResultSet.
+	 * Creates a QResultIterator for a ResultSet.
 	 * @param resultSet the ResultSet
 	 */
 	public QResultIterator(ResultSet resultSet)
@@ -227,7 +227,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Closes the ResultIterator.
+	 * Closes the QResultIterator.
 	 * Depending on the {@link #isCloseResult() close flag} it also closes the ResultSet.
 	 */
 	@Override public void close() throws JdbxException

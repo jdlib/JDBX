@@ -21,14 +21,15 @@ import java.sql.ResultSet;
 
 
 /**
- * ResultType is an Enum for the JDBC constants which define the ResultSet type.
+ * QResultType is an Enum for the JDBC constants which define the ResultSet type.
+ * Given a JDBX statement object, you can configure the result type as follows:
+ * <p><code>stmt.options().resultType(QResultType.nnn)</code>
  */
 public enum QResultType implements JdbcEnum
 {
     /**
      * The enum indicating the type for a <code>QueryCursor</code> object
      * whose cursor may move only forward.
-     * @since 1.2
      */
 	FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
 	

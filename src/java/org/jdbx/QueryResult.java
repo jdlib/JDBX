@@ -7,16 +7,16 @@ import org.jdbx.function.CheckedFunction;
 
 
 /**
- * Query is a builder class to run a SQL query and extract values from the JDBC result set.
- * Note that actual query on JDBC level may actually not be run until
+ * QueryResult is a builder class to run a SQL query and extract values from the JDBC result set.
+ * Note that actual query on JDBC level may not be run until
  * a terminal operation of the builder method chain is executed. 
  */
 public abstract class QueryResult extends StmtRunnable
 {
 	/**
-	 * Returns a Query object for an existing ResultSet.
+	 * Returns a QueryResult object for an existing ResultSet.
 	 * @param resultSet a ResultSet
-	 * @return the Query
+	 * @return the QueryResult
 	 */
 	public static QueryResult of(ResultSet resultSet)
 	{
@@ -25,7 +25,7 @@ public abstract class QueryResult extends StmtRunnable
 
 
 	/**
-	 * Instructs the query to skip the first n rows from the result.
+	 * Skips the first n rows from the result.
 	 * @param n a number of rows
 	 * @return this
 	 */
@@ -184,7 +184,7 @@ public abstract class QueryResult extends StmtRunnable
 
 	@Override protected final String getRunnableType()
 	{
-		return "Query";
+		return "QueryResult";
 	}
 
 

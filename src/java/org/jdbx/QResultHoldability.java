@@ -21,8 +21,10 @@ import java.sql.ResultSet;
 
 
 /**
- * ResultConcurrency is an Enum for the JDBC constants
+ * QResultHoldability is an Enum for the JDBC constants
  * ResultSet.HOLD_CURSORS_OVER_COMMIT and ResultSet.CLOSE_CURSORS_AT_COMMIT.
+ * Given a JDBX statement object, you can configure the result holdability as follows:
+ * <p><code>stmt.options().resultHoldability(QResultHoldability.nnn)</code>
  */
 public enum QResultHoldability implements JdbcEnum
 {

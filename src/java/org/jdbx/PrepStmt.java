@@ -411,8 +411,8 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * Returns a Query builder to execute the current SQL command.
-	 * @return the Queryt
+	 * Returns a QueryResult builder to execute the current SQL command.
+	 * @return the QueryResult
 	 */
 	public QueryResult query() throws JdbxException
 	{

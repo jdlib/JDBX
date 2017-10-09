@@ -38,13 +38,13 @@ import org.jdbx.function.GetForName;
 
 /**
  * QResultRows is a builder class to
- * retrieve the multi-row result of a query.
+ * extract a list of values from all rows of a query result.
  */
 public class QResultRows
 {
-	QResultRows(QueryResult query, int max)
+	QResultRows(QueryResult result, int max)
 	{
-		query_ = query;
+		result_ = result;
 		max_    = max;
 	}
 
@@ -62,7 +62,7 @@ public class QResultRows
 			while ((++index < max_) && cursor.next())
 				consumer.accept(cursor);
 		}; 
-		query_.read(c);
+		result_.read(c);
 	}
 
 
@@ -93,8 +93,8 @@ public class QResultRows
 	{
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");
-		return query_.read(false, cursor -> {
-			if (query_.applySkip(cursor))
+		return result_.read(false, cursor -> {
+			if (result_.applySkip(cursor))
 			{
 				int index = -1;
 				while ((++index < max_) && cursor.next())
@@ -559,6 +559,6 @@ public class QResultRows
 	}
 
 
-	private QueryResult query_;
+	private final QueryResult result_;
 	private int max_ = Integer.MAX_VALUE;
 }

@@ -122,8 +122,8 @@ public class CallStmtTest extends JdbxTest
 		stmt_.init("call GetUserAsResult(?)");
 		stmt_.param(1).setInteger(id_);
 		Object[] data = stmt_.createExecute().run(r -> {
-			assertTrue(r.nextQuery());
-			Object[] result = r.getQuery().row().required().cols();
+			assertTrue(r.nextQueryResult());
+			Object[] result = r.getQueryResult().row().required().cols();
 			assertFalse(r.next());
 			return result;
 		});

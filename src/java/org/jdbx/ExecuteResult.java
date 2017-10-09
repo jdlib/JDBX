@@ -2,7 +2,6 @@ package org.jdbx;
 
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import org.jdbx.function.CheckedFunction;
 import org.jdbx.function.CheckedRunnable;
@@ -16,12 +15,13 @@ import org.jdbx.function.GetReturnCols;
  * <pre><code>
  * ExecuteResult result = ...;
  * while (result.next()) {
- *     if (result.isQuery()) {
- *     	   Query q = result.getQuery(); 
+ *     if (result.isQueryResult()) {
+ *     	   QueryResult qr = result.getQueryResult(); 
  *         // process query result
  *     }
  *     else {
- *         int count = result.getUpdateCount(); ...
+ *         UpdateResult<Void> ur = result.getUpdateResult();
+ *         // process update result
  *     }
  * }
  * </code></pre>
@@ -64,11 +64,10 @@ public class ExecuteResult
 	}
 
 
-	ExecuteResult(Statement stmt, boolean hasQuery)
+	ExecuteResult(Statement stmt, boolean hasQueryResult)
 	{
-		stmt_ 		= Check.notNull(stmt, "stmt");
-		hasQuery_	= hasQuery;
-		status_		= Status.BEFORE_FIRST;
+		stmt_ 			= Check.notNull(stmt, "stmt");
+		hasQueryResult_	= hasQueryResult;
 	}
 
 	
@@ -77,9 +76,9 @@ public class ExecuteResult
 	//-------------------------------
 	
 
-	private void initNext(boolean hasQuery) throws JdbxException
+	private void initNext(boolean hasQueryResult) throws JdbxException
 	{
-		if (hasQuery_ = hasQuery)
+		if (hasQueryResult_ = hasQueryResult)
 		{
 			status_ = Status.HAS_QUERYRESULT;
 			updateCount_ = -1;
@@ -119,7 +118,7 @@ public class ExecuteResult
 		checkNotLast();
 		Check.valid(current);
 		if (status_ == Status.BEFORE_FIRST)
-			initNext(hasQuery_);
+			initNext(hasQueryResult_);
 		else
 		{
 			try
@@ -137,13 +136,13 @@ public class ExecuteResult
 
 	/**
 	 * Moves to the next result until the result is a query result.
-	 * @return true if moved to a result which is a ResultSet
+	 * @return true if moved to a result which is a query result
 	 */
-	public boolean nextQuery() throws JdbxException
+	public boolean nextQueryResult() throws JdbxException
 	{
 		while (next())
 		{
-			if (isQuery())
+			if (isQueryResult())
 				return true;
 		}
 		return false;
@@ -154,7 +153,7 @@ public class ExecuteResult
 	 * Moves to the next result until the result is an update result.
 	 * @return true if moved to a result which is an update result
 	 */
-	public boolean nextUpdate() throws JdbxException
+	public boolean nextUpdateResult() throws JdbxException
 	{
 		while (next())
 		{
@@ -247,36 +246,35 @@ public class ExecuteResult
 	 * @return true if the current result provides a query result
 	 * @throws JdbxException if next() has not been called yet or if position after the last result
 	 */
-	public boolean isQuery() throws JdbxException
+	public boolean isQueryResult() throws JdbxException
 	{
 		checkHasResult();
 		return status_ == Status.HAS_QUERYRESULT;
 	}
 
 
-	private void checkIsQuery() throws JdbxException
+	private void checkIsQueryResult() throws JdbxException
 	{
-		if (!isQuery())
+		if (!isQueryResult())
 			throw JdbxException.illegalState("current result is not a query result");
 	}
 
 
 	/**
-	 * Returns the current result as query.
-	 * @return the query
-	 * @throws JdbxException if the current result is not an {@link #isQuery() result set}
-	 * @throws SQLException if the JDBC operation throws a SQLException
+	 * Returns the current result as query result.
+	 * @return the query result
+	 * @throws JdbxException if the current result is not an {@link #isQueryResult() query result}
 	 */
-	public QueryResult getQuery() throws JdbxException
+	public QueryResult getQueryResult() throws JdbxException
 	{
-		checkIsQuery();
+		checkIsQueryResult();
 		ResultSet resultSet = CheckedFunction.unchecked(Statement::getResultSet, stmt_);
 		return QueryResult.of(resultSet);
 	}
 
 
 	private Statement stmt_;
-	private boolean hasQuery_;
+	private boolean hasQueryResult_;
 	private long updateCount_;
 	private Status status_ = Status.BEFORE_FIRST;
 }

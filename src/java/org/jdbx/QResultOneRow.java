@@ -14,15 +14,14 @@ import org.jdbx.function.GetForName;
  */
 public class QResultOneRow
 {
-	QResultOneRow(QueryResult query)
+	QResultOneRow(QueryResult result)
 	{
-		query_ = query;
+		result_ = result;
 	}
 
 
 	/**
-	 * Instructs the query to throw an Exception
-	 * if the result is empty.
+	 * Instructs this builder to throw an Exception if the result is empty.
 	 * @return this
 	 */
 	public QResultOneRow required()
@@ -33,7 +32,7 @@ public class QResultOneRow
 
 
 	/**
-	 * Instructs the query to throw an Exception
+	 * Instructs this builder to throw an Exception
 	 * if the result contains more than one row.
 	 * @return this
 	 */
@@ -66,8 +65,8 @@ public class QResultOneRow
 	public <T> T read(CheckedFunction<QueryCursor,T> reader, T emptyValue) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
-		return query_.read(false, result -> {
-			if (query_.applySkip(result) && result.next())
+		return result_.read(false, result -> {
+			if (result_.applySkip(result) && result.next())
 			{
 				T value = reader.apply(result);
 				if (unique_ && result.next())
@@ -296,7 +295,7 @@ public class QResultOneRow
 	}
 
 
-	private QueryResult query_;
+	private QueryResult result_;
 	private boolean required_;
 	private boolean unique_;
 }

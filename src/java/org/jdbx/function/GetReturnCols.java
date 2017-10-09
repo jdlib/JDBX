@@ -15,7 +15,7 @@ public interface GetReturnCols<V>
 	/**
 	 * Reads the returned column values as a value of type V 
 	 * @param updateCount the update count
-	 * @param result a Query representing the returned column values
+	 * @param result a QueryResult containing the returned column values
 	 * @return the value representing the returned column values 
 	 * @see Statement#getGeneratedKeys()
 	 * @throws Exception if an error occurs

@@ -91,15 +91,15 @@ public abstract class Batch
 	/**
 	 * Executes the batched SQL commands.
 	 * A list of auto-generated keys of the given type will also be returned.
-	 * @param keyType the type of the generated keys
+	 * @param colType the type of the generated keys
 	 * @param <V> the type of the auto generated keys
 	 * @return the result
 	 */
-	public <V> BatchResult<List<V>> runGetAutoKeys(Class<V> keyType) throws JdbxException
+	public <V> BatchResult<List<V>> runGetAutoKeys(Class<V> colType) throws JdbxException
 	{
-		Check.notNull(keyType, "keyType");
+		Check.notNull(colType, "colType");
 		return runGetAutoKeys((rs,r) -> {
-			r.value = QueryResult.of(rs).rows().col().get(keyType);
+			r.value = QueryResult.of(rs).rows().col().get(colType);
 		});
 	}
 

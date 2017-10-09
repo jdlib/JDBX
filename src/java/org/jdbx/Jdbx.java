@@ -16,13 +16,13 @@ public class Jdbx
 	 * @param con a connection
 	 * @param sql a SQL command
 	 * @param params zero or more parameters
-	 * @return the Query
+	 * @return the QueryResult
 	 */
 	public static QueryResult query(Connection con, String sql, Object... params)
 	{
 		Check.notNull(con, "con");
 		Check.notNull(sql, "sql");
-		return new FastQuery(new StmtProvider(con, sql, params));
+		return new FastQResult(new StmtProvider(con, sql, params));
 	}
 
 
@@ -131,9 +131,9 @@ public class Jdbx
 	}
 
 
-	private static class FastQuery extends QueryResult
+	private static class FastQResult extends QueryResult
 	{
-		public FastQuery(StmtProvider provider)
+		public FastQResult(StmtProvider provider)
 		{
 			provider_ = provider;
 		}

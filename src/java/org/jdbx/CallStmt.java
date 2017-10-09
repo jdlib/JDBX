@@ -500,8 +500,8 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * Executes the current SQL query command and returns a Query. 
-	 * @return the query object
+	 * Executes the current SQL query command and returns a QueryResult. 
+	 * @return the query result
 	 */
 	public QueryResult query() throws JdbxException
 	{

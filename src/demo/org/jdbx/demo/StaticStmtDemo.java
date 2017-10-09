@@ -58,7 +58,7 @@ public class StaticStmtDemo
 	private void query(StaticStmt stmt)
 	{
 		// SQL query string is passed to StaticStmt.query()
-		int userCount = stmt.query("SELECT count(* FROM Users").row().col().getInt();
+		int userCount = stmt.query("SELECT count(*) FROM Users").row().col().getInt();
 	}
 
 
@@ -103,8 +103,8 @@ public class StaticStmtDemo
 			}
 			else
 			{
-				QueryResult q = result.getQuery();
-				// read values from query 
+				QueryResult qr = result.getQueryResult();
+				// read values from query result 
 			}
 		}
 	}
