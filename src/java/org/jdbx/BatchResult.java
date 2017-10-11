@@ -12,7 +12,7 @@ import java.sql.Statement;
  * @see Batch#runGetAutoKeys(Class)
  * @see Batch#runGetAutoKey(Class)
  */
-public class BatchResult<R>
+public class BatchResult<V>
 {
 	/**
 	 * UpdateType categorizes update counts
@@ -37,18 +37,42 @@ public class BatchResult<R>
 		/**
 		 * The type for an invaid update count return by the JDBC driver.
 		 */
-		INVALID,
+		INVALID;
+		
+		
+		public static UpdateType forCount(int count)
+		{
+			if (count >= 0)
+				return SUCCESS;
+			else if (count == Statement.SUCCESS_NO_INFO)
+				return SUCCESS_NO_INFO;
+			else if (count == Statement.EXECUTE_FAILED)
+				return EXECUTE_FAILED;
+			else
+				return INVALID;
+		}
 	}
 
 
 	/**
 	 * Creates a new BatchResult.
-	 * @param the update counts
+	 * @param counts the update counts
 	 */
-	public BatchResult(int[] counts)
+	public BatchResult(int... counts)
+	{
+		this(null, counts);
+	}
+	
+	
+	/**
+	 * Creates a new BatchResult.
+	 * @param counts the update counts
+	 */
+	public BatchResult(V value, int... counts)
 	{
 		// silently correct misbehavior of null results returned by Statement.executeBatch
 		counts_ = counts != null ? counts : new int[0];
+		value_  = value;
 	}
 
 
@@ -63,6 +87,18 @@ public class BatchResult<R>
 
 
 	/**
+	 * Returns the number of update counts in this BatchResult.
+	 * @return the number of update counts
+	 */
+	public BatchResult<V> requireSize(int size)
+	{
+		if (size() != size)
+			throw JdbxException.invalidResult("expected batch result size " + size + ", but was " + size());
+		return this;
+	}
+	
+	
+	/**
 	 * Returns the update count with the given index.
 	 * @return the update count
 	 */
@@ -73,6 +109,16 @@ public class BatchResult<R>
 
 
 	/**
+	 * Returns the update counts.
+	 * @return the update counts
+	 */
+	public int[] getCounts()
+	{
+		return counts_;
+	}
+
+	
+	/**
 	 * Returns the type of the update count with the given index.
 	 * @return the type
 	 * @see Statement#executeBatch()
@@ -81,15 +127,7 @@ public class BatchResult<R>
 	 */
 	public UpdateType getCountType(int index)
 	{
-		int count = getCount(index);
-		if (count >= 0)
-			return UpdateType.SUCCESS;
-		else if (count == Statement.SUCCESS_NO_INFO)
-			return UpdateType.SUCCESS_NO_INFO;
-		else if (count == Statement.EXECUTE_FAILED)
-			return UpdateType.EXECUTE_FAILED;
-		else
-			return UpdateType.INVALID;
+		return UpdateType.forCount(getCount(index));
 	}
 
 
@@ -98,7 +136,7 @@ public class BatchResult<R>
 	 * @return this
 	 * @throws JdbxException thrown if the actual value does not match the expected value
 	 */
-	public BatchResult<R> checkCount(int index, int count) throws JdbxException
+	public BatchResult<V> requireCount(int index, int count) throws JdbxException
 	{
 		if (getCount(index) != count)
 			throw JdbxException.invalidResult("#" + index + ": expected update count " + count + ", but was " + getCount(index));
@@ -111,7 +149,7 @@ public class BatchResult<R>
 	 * @return this
 	 * @throws JdbxException thrown if the actual type does not match the expected type
 	 */
-	public BatchResult<R> checkCountType(int index, UpdateType type) throws JdbxException
+	public BatchResult<V> requireCountType(int index, UpdateType type) throws JdbxException
 	{
 		if (getCountType(index) != type)
 			throw JdbxException.invalidResult("#" + index + ": expected update count type " + type + ", but was " + getCountType(index));
@@ -123,23 +161,29 @@ public class BatchResult<R>
 	 * Checks that the value of this BatchResult is not null.
 	 * @throws JdbxException thrown if the actual value does not match the expected value
 	 */
-	public R checkHasValue() throws JdbxException
+	public V requireValue() throws JdbxException
 	{
-		if (this.value == null)
+		if (value_ == null)
 			throw JdbxException.invalidResult("expected non-null value");
-		return this.value;
+		return value_;
+	}
+	
+	
+	public V value()
+	{
+		return value_;
 	}
 
 
 	/**
 	 * Holds the update counts for the executed commands.
 	 */
-	private int[] counts_;
+	private final int[] counts_;
 
 	/**
 	 * Stores the value returned by the AutoKeysReader.
 	 */
-	public R value;
+	private final V value_;
 }
 
 

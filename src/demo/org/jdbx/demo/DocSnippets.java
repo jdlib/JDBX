@@ -345,10 +345,21 @@ public class DocSnippets
 	
 	public void batches() throws Exception
 	{
-		stmt.batch()
-			.add("UPDATE ...")
-			.add("UPDATE ...")
-			.run();
+        stmt.batch()
+            .add("INSERT INTO BatchDemo (name) VALUES ('A')")
+            .add("INSERT INTO BatchDemo (name) VALUES ('B'), ('C'), ('D')")
+            .run()  // returns a BatchResult
+    		.requireSize(2)
+    		.requireCount(0, 1)
+    		.requireCount(1, 3);
+           
+        pstmt.init("INSERT INTO BatchDemo (name) VALUES (?)");
+        pstmt.params("A").batch().add();
+        pstmt.params("B").batch().add()
+            .run()  // returns a BatchResult
+    		.requireSize(2)
+    		.requireCount(0, 1)
+    		.requireCount(1, 1);
 	}
 	
 	

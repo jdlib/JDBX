@@ -18,6 +18,7 @@ package org.jdbx.demo;
 
 
 import java.sql.Connection;
+import org.jdbx.BatchResult;
 import org.jdbx.JdbxException;
 import org.jdbx.PrepStmt;
 import org.jdbx.StaticStmt;
@@ -36,7 +37,7 @@ public class BatchDemo
 	{
 		try (StaticStmt stmt = new StaticStmt(con))
 		{
-			int result[] = stmt.batch()
+			BatchResult<Void> result = stmt.batch()
 				.add("UPDATE StatusA SET flag = 0")
 				.add("UPDATE StatusB SET flag = 1")
 				.add("UPDATE StatusC SET flag = 2")
@@ -58,7 +59,7 @@ public class BatchDemo
 				stmt.param(1).setInt(id);
 				stmt.batch().add();
 			}
-			int[] result = stmt.batch().run();
+			BatchResult<Void> result = stmt.batch().run();
 		}
 	}
 }

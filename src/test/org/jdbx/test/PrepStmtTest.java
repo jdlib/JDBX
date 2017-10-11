@@ -18,6 +18,7 @@ package org.jdbx.test;
 
 
 import org.jdbx.JdbxException;
+import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 import org.jdbx.QueryCursor;
@@ -73,10 +74,10 @@ public class PrepStmtTest extends JdbxTest
 		pstmt_.param(1, "d");
 		pstmt_.param(2).setInt(3);
 		pstmt_.batch().add();
-		int updateCounts[] = pstmt_.batch().run();
-		assertEquals(2, updateCounts.length);
-		assertEquals(1, updateCounts[0]);
-		assertEquals(1, updateCounts[1]);
+		BatchResult<Void> result = pstmt_.batch().run();
+		assertEquals(2, result.size());
+		result.requireCount(0, 1);
+		result.requireCount(1, 1);
 
 		// read a row by id
 		pstmt_.init("SELECT * FROM PTests WHERE id = ?");

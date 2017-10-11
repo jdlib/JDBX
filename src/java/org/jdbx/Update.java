@@ -32,11 +32,10 @@ public abstract class Update extends StmtRunnable
 {
 	/**
 	 * Instructs the Update to retrieve the update count as long value.
-	 * The count is always reported as {@link UpdateResult#count() long value} but
-	 * by default is on the JDBC level retrieved as int value.  
+	 * The large count can be retrieved from the result by calling {@link UpdateResult#largeCount()}
 	 * @see Statement#executeUpdate(String)
 	 * @see Statement#executeLargeUpdate(String)
-	 * @return this.
+	 * @return this
 	 */
 	public Update returnLargeCount()
 	{

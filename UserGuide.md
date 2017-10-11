@@ -83,8 +83,8 @@ connection will also be closed automatically.
 To configure a `StaticStmt` use the builder returned by its `init()` method.      
 
     stmt.init()
-        .resultType(ResultType.SCROLL_SENSITIVE)
-        .resultConcurrency(ResultConcurrency.READ_ONLY);
+        .resultType(QResultType.SCROLL_SENSITIVE)
+        .resultConcurrency(QResultConcurrency.READ_ONLY);
 
 
 ### <a name="stmts-prep"></a>PrepStmt
@@ -104,8 +104,8 @@ Contrary to `java.sql.PreparedStatement` you can also re-initialize the command.
 Like in `StaticStmt` you can use the builder returned by the `init()` method to configure the `PrepStmt`.
       
     pstmt.init()
-        .resultType(ResultType.SCROLL_INSENSITIVE)
-        .resultHoldability(ResultHoldability.HOLD_OVER_COMMIT)
+        .resultType(QResultType.SCROLL_INSENSITIVE)
+        .resultHoldability(QResultHoldability.HOLD_OVER_COMMIT)
         .cmd("SELECT * FROM Cities WHERE name LIKE ?");
      
 
@@ -127,7 +127,7 @@ be executed multiple times using different parameter values. Example:
 In JDBC executing a query returns a `java.sql.ResultSet`. Given the `ResultSet` you can loop over its rows and extract 
 values from the rows in appropriate form.
 
-JDBX uses the builder pattern and functional programming to avoid most of the boilerplate code needed in JDBC.
+JDBX uses fluent APIs and functional programming to avoid most of the boilerplate code needed in JDBC.
 
 **Example 1:** Read all rows from a query result and convert each row into a data object
 
@@ -176,7 +176,7 @@ JDBX uses the builder pattern and functional programming to avoid most of the bo
 In order to execute a SQL query you need a `StaticStmt` or `PrepStmt`. 
 
 `StaticStmt.query(String)` and `PrepStmt.query()` return a `org.jdbx.QueryResult` object
-which provides a builder API to extract values from the result:
+which provides a fluent API to extract values from the result:
 
      QueryResult qr = stmt.query(sql);
      QueryResult qr = pstmt.init(sql).params("a", "b").query();
@@ -187,10 +187,10 @@ If you have obtained a `java.sql.ResultSet` from somewhere else you can also tur
     List<String> names = QueryResult.of(resultSet).rows().col("name").getString();
      
 In the following variable `qr` represents a `QueryResult` object obtained from a `StaticStmt` or `PrepStmt`.     
-But because of its builder API you rarely will need to store a `QueryResult` in a local variable but rather chain
+But because of its fluent API you rarely will need to store a `QueryResult` in a local variable but rather chain
 method calls until you receive the result of the query.      
 
-Also note that the actual JDBC query is usually not run until you invoke the terminal method of the builder chain.
+Also note that the actual JDBC query is usually not run until you invoke the terminal method of the fluent call chain.
 
 
 ### <a name="queries-singlerow">Reading a single result row
@@ -287,8 +287,8 @@ value constructed from row values:
 Now the builders returned by `QueryResult.row()` and `.rows()` accept such a reader function and invoke it for the first row / all rows
 to return a single object / a list of objects:
 
-    City city       = qr.row().read(City::read);		// read a single data object from first result row 	 
-    List<City> city = qr.rows().read(City::read); 	// read a list of data objects from all rows 
+    City city       = qr.row().read(City::read);    // read a single data object from first result row 	 
+    List<City> city = qr.rows().read(City::read);   // read a list of data objects from all rows 
 
 
 #### Self-managed QueryCursor navigation 
@@ -313,7 +313,7 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
 
 	// configure a scroll sensitive cursor	
 	StaticStmt stmt = ....
-	stmt.init().resultType(ResultType.SCROLL_SENSITIVE);
+	stmt.init().resultType(QResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
 	try (QueryCursor qc = stmt.query(sql).cursor()) {
@@ -334,7 +334,7 @@ If your cursor is updatable, you can or update or delete the current row, or ins
 
 	// configure the result to be updatable
 	StaticStmt stmt = ....
-	stmt.init().resultConcurrency(ResultConcurrency.CONCUR_UPDATABLE);
+	stmt.init().resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 	QueryCursor qc = stmt.query(sql).cursor();
 	
 	// position row
@@ -348,7 +348,7 @@ If your cursor is updatable, you can or update or delete the current row, or ins
      
 #### Accessing the ResultSet  
       
-You still can obtain the `java.sql.ResultSet` of a query cursor if you need to:
+You can still obtain the underlying `java.sql.ResultSet` of a query cursor if you need to:
  
     ResultSet resultSet = qc.resultSet();
     while (resultSet.next())
@@ -394,12 +394,12 @@ Testing the update count can be shortened by calling `UpdateResult.requireCount`
 
 If you want to retrieve returned columns values, e.g. auto-generated primary key values, or want to enable large (`long`) update counts, 
 then call `StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` which returns a `org.jdbx.Update` object.
-The `Update` class provides a builder API to configure and then run the update to return a `UpdateResult`:
+The `Update` class provides a fluent API to configure and then run the update to return a `UpdateResult`:
     
      Update u = stmt.createUpdate(sql);
      Update u = pstmt.init(sql).params("1", "2").createUpdate();
      
-Because of its builder API you will rarely need to store an `Update` object in a local variable but rather chain
+Because of its fluent API you will rarely need to store an `Update` object in a local variable but rather chain
 method calls to retrieve the result. 
 
 
@@ -415,8 +415,8 @@ For `StaticStmt` steps 1) and 2) are done by configuring the `Update` object:
   
     StaticStmt stmt = ...
     UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
-        .returnAutoKeyCols()        // step 1: tell the Update to return the auto-generated key value
-        .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key value as Integer 
+        .returnAutoKeyCols()        // step 1: tell the Update to return the auto-generated key columns
+        .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key column as Integer 
     int inserted  = result.count();
     Integer newId = result.value();
     
@@ -459,7 +459,7 @@ Since version 4.2 JDBC has an API for large update counts, represented as `long`
 JDBC drivers support this feature JDBX gives optional access to large count values:       
 
     long updated = stmt.createUpdate("UPDATE MegaTable SET timestamp = NOW()") 
-        .returnLargeCount()  // configures the Update 
+        .returnLargeCount()  // configures the Update to retrieve large counts 
         .run()               // runs the Update and returns the UpdateResult
         .largeCount();       // returns the update count as long   
         
@@ -478,7 +478,7 @@ update or query results and evaluate the `UpdateResult` or `QueryResult`.
 	ExecuteResult result = stmt.execute(sql);
 	while (result.next()) {
 	    if (result.isQuery())
-		    // process result.getQueryResult() 
+            // process result.getQueryResult() 
 	    else
 	        // process result.getUpdateResult()
 	}  	
@@ -490,9 +490,28 @@ TODO
 
 All JDBX statement classes - like their counterparts in JDBC - allow to group SQL commands in batches to improve
 roundtrip performance. Instead of directly incorporating batch related methods into the statement interface,
-all JDBX statements know a `batch()` method which returns a service object to add or clear commands and run the batch:   
+all JDBX statements know a `batch()` method which returns a `org.jdbc.Batch` object to add or clear commands and run the batch.
 
+When the Batch is run it returns a `org.jdbx.BatchResult` which similar to `UpdateResult` allows you to access the update counts:
 
+    StaticStmt stmt = ...
+    stmt.batch()
+        .add("INSERT INTO BatchDemo (name) VALUES ('A')")
+        .add("INSERT INTO BatchDemo (name) VALUES ('B'), ('C'), ('D')")
+        .run()  // returns a BatchResult
+		.requireSize(2)
+		.requireCount(0, 1)
+		.requireCount(1, 3);
+       
+    PStmt pstmt = ... 
+    pstmt.init("INSERT INTO BatchDemo (name) VALUES (?)");
+    pstmt.params("A").batch().add();
+    pstmt.params("B").batch().add()
+        .run()  // returns a BatchResult
+		.requireSize(2)
+		.requireCount(0, 1;
+		.requireCount(1, 1);
+		
 
 ## <a name="exceptions"></a>7. Exceptions
 

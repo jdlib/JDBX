@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import org.jdbx.JdbxException;
 import org.jdbx.QueryCursor;
+import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.QResultConcurrency;
 import org.jdbx.QResultIterator;
@@ -149,10 +150,10 @@ public class StaticStmtTest extends JdbxTest
 	{
 		stmt_.batch().add("INSERT INTO STest (name) VALUES ('A'), ('B')");
 		stmt_.batch().add("INSERT INTO STest (name) VALUES ('C'), ('D')");
-		int[] count = stmt_.batch().run();
-		assertEquals(2, count.length);
-		assertEquals(2, count[0]);
-		assertEquals(2, count[1]);
+		BatchResult<Void> result = stmt_.batch().run();
+		result.requireSize(2);
+		result.requireCount(0, 2);
+		result.requireCount(1, 2);
 	}
 
 

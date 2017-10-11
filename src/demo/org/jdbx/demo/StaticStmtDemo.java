@@ -19,6 +19,7 @@ package org.jdbx.demo;
 
 import java.sql.Connection;
 import javax.sql.DataSource;
+import org.jdbx.BatchResult;
 import org.jdbx.ExecuteResult;
 import org.jdbx.QueryResult;
 import org.jdbx.StaticStmt;
@@ -118,7 +119,7 @@ public class StaticStmtDemo
 	{
 		// SQL command string is passed to StaticStmt.Batch.add
 
-		int[] updateCounts = stmt.batch()
+		BatchResult<Void> result = stmt.batch()
 			.add("UPDATE Status1 SET flag1 = 1")
 			.add("UPDATE Status2 SET flag2 = 2")
 			.add("UPDATE Status3 SET flag3 = 3")
