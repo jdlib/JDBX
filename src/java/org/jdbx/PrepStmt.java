@@ -137,14 +137,8 @@ public class PrepStmt extends Stmt
 	/**
 	 * Allows to initialize the statement.
 	 */
-	public class Init extends InitBase<Init> implements ReturnCols.Builder<Init>
+	public class Init implements ReturnCols.Builder<Init>
 	{
-		private Init()
-		{
-			super(options_);
-		}
-
-
 		/**
 		 * Instructs the init builder that the SQL command has named parameters
 		 * instead of positional parameters.
@@ -191,9 +185,6 @@ public class PrepStmt extends Stmt
 					paramMap_ = null;
 					p.close();
 				}
-
-				if (optionsChanged_)
-					updateOptions(options());
 
 				if (namedParams_)
 				{

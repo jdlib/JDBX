@@ -118,11 +118,10 @@ public class CallStmt extends Stmt
 	/**
 	 * Init is a builder to define the SQL command and auto keys behaviour.
 	 */
-	public class Init extends InitBase<Init>
+	public class Init
 	{
 		private Init()
 		{
-			super(options_);
 		}
 
 
@@ -145,10 +144,6 @@ public class CallStmt extends Stmt
 					stmt_ = null;
 					p.close();
 				}
-
-				// store changed options
-				if (optionsChanged_)
-					updateOptions(options()); // will create options if not yet done
 
 				// create the new statement
 				stmt_ = createJdbcStmt(sql);

@@ -133,7 +133,7 @@ public abstract class Stmt implements AutoCloseable
 	}
 
 
-	protected void closeStmt() throws JdbxException
+	protected void closeJdbcStmt() throws JdbxException
 	{
 		try
 		{

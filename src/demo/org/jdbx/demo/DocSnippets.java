@@ -17,10 +17,6 @@ public class DocSnippets
 {
 	public List<City> readmeEx1Jdbc() throws SQLException 
 	{
-		stmt.init().resultConcurrency(null);
-		stmt.options().setFetchSize(2);
-		
-		
 		List<City> list = new ArrayList<>();
 	    try (Statement stmt = con.createStatement()) {
 	        ResultSet result = stmt.executeQuery("SELECT * FROM Cities ORDER BY name");
@@ -86,7 +82,7 @@ public class DocSnippets
 	public void stmtsStaticStmt()
 	{
 		long count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')").count();
-		stmt.init().resultType(QResultType.SCROLL_SENSITIVE).resultConcurrency(QResultConcurrency.READ_ONLY);
+		stmt.options().setResultType(QResultType.SCROLL_SENSITIVE).setResultConcurrency(QResultConcurrency.READ_ONLY);
 	}
 
 
@@ -96,10 +92,9 @@ public class DocSnippets
 		pstmt.params("John", "Doe").update();
 		pstmt.params("Mary", "Jane").update();
 		pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
-		pstmt.init()
-	        .resultType(QResultType.SCROLL_INSENSITIVE)
-	        .resultHoldability(QResultHoldability.HOLD_OVER_COMMIT)
-	        .cmd("SELECT * FROM Cities WHERE name LIKE ?");
+		
+		pstmt.options().setResultType(QResultType.SCROLL_INSENSITIVE).setResultHoldability(QResultHoldability.HOLD_OVER_COMMIT);
+		pstmt.init("SELECT * FROM Cities WHERE name LIKE ?");
 	}
 	
 	
@@ -248,7 +243,7 @@ public class DocSnippets
 		    // read the result row
 		}
 		
-		stmt.init().resultType(QResultType.SCROLL_SENSITIVE).resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+		stmt.options().setResultType(QResultType.SCROLL_SENSITIVE).setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
 		qc = stmt.query("sql").cursor();
@@ -268,7 +263,7 @@ public class DocSnippets
 	
 	public void queryCursorObtain() throws Exception
 	{
-		stmt.init().resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+		stmt.options().setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 
 	   	qc.col("status").setString("ok"); 
 	    qc.row().update();

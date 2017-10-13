@@ -218,7 +218,6 @@ public class StmtOptions
 
 	/**
 	 * Returns {@link Statement#getResultSetHoldability()} as enum value.
-	 * You can set the holdability when you initialize the JDBX statement.
 	 * @return the holdability
 	 */
 	public QResultHoldability getResultHoldability()
@@ -226,6 +225,19 @@ public class StmtOptions
 		return holdability_;
 	}
 
+
+	/**
+	 * Sets the result holdability.
+	 * This will reinitialize the internal JDBC statement. 
+	 * @return this
+	 */
+	public StmtOptions setResultHoldability(QResultHoldability value)
+	{
+		if (changed(holdability_, value))
+			holdability_ = value;
+		return this;
+	}
+	
 
 	protected boolean initResultHoldability(QResultHoldability value)
 	{
@@ -237,7 +249,6 @@ public class StmtOptions
 
 	/**
 	 * Returns {@link Statement#getResultSetConcurrency()} as enum value.
-	 * You can set the concurrency when you initialize the JDBX statement.
 	 * @return the concurrency
 	 */
 	public QResultConcurrency getResultConcurrency()
@@ -245,6 +256,19 @@ public class StmtOptions
 		return concurrency_;
 	}
 
+
+	/**
+	 * Sets the result concurrency.
+	 * This will reinitialize the internal JDBC statement. 
+	 * @return this
+	 */
+	public StmtOptions setResultConcurrency(QResultConcurrency value)
+	{
+		if (changed(concurrency_, value))
+			concurrency_ = value;
+		return this;
+	}
+	
 
 	protected boolean initResultConcurrency(QResultConcurrency value)
 	{
@@ -256,7 +280,6 @@ public class StmtOptions
 
 	/**
 	 * Returns {@link Statement#getResultSetType()} as enum value.
-	 * You can set the result type when you initialize the JDBX statement.
 	 * @return the result type
 	 */
 	public QResultType getResultType()
@@ -264,19 +287,30 @@ public class StmtOptions
 		return resultSetType_;
 	}
 
-
-	protected boolean initResultType(QResultType value)
+	
+	/**
+	 * Set the {@link Statement#setResultSetType()}.
+	 * This will reinitialize the JDBC statement. 
+	 * @return this
+	 */
+	public StmtOptions setResultType(QResultType value)
 	{
-		boolean changed = changed(resultSetType_, value);
-		resultSetType_ = value;
-		return changed;
+		if (changed(resultSetType_, value))
+			resultSetType_ = value;
+		return this;
 	}
-
+	
 
 	private boolean changed(JdbcEnum oldValue, JdbcEnum newValue)
 	{
 		Check.valid(newValue);
-		return oldValue != newValue;
+		if (oldValue != newValue)
+		{
+			stmt_.closeJdbcStmt();
+			return true;
+		}
+		else
+			return false;
 	}
 
 

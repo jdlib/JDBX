@@ -80,11 +80,11 @@ connection will also be closed automatically.
     StaticStmt stmt = ...
     int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
     
-To configure a `StaticStmt` use the builder returned by its `init()` method.      
+To configure a `StaticStmt` use the builder returned by its `options()` method.      
 
-    stmt.init()
-        .resultType(QResultType.SCROLL_SENSITIVE)
-        .resultConcurrency(QResultConcurrency.READ_ONLY);
+    stmt.options()
+        .setResultType(QResultType.SCROLL_SENSITIVE)
+        .setResultConcurrency(QResultConcurrency.READ_ONLY);
 
 
 ### <a name="stmts-prep"></a>PrepStmt
@@ -101,12 +101,11 @@ Contrary to `java.sql.PreparedStatement` you can also re-initialize the command.
     ...
      
     
-Like in `StaticStmt` you can use the builder returned by the `init()` method to configure the `PrepStmt`.
+Like in `StaticStmt` you can use the builder returned by the `options()` method to configure the `PrepStmt`.
       
-    pstmt.init()
-        .resultType(QResultType.SCROLL_INSENSITIVE)
-        .resultHoldability(QResultHoldability.HOLD_OVER_COMMIT)
-        .cmd("SELECT * FROM Cities WHERE name LIKE ?");
+    pstmt.options()
+        .setResultType(QResultType.SCROLL_INSENSITIVE)
+        .setResultHoldability(QResultHoldability.HOLD_OVER_COMMIT);
      
 
 ### <a name="stmts-call"></a>CallStmt
@@ -313,7 +312,7 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
 
 	// configure a scroll sensitive cursor	
 	StaticStmt stmt = ....
-	stmt.init().resultType(QResultType.SCROLL_SENSITIVE);
+	stmt.options().setResultType(QResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
 	try (QueryCursor qc = stmt.query(sql).cursor()) {
@@ -334,7 +333,7 @@ If your cursor is updatable, you can or update or delete the current row, or ins
 
 	// configure the result to be updatable
 	StaticStmt stmt = ....
-	stmt.init().resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+	stmt.options().setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 	QueryCursor qc = stmt.query(sql).cursor();
 	
 	// position row

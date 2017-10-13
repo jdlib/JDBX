@@ -140,7 +140,7 @@ public class StaticStmtTest extends JdbxTest
 	{
 		assertTrue(stmt_.isInitialized());
 		assertEquals(QResultConcurrency.READ_ONLY, stmt_.options().getResultConcurrency());
-		stmt_.init().resultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+		stmt_.options().setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
 		assertEquals(QResultConcurrency.CONCUR_UPDATABLE, stmt_.options().getResultConcurrency());
 		stmt_.update("INSERT INTO STest (name) VALUES ('A'), ('B')");
 	}

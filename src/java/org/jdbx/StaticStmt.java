@@ -121,43 +121,6 @@ public class StaticStmt extends Stmt
 
 
 	//------------------------------
-	// init
-	//------------------------------
-
-
-	/**
-	 * Returns a builder to initialize the statement holdability, concurrency and resultset type.
-	 * @return a init builder
-	 * @throws JdbxException if closed
-	 */
-	public Init init() throws JdbxException
-	{
-		checkOpen();
-		return new Init();
-	}
-
-
-	/**
-	 * A Builder to initialize the StaticStmt.
-	 */
-	public class Init extends InitBase<Init>
-	{
-		private Init()
-		{
-			super(options_);
-		}
-
-
-		@Override protected void optionsChanged() throws JdbxException
-		{
-			checkOpen();
-			updateOptions(options()); // will create options if not yet done
-			closeStmt(); // will force recreate of jdbc statement with new options
-		}
-	}
-
-
-	//------------------------------
 	// query
 	//------------------------------
 
