@@ -84,10 +84,15 @@ public abstract class Stmt implements AutoCloseable
 	/**
 	 * Returns the internal JDBC statement used by the JDBC statement.
 	 * @return the JDBC statement
-	 * @throws JdbxException if the statement is not open.
+	 * @throws JdbxException if the statement was closed.
 	 */
 	public abstract Statement getJdbcStmt() throws JdbxException;
 
+	
+	boolean hasJdbcStmt()
+	{
+		return jdbcStmt_ != null;
+	}
 
 	//------------------------------
 	// open/closed state
@@ -128,7 +133,7 @@ public abstract class Stmt implements AutoCloseable
 	protected void checkInitialized() throws JdbxException
 	{
 		checkOpen();
-		if (stmt_ == null)
+		if (jdbcStmt_ == null)
 			throw JdbxException.illegalState("no statement prepared");
 	}
 
@@ -137,12 +142,12 @@ public abstract class Stmt implements AutoCloseable
 	{
 		try
 		{
-			if (stmt_ != null)
+			if (jdbcStmt_ != null)
 				call(Statement::close);
 		}
 		finally
 		{
-			stmt_ = null;
+			jdbcStmt_ = null;
 		}
 	}
 
@@ -158,8 +163,8 @@ public abstract class Stmt implements AutoCloseable
 			{
 				if (closeAction_ == CloseAction.CONNECTION)
 					con_.close();
-				else if ((stmt_ != null) && (closeAction_ == CloseAction.STATEMENT))
-					stmt_.close();
+				else if ((jdbcStmt_ != null) && (closeAction_ == CloseAction.STATEMENT))
+					jdbcStmt_.close();
 			}
 			catch (Exception e)
 			{
@@ -168,7 +173,7 @@ public abstract class Stmt implements AutoCloseable
 			finally
 			{
 				con_  = null;
-				stmt_ = null;
+				jdbcStmt_ = null;
 			}
 		}
 	}
@@ -202,10 +207,10 @@ public abstract class Stmt implements AutoCloseable
 	 * Returns the statement options.
 	 * @return the options
 	 */
-	public final StmtOptions options() throws JdbxException
+	public final Options options() throws JdbxException
 	{
 		if (options_ == null)
-			options_ = new StmtOptions(this);
+			options_ = new Options(this);
 		return options_;
 	}
 
@@ -237,7 +242,7 @@ public abstract class Stmt implements AutoCloseable
 	public SQLWarning getWarnings() throws JdbxException
 	{
 		checkOpen();
-		return stmt_ != null ? get(Statement::getWarnings) : null;
+		return jdbcStmt_ != null ? get(Statement::getWarnings) : null;
 	}
 
 
@@ -247,7 +252,7 @@ public abstract class Stmt implements AutoCloseable
 	 */
 	public void clearWarnings() throws JdbxException
 	{
-		if (stmt_ != null)
+		if (jdbcStmt_ != null)
 			call(Statement::clearWarnings);
 	}
 
@@ -301,12 +306,12 @@ public abstract class Stmt implements AutoCloseable
 	 */
 	@Override public String toString()
 	{
-		return stmt_ != null ? stmt_.toString() : "<stmt closed>";
+		return jdbcStmt_ != null ? jdbcStmt_.toString() : "<null>";
 	}
 
 
 	protected Connection con_;
-	protected Statement stmt_;
+	protected Statement jdbcStmt_;
 	protected CloseAction closeAction_;
-	protected StmtOptions options_;
+	protected Options options_;
 }

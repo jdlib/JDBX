@@ -80,7 +80,7 @@ Perform a parameterized INSERT, return the auto generated primary key, convert a
 	
 ## <a name="download"></a>Download and Installation 
 
-* Download the [latest release](https://github.com/jdlib/JDBX/releases/latest)
+* Download the [latest release](https://github.com/jdlib/JDBX/releases/latest).
 * and put the JDBX jar file into the classpath.
 
 

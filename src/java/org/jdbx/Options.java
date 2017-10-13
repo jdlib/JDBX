@@ -18,19 +18,18 @@ package org.jdbx;
 
 
 import java.sql.Statement;
-import org.jdbx.function.CheckedRunnable;
 
 
 /**
- * StmtOptions holds the options which can be set on a JDBX statement.
- * All operations return or set values on the wrapped java.sql.Statement object.
+ * Options allows to set or get options of JDBX statements.
  * @see Stmt#options()
  */
-public class StmtOptions
+public class Options
 {
-	StmtOptions(Stmt stmt)
+	Options(Stmt stmt)
 	{
 		stmt_ = stmt;
+		resetResultOptions();
 	}
 
 
@@ -40,9 +39,9 @@ public class StmtOptions
 	 * @return this
 	 * @see Statement#setPoolable(boolean)
 	 */
-	public StmtOptions setPoolable(boolean poolable) throws JdbxException
+	public Options setPoolable(boolean value) throws JdbxException
 	{
-		stmt_.setBoolean(Statement::setPoolable, poolable);
+		set(Option.POOLABLE, Boolean.valueOf(value));
 		return this;
 	}
 
@@ -54,7 +53,7 @@ public class StmtOptions
 	 */
 	public boolean isPoolable() throws JdbxException
 	{
-		return stmt_.get(Statement::isPoolable).booleanValue();
+		return get(Option.POOLABLE).booleanValue();
 	}
 
 
@@ -64,9 +63,9 @@ public class StmtOptions
 	 * @return this
 	 * @see Statement#setCursorName
 	 */
-	public StmtOptions setCursorName(String cursorName) throws JdbxException
+	public Options setCursorName(String value) throws JdbxException
 	{
-		CheckedRunnable.unchecked(() -> stmt_.getJdbcStmt().setCursorName(cursorName));
+		set(Option.CURSORNAME, value);
 		return this;
 	}
 
@@ -76,9 +75,9 @@ public class StmtOptions
 	 * @param size the maximum number of bytes
 	 * @return this
 	 */
-	public StmtOptions setMaxFieldSize(int size) throws JdbxException
+	public Options setMaxFieldSize(int bytes) throws JdbxException
 	{
-		stmt_.setInt(Statement::setMaxFieldSize, size);
+		set(Option.MAXFIELDSIZE, Integer.valueOf(bytes));
 		return this;
 	}
 
@@ -89,18 +88,18 @@ public class StmtOptions
 	 */
 	public int getMaxFieldSize() throws JdbxException
 	{
-		return stmt_.get(Statement::getMaxFieldSize).intValue();
+		return get(Option.MAXFIELDSIZE).intValue();
 	}
 
 
 	/**
 	 * Calls {@link Statement#setLargeMaxRows(long)}.
-	 * @param max the maximum number
+	 * @param size the maximum number of bytes
 	 * @return this
 	 */
-	public StmtOptions setLargeMaxRows(long max) throws JdbxException
+	public Options setLargeMaxRows(long bytes) throws JdbxException
 	{
-		CheckedRunnable.unchecked(() -> stmt_.getJdbcStmt().setLargeMaxRows(max));
+		set(Option.LARGEMAXROWS, Long.valueOf(bytes));
 		return this;
 	}
 
@@ -111,7 +110,7 @@ public class StmtOptions
 	 */
 	public long getLargeMaxRows() throws JdbxException
 	{
-		return stmt_.get(Statement::getLargeMaxRows).longValue();
+		return get(Option.LARGEMAXROWS).longValue();
 	}
 
 
@@ -120,9 +119,9 @@ public class StmtOptions
 	 * @param max the maximum number
 	 * @return this
 	 */
-	public StmtOptions setMaxRows(int max) throws JdbxException
+	public Options setMaxRows(int value) throws JdbxException
 	{
-		stmt_.setInt(Statement::setMaxRows, max);
+		set(Option.MAXROWS, Integer.valueOf(value));
 		return this;
 	}
 
@@ -133,7 +132,7 @@ public class StmtOptions
 	 */
 	public int getMaxRows() throws JdbxException
 	{
-		return stmt_.get(Statement::getMaxRows).intValue();
+		return get(Option.MAXROWS).intValue();
 	}
 
 
@@ -142,9 +141,9 @@ public class StmtOptions
 	 * @param seconds the timeout in seconds
 	 * @return this
 	 */
-	public StmtOptions setQueryTimeout(int seconds) throws JdbxException
+	public Options setQueryTimeout(int seconds) throws JdbxException
 	{
-		stmt_.setInt(Statement::setQueryTimeout, seconds);
+		set(Option.QUERYTIMEOUT, Integer.valueOf(seconds));
 		return this;
 	}
 
@@ -155,7 +154,7 @@ public class StmtOptions
 	 */
 	public int getQueryTimeout() throws JdbxException
 	{
-		return stmt_.get(Statement::getQueryTimeout).intValue();
+		return get(Option.QUERYTIMEOUT).intValue();
 	}
 
 
@@ -164,9 +163,9 @@ public class StmtOptions
 	 * @param enable the flag
 	 * @return this
 	 */
-	public StmtOptions setEscapeProcessing(boolean enable) throws JdbxException
+	public Options setEscapeProcessing(boolean enable) throws JdbxException
 	{
-		stmt_.setBoolean(Statement::setEscapeProcessing, enable);
+		set(Option.ESCAPEPROCESSING, Boolean.valueOf(enable));
 		return this;
 	}
 
@@ -176,10 +175,10 @@ public class StmtOptions
 	 * @param direction the fetch direction enum
 	 * @return this
 	 */
-	public StmtOptions setFetchDirection(FetchDirection direction) throws JdbxException
+	public Options setFetchDirection(FetchDirection direction) throws JdbxException
 	{
 		Check.valid(direction);
-		stmt_.setInt(Statement::setFetchDirection, direction.getCode());
+		set(Option.FETCHDIRECTION, Integer.valueOf(direction.getCode()));
 		return this;
 	}
 
@@ -190,7 +189,7 @@ public class StmtOptions
 	 */
 	public FetchDirection getFetchDirection() throws JdbxException
 	{
-		return FetchDirection.MAP.forCode(stmt_.get(Statement::getFetchDirection));
+		return FetchDirection.MAP.forCode(get(Option.FETCHDIRECTION));
 	}
 
 
@@ -199,9 +198,9 @@ public class StmtOptions
 	 * @param rows the fetch size
 	 * @return this
 	 */
-	public StmtOptions setFetchSize(int rows) throws JdbxException
+	public Options setFetchSize(int rows) throws JdbxException
 	{
-		stmt_.setInt(Statement::setFetchSize, rows);
+		set(Option.FETCHSIZE, Integer.valueOf(rows));
 		return this;
 	}
 
@@ -212,7 +211,7 @@ public class StmtOptions
 	 */
 	public int getFetchSize() throws JdbxException
 	{
-		return stmt_.get(Statement::getFetchSize).intValue();
+		return get(Option.FETCHSIZE).intValue();
 	}
 
 
@@ -231,21 +230,13 @@ public class StmtOptions
 	 * This will reinitialize the internal JDBC statement. 
 	 * @return this
 	 */
-	public StmtOptions setResultHoldability(QResultHoldability value)
+	public Options setResultHoldability(QResultHoldability value)
 	{
 		if (changed(holdability_, value))
 			holdability_ = value;
 		return this;
 	}
 	
-
-	protected boolean initResultHoldability(QResultHoldability value)
-	{
-		boolean changed = changed(holdability_, value);
-		holdability_ = value;
-		return changed;
-	}
-
 
 	/**
 	 * Returns {@link Statement#getResultSetConcurrency()} as enum value.
@@ -262,21 +253,13 @@ public class StmtOptions
 	 * This will reinitialize the internal JDBC statement. 
 	 * @return this
 	 */
-	public StmtOptions setResultConcurrency(QResultConcurrency value)
+	public Options setResultConcurrency(QResultConcurrency value)
 	{
 		if (changed(concurrency_, value))
 			concurrency_ = value;
 		return this;
 	}
 	
-
-	protected boolean initResultConcurrency(QResultConcurrency value)
-	{
-		boolean changed = changed(concurrency_, value);
-		concurrency_ = value;
-		return changed;
-	}
-
 
 	/**
 	 * Returns {@link Statement#getResultSetType()} as enum value.
@@ -293,7 +276,7 @@ public class StmtOptions
 	 * This will reinitialize the JDBC statement. 
 	 * @return this
 	 */
-	public StmtOptions setResultType(QResultType value)
+	public Options setResultType(QResultType value)
 	{
 		if (changed(resultSetType_, value))
 			resultSetType_ = value;
@@ -312,10 +295,73 @@ public class StmtOptions
 		else
 			return false;
 	}
+	
+	
+	private <T> void set(Option<T> option, T value)
+	{
+		headValue_ = OptionValue.set(headValue_, option, value);
+		if (stmt_.hasJdbcStmt())
+		{
+			try
+			{
+				option.setter.accept(stmt_.getJdbcStmt(), value);
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
+		}
+	}
+	
+	
+	private <T> T get(Option<T> option)
+	{
+		T value = OptionValue.get(headValue_, option);
+		if (value == null)
+		{
+			try
+			{
+				value = option.getter.apply(stmt_.getJdbcStmt());
+			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
+		}
+		return value;
+	}
+	
+	
+	private void resetResultOptions()
+	{
+		resultSetType_ 	= QResultType.FORWARD_ONLY;
+		concurrency_ 	= QResultConcurrency.READ_ONLY;
+		holdability_ 	= QResultHoldability.CLOSE_AT_COMMIT;
+	}
+	
+	
+	/**
+	 * Resets the options to its defaults.
+	 */
+	public Options reset()
+	{
+		resetResultOptions();
+		headValue_ = null;
+		stmt_.closeJdbcStmt();
+		return this;
+	}
+	
+	
+	void apply(Statement statement) throws Exception
+	{
+		if (headValue_ != null)
+			headValue_.apply(statement);
+	}
 
-
-	protected Stmt stmt_;
-	private QResultType resultSetType_ = QResultType.FORWARD_ONLY;
-	private QResultConcurrency concurrency_ = QResultConcurrency.READ_ONLY;
-	private QResultHoldability holdability_ = QResultHoldability.CLOSE_AT_COMMIT;
+	
+	private final Stmt stmt_;
+	private QResultType resultSetType_;
+	private QResultConcurrency concurrency_;
+	private QResultHoldability holdability_;
+	private OptionValue<?> headValue_;
 }

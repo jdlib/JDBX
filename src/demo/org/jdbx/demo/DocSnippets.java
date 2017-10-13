@@ -65,8 +65,9 @@ public class DocSnippets
 	}
 
 	
-	public void stmtsCreatingClosing()
+	public void stmtsCreateConfigureClose()
 	{
+		// createing
 		new StaticStmt(con); 
 		new PrepStmt(con);
 		new CallStmt(con);
@@ -74,15 +75,23 @@ public class DocSnippets
 		new PrepStmt(ds);
 		new CallStmt(ds);
 		
+		// close
 		try (StaticStmt stmt = new StaticStmt(con)) {
 		} 
+		
+		// configure
+	    stmt.options()
+	        .setResultType(QResultType.SCROLL_SENSITIVE)
+	        .setResultConcurrency(QResultConcurrency.READ_ONLY)
+	        .setQueryTimeout(20)
+	        .setFetchSize(5000);
+	    int seconds = stmt.options().getQueryTimeout();
 	}
 
 
 	public void stmtsStaticStmt()
 	{
 		long count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')").count();
-		stmt.options().setResultType(QResultType.SCROLL_SENSITIVE).setResultConcurrency(QResultConcurrency.READ_ONLY);
 	}
 
 

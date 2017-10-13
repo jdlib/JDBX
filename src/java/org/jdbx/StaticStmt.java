@@ -79,34 +79,35 @@ public class StaticStmt extends Stmt
 		checkOpen();
 	}
 
-
+	
 	/**
 	 * Returns the internal java.sql.Statement.
 	 */
 	@Override public Statement getJdbcStmt() throws JdbxException
 	{
-		checkOpen();
-		try
+		if (jdbcStmt_ == null)
 		{
-			if (stmt_ == null)
+			checkOpen();
+			try
 			{
 				if (options_ == null)
-					stmt_ = con_.createStatement();
+					jdbcStmt_ = con_.createStatement();
 				else
 				{
-					stmt_ = con_.createStatement(
+					jdbcStmt_ = con_.createStatement(
 						options_.getResultType().getCode(),
 						options_.getResultConcurrency().getCode(),
 						options_.getResultHoldability().getCode()
 					);
+					options_.apply(jdbcStmt_);
 				}
 			}
+			catch (Exception e)
+			{
+				throw JdbxException.of(e);
+			}
 		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
-		return stmt_;
+		return jdbcStmt_;
 	}
 
 

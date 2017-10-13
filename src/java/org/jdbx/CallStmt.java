@@ -74,7 +74,7 @@ public class CallStmt extends Stmt
 	@Override public CallableStatement getJdbcStmt() throws JdbxException
 	{
 		checkInitialized();
-		return (CallableStatement)stmt_;
+		return (CallableStatement)jdbcStmt_;
 	}
 
 
@@ -138,15 +138,15 @@ public class CallStmt extends Stmt
 			try
 			{
 				// close old statement
-				if (stmt_ != null)
+				if (jdbcStmt_ != null)
 				{
-					CallableStatement p = (CallableStatement)stmt_;
-					stmt_ = null;
+					CallableStatement p = (CallableStatement)jdbcStmt_;
+					jdbcStmt_ = null;
 					p.close();
 				}
 
 				// create the new statement
-				stmt_ = createJdbcStmt(sql);
+				createJdbcStmt(sql);
 
 				return CallStmt.this;
 			}
@@ -157,15 +157,18 @@ public class CallStmt extends Stmt
 		}
 
 
-		private CallableStatement createJdbcStmt(String sql) throws SQLException
+		private void createJdbcStmt(String sql) throws Exception
 		{
 			if (options_ == null)
-				return con_.prepareCall(sql);
+				jdbcStmt_ = con_.prepareCall(sql);
 			else
-				return con_.prepareCall(sql,
+				jdbcStmt_ = con_.prepareCall(sql,
 					options_.getResultType().getCode(),
 					options_.getResultConcurrency().getCode(),
 					options_.getResultHoldability().getCode());
+			
+			if (options_ != null)
+				options_.apply(jdbcStmt_);
 		}
 	}
 
@@ -175,7 +178,7 @@ public class CallStmt extends Stmt
 	 */
 	@Override public boolean isInitialized()
 	{
-		return stmt_ != null;
+		return jdbcStmt_ != null;
 	}
 
 

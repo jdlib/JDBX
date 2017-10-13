@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -92,7 +91,7 @@ public class PrepStmt extends Stmt
 	@Override public PreparedStatement getJdbcStmt() throws JdbxException
 	{
 		checkInitialized();
-		return (PreparedStatement)stmt_;
+		return (PreparedStatement)jdbcStmt_;
 	}
 
 
@@ -107,7 +106,7 @@ public class PrepStmt extends Stmt
 	 */
 	@Override public boolean isInitialized()
 	{
-		return stmt_ != null;
+		return jdbcStmt_ != null;
 	}
 
 
@@ -178,10 +177,10 @@ public class PrepStmt extends Stmt
 
 			try
 			{
-				if (stmt_ != null)
+				if (jdbcStmt_ != null)
 				{
-					PreparedStatement p = (PreparedStatement)stmt_;
-					stmt_ = null;
+					PreparedStatement p = (PreparedStatement)jdbcStmt_;
+					jdbcStmt_ = null;
 					paramMap_ = null;
 					p.close();
 				}
@@ -192,7 +191,7 @@ public class PrepStmt extends Stmt
 					paramMap_ = npc.getParamMap();
 					sql = npc.getConverted();
 				}
-				stmt_ = createJdbcStmt(sql);
+				createJdbcStmt(sql);
 
 				return PrepStmt.this;
 			}
@@ -203,24 +202,27 @@ public class PrepStmt extends Stmt
 		}
 
 
-		private PreparedStatement createJdbcStmt(String sql) throws SQLException
+		private void createJdbcStmt(String sql) throws Exception
 		{
 			if (returnCols_ == null)
 			{
 				if (options_ == null)
-					return con_.prepareStatement(sql);
+					jdbcStmt_ = con_.prepareStatement(sql);
 				else
-					return con_.prepareStatement(sql,
+					jdbcStmt_ = con_.prepareStatement(sql,
 						options_.getResultType().getCode(),
 						options_.getResultConcurrency().getCode(),
 						options_.getResultHoldability().getCode());
 			}
 			else if (returnCols_.getNames() != null)
-				return con_.prepareStatement(sql, returnCols_.getNames());
+				jdbcStmt_ = con_.prepareStatement(sql, returnCols_.getNames());
 			else if (returnCols_.getIndexes() != null)
-				return con_.prepareStatement(sql, returnCols_.getIndexes());
+				jdbcStmt_ = con_.prepareStatement(sql, returnCols_.getIndexes());
 			else
-				return con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				jdbcStmt_ = con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			if (options_ != null)
+				options_.apply(jdbcStmt_);
 		}
 
 

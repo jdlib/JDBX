@@ -22,7 +22,7 @@ import org.jdbx.CallStmt;
 import org.jdbx.JdbxException;
 import org.jdbx.QResultType;
 import org.jdbx.StaticStmt;
-import org.jdbx.StmtOptions;
+import org.jdbx.Options;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -163,7 +163,7 @@ public class CallStmtTest extends JdbxTest
 
 	@Test public void testOptions() throws Exception
 	{
-		StmtOptions options = stmt_.options();
+		Options options = stmt_.options();
 		assertSame(QResultType.FORWARD_ONLY, options.getResultType());
 		options.setResultType(QResultType.SCROLL_SENSITIVE);
 		assertSame(QResultType.SCROLL_SENSITIVE, options.getResultType());
