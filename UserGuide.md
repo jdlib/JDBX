@@ -125,7 +125,7 @@ be executed multiple times using different parameter values. Example:
 ## <a name="queries"></a>3. Running SQL queries
 
 In JDBC executing a query returns a `java.sql.ResultSet`. Given the `ResultSet` you can loop over its rows and extract 
-values from the rows in appropriate form.
+values from the rows.
 
 JDBX uses fluent APIs and functional programming to avoid most of the boilerplate code needed in JDBC.
 
@@ -167,7 +167,7 @@ JDBX uses fluent APIs and functional programming to avoid most of the boilerplat
 	    
     // JDBX:
     try (PrepStmt pstmt = new PrepStmt(con)) {
-    	return pstmt.init(sql).params("MUC").query().row().col().getString();
+        return pstmt.init(sql).params("MUC").query().row().col().getString();
     }
 
 

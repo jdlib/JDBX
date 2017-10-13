@@ -1,7 +1,7 @@
 # JDBX
 
 JDBX is a library which provides replacements for Java JDBC Statement and ResultSet classes
-to allow you to write compact and concise database code.
+to allow you to write compact and concise Java database code.
 
 It shares this intent with libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which all wrap plain JDBC to make database access easier.
 But unlike these libraries JDBX does not only simplify coding but still provides an API which retains 100% of the original JDBC functionality.
@@ -17,10 +17,10 @@ JDBX requires Java 8+, has no external dependencies and is released under the Ap
 ## <a name="examples"></a>Examples
 
 The following snippets show two examples of typical JDBC code and the JDBX rewrite, giving you a impression
-how database code gets easier when using JDBX.
+how JDBX reduces boilerplate database code:
 
 **Example 1:** 
-Perform a SQL select, create a bean object for every result row, return the beans stored in a List.
+Perform a SQL select, create a data object for every result row, return the objects stored in a `List`.
 
 *using JDBC:*
         

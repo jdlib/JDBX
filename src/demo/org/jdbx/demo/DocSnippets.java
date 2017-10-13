@@ -17,6 +17,10 @@ public class DocSnippets
 {
 	public List<City> readmeEx1Jdbc() throws SQLException 
 	{
+		stmt.init().resultConcurrency(null);
+		stmt.options().setFetchSize(2);
+		
+		
 		List<City> list = new ArrayList<>();
 	    try (Statement stmt = con.createStatement()) {
 	        ResultSet result = stmt.executeQuery("SELECT * FROM Cities ORDER BY name");
