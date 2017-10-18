@@ -75,8 +75,8 @@ connection will also be closed automatically.
 To ***configure*** a statement object use the builder returned by its `options()` method:      
 
     stmt.options()
-        .setResultType(QResultType.SCROLL_SENSITIVE)
-        .setResultConcurrency(QResultConcurrency.READ_ONLY);
+        .setResultType(ResultType.SCROLL_SENSITIVE)
+        .setResultConcurrency(Concurrency.READ_ONLY);
         .setQueryTimeout(20)
 	    .setFetchSize(5000);
 	int seconds = stmt.options().getQueryTimeout();
@@ -106,8 +106,8 @@ Contrary to `java.sql.PreparedStatement` you can also re-initialize the command.
 Like in `StaticStmt` you can use the builder returned by the `options()` method to configure the `PrepStmt`.
       
     pstmt.options()
-        .setResultType(QResultType.SCROLL_INSENSITIVE)
-        .setResultHoldability(QResultHoldability.HOLD_OVER_COMMIT);
+        .setResultType(ResultType.SCROLL_INSENSITIVE)
+        .setResultHoldability(Holdability.HOLD_OVER_COMMIT);
      
 
 ### <a name="stmts-call"></a>CallStmt
@@ -314,7 +314,7 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
 
 	// configure a scroll sensitive cursor	
 	StaticStmt stmt = ....
-	stmt.options().setResultType(QResultType.SCROLL_SENSITIVE);
+	stmt.options().setResultType(ResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
 	try (QueryCursor qc = stmt.query(sql).cursor()) {
@@ -335,7 +335,7 @@ If your cursor is updatable, you can or update or delete the current row, or ins
 
 	// configure the result to be updatable
 	StaticStmt stmt = ....
-	stmt.options().setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+	stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 	QueryCursor qc = stmt.query(sql).cursor();
 	
 	// position row

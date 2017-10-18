@@ -24,11 +24,10 @@ import java.sql.SQLWarning;
 import java.util.Map;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
-import org.jdbx.function.CheckedRunnable;
-import org.jdbx.function.CheckedSupplier;
 import org.jdbx.function.GetForIndex;
 import org.jdbx.function.SetForIndex;
 import org.jdbx.function.SetForName;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -391,7 +390,7 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public void setFetchSize(int size) throws JdbxException
 	{
-		CheckedRunnable.unchecked(() -> resultSet_.setFetchSize(size));
+		Unchecked.run(() -> resultSet_.setFetchSize(size));
 	}
 
 
@@ -413,7 +412,7 @@ public class QueryCursor implements AutoCloseable
 	public void setFetchDirection(FetchDirection dir) throws JdbxException
 	{
 		Check.valid(dir);
-		CheckedRunnable.unchecked(() -> resultSet_.setFetchDirection(dir.getCode()));
+		Unchecked.run(() -> resultSet_.setFetchDirection(dir.getCode()));
 	}
 
 
@@ -421,9 +420,9 @@ public class QueryCursor implements AutoCloseable
 	 * Returns the concurrency of the ResultSet.
 	 * @return the concurrency as enum value
 	 */
-	public QResultConcurrency getConcurrency() throws JdbxException
+	public Concurrency getConcurrency() throws JdbxException
 	{
-		return QResultConcurrency.MAP.forCode(toInt(ResultSet::getConcurrency));
+		return Concurrency.MAP.forCode(toInt(ResultSet::getConcurrency));
 	}
 
 
@@ -431,9 +430,9 @@ public class QueryCursor implements AutoCloseable
 	 * Returns the holdability of the ResultSet.
 	 * @return the holdability as enum value
 	 */
-	public QResultHoldability getHoldability() throws JdbxException
+	public Holdability getHoldability() throws JdbxException
 	{
-		return QResultHoldability.MAP.forCode(toInt(ResultSet::getHoldability));
+		return Holdability.MAP.forCode(toInt(ResultSet::getHoldability));
 	}
 
 
@@ -441,9 +440,9 @@ public class QueryCursor implements AutoCloseable
 	 * Returns the type of the ResultSet.
 	 * @return the type as enum value
 	 */
-	public QResultType getType() throws JdbxException
+	public ResultType getType() throws JdbxException
 	{
-		return QResultType.MAP.forCode(toInt(ResultSet::getType));
+		return ResultType.MAP.forCode(toInt(ResultSet::getType));
 	}
 
 
@@ -474,7 +473,7 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public int findColumn(String columnLabel) throws JdbxException
 	{
-		return CheckedSupplier.unchecked(() -> Integer.valueOf(resultSet_.findColumn(columnLabel))).intValue();
+		return Unchecked.get(() -> Integer.valueOf(resultSet_.findColumn(columnLabel))).intValue();
 	}
 
 
@@ -584,7 +583,7 @@ public class QueryCursor implements AutoCloseable
 		 */
 		public boolean absolute(int row) throws JdbxException
 		{
-			return CheckedSupplier.unchecked(() -> Boolean.valueOf(resultSet_.absolute(row))).booleanValue();
+			return Unchecked.get(() -> Boolean.valueOf(resultSet_.absolute(row))).booleanValue();
 		}
 
 
@@ -596,7 +595,7 @@ public class QueryCursor implements AutoCloseable
 		 */
 		public boolean relative(int rows) throws JdbxException
 		{
-			return CheckedSupplier.unchecked(() -> Boolean.valueOf(resultSet_.relative(rows))).booleanValue();
+			return Unchecked.get(() -> Boolean.valueOf(resultSet_.relative(rows))).booleanValue();
 		}
 
 
@@ -822,25 +821,25 @@ public class QueryCursor implements AutoCloseable
 
 	private boolean toBoolean(CheckedFunction<ResultSet,Boolean> fn) throws JdbxException
 	{
-		return CheckedFunction.unchecked(fn, resultSet_).booleanValue();
+		return Unchecked.apply(fn, resultSet_).booleanValue();
 	}
 
 
 	private int toInt(CheckedFunction<ResultSet,Integer> fn) throws JdbxException
 	{
-		return CheckedFunction.unchecked(fn, resultSet_).intValue();
+		return Unchecked.apply(fn, resultSet_).intValue();
 	}
 
 
 	private <T> T toValue(CheckedFunction<ResultSet,T> fn) throws JdbxException
 	{
-		return CheckedFunction.unchecked(fn, resultSet_);
+		return Unchecked.apply(fn, resultSet_);
 	}
 
 
 	private void call(CheckedConsumer<ResultSet> fn) throws JdbxException
 	{
-		CheckedConsumer.unchecked(fn, resultSet_);
+		Unchecked.accept(fn, resultSet_);
 	}
 
 

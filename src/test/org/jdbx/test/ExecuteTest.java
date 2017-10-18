@@ -38,11 +38,11 @@ public class ExecuteTest extends JdbxTest
 	}
 
 
-	@Test public void x()
+	@Test public void test()
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
-			ExecuteResult result = stmt.createExecute("SELECT * FROM ExecTest; SELECT * FROM ExecTest;").run();
+			ExecuteResult result = stmt.createExecute("SELECT * FROM ExecTest; SELECT * FROM ExecTest").run();
 			assertTrue(result.next());
 			assertTrue(result.isQueryResult());
 			assertTrue(result.next());

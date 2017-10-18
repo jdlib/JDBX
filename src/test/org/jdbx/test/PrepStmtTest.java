@@ -56,7 +56,7 @@ public class PrepStmtTest extends JdbxTest
 		assertFalse(pstmt_.isInitialized());
 
 		// insert a single record and remember the generated id
-		pstmt_.init().returnCols(1).cmd("INSERT INTO PTests VALUES (DEFAULT, ?, ?)");
+		pstmt_.init().returnCols(1).sql("INSERT INTO PTests VALUES (DEFAULT, ?, ?)");
 		assertTrue(pstmt_.isInitialized());
 		pstmt_.params("a", 1);
 		Integer idA = pstmt_.createUpdate().runGetCol(Integer.class)
@@ -64,7 +64,7 @@ public class PrepStmtTest extends JdbxTest
 			.requireValue();
 
 		// insert a single record and remember it: use named parameters
-		pstmt_.init().namedParams().cmd("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
+		pstmt_.init().namedParams().sql("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
 		pstmt_.param("name").setString("b");
 		pstmt_.param("type").setInt(15);
 		assertEquals(1, pstmt_.update().count());

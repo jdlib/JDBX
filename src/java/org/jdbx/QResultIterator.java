@@ -19,7 +19,7 @@ package org.jdbx;
 
 import java.sql.ResultSet;
 import java.util.Map;
-import org.jdbx.function.CheckedRunnable;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -233,7 +233,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	@Override public void close() throws JdbxException
 	{
 		if (closeResult_)
-			CheckedRunnable.unchecked(resultSet_::close);
+			Unchecked.run(resultSet_::close);
 	}
 
 

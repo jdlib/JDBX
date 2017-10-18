@@ -23,7 +23,7 @@ import org.jdbx.JdbxException;
 import org.jdbx.QueryCursor;
 import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
-import org.jdbx.QResultConcurrency;
+import org.jdbx.Concurrency;
 import org.jdbx.QResultIterator;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
@@ -139,9 +139,9 @@ public class StaticStmtTest extends JdbxTest
 	@Test public void testOptions() throws JdbxException
 	{
 		assertTrue(stmt_.isInitialized());
-		assertEquals(QResultConcurrency.READ_ONLY, stmt_.options().getResultConcurrency());
-		stmt_.options().setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
-		assertEquals(QResultConcurrency.CONCUR_UPDATABLE, stmt_.options().getResultConcurrency());
+		assertEquals(Concurrency.READ_ONLY, stmt_.options().getResultConcurrency());
+		stmt_.init().resultConcurrency(Concurrency.CONCUR_UPDATABLE);
+		assertEquals(Concurrency.CONCUR_UPDATABLE, stmt_.options().getResultConcurrency());
 		stmt_.update("INSERT INTO STest (name) VALUES ('A'), ('B')");
 	}
 

@@ -17,9 +17,6 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbxException;
-
-
 /**
  * A functional interface like java.util.Supplier which
  * can throw any exception.
@@ -28,26 +25,6 @@ import org.jdbx.JdbxException;
 @FunctionalInterface
 public interface CheckedSupplier<T>
 {
-	/**
-	 * Returns the value provided by the supplier and converts
-	 * any exception into a JdbxException.
-	 * @param supplier a supplier
-	 * @param <T> the type of results supplied by this supplier
-	 * @return the value provided by the supplier
-	 */
-	public static <T> T unchecked(CheckedSupplier<T> supplier) throws JdbxException
-	{
-		try
-		{
-			return supplier.get();
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
-	}
-
-
 	/**
 	 * Returns a value.
 	 * @return the value provided by the supplier

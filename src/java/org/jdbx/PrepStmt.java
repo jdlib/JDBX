@@ -9,9 +9,9 @@ import java.sql.Statement;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedConsumer;
-import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.CheckedSupplier;
 import org.jdbx.function.SetForIndex;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -101,8 +101,9 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * Returns if the PrepStmt is initialized.
+	 * Returns if this PrepStmt is initialized.
 	 * @see #init()
+	 * @see #init(String)
 	 */
 	@Override public boolean isInitialized()
 	{
@@ -111,8 +112,21 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * Returns a builder to initialize the statement.
-	 * @return a init builder
+	 * Initializes the statement to use the given SQL command.
+	 * @param cmd a SQL command
+	 * @return this
+	 */
+	public PrepStmt init(String cmd) throws JdbxException
+	{
+		return init().sql(cmd);
+	}
+
+
+	/**
+	 * Returns a builder to initialize this PrepStmt.
+	 * In order to take effect, in the end a sql command must be specified on the builder
+	 * by calling its {@link Init#sql(String)} method.
+	 * @return the init builder
 	 */
 	public Init init() throws JdbxException
 	{
@@ -120,24 +134,29 @@ public class PrepStmt extends Stmt
 		return new Init();
 	}
 
-
+	
 	/**
-	 * Initializes the statement to use the following SQL command.
-	 * This is the same as {@link #init() init()}{@link Init#cmd(String) .cmd(String)}.
-	 * @param sql a SQL command
-	 * @return this
+	 * A Builder to initialize the PrepStmt.
 	 */
-	public PrepStmt init(String sql) throws JdbxException
+	public class Init extends InitBase<Init> implements ReturnCols.Builder<Init>
 	{
-		return init().cmd(sql);
-	}
+		private Init()
+		{
+		}
+		
+		
+		/**
+		 * Defines which columns should be returned for insert or update commands.
+		 * @param cols the columns or null if no columns should be returned
+		 * @return this
+		 */
+		@Override public Init returnCols(ReturnCols cols)
+		{
+			returnCols_ = cols;
+			return this;
+		}
 
 
-	/**
-	 * Allows to initialize the statement.
-	 */
-	public class Init implements ReturnCols.Builder<Init>
-	{
 		/**
 		 * Instructs the init builder that the SQL command has named parameters
 		 * instead of positional parameters.
@@ -155,11 +174,11 @@ public class PrepStmt extends Stmt
 		 * @param cmd a SQL command with named parameters
 		 * @return the PrepStmt
 		 */
-		public PrepStmt cmd(NamedParamCmd cmd) throws JdbxException
+		public PrepStmt sql(NamedParamCmd cmd) throws JdbxException
 		{
 			Check.notNull(cmd, "cmd");
 			namedParams_ = false;
-			cmd(cmd.getConverted());
+			sql(cmd.getConverted());
 			paramMap_ = cmd.getParamMap();
 			return PrepStmt.this;
 		}
@@ -170,7 +189,7 @@ public class PrepStmt extends Stmt
 		 * @param sql a SQL command
 		 * @return the PrepStmt
 		 */
-		public PrepStmt cmd(String sql) throws JdbxException
+		public PrepStmt sql(String sql) throws JdbxException
 		{
 			Check.notNull(sql, "sql");
 			checkOpen();
@@ -179,19 +198,21 @@ public class PrepStmt extends Stmt
 			{
 				if (jdbcStmt_ != null)
 				{
-					PreparedStatement p = (PreparedStatement)jdbcStmt_;
+					Statement old = jdbcStmt_;
 					jdbcStmt_ = null;
-					paramMap_ = null;
-					p.close();
+					paramMap_ = null;	// TODO closeJdbcStmt should set it to null also
+					old.close();
 				}
-
+				
 				if (namedParams_)
 				{
 					NamedParamCmd npc = new NamedParamCmd(sql);
 					paramMap_ = npc.getParamMap();
 					sql = npc.getConverted();
 				}
-				createJdbcStmt(sql);
+				
+				jdbcStmt_ = createJdbcStmt(sql);
+				updateOptions(PrepStmt.this);
 
 				return PrepStmt.this;
 			}
@@ -202,39 +223,16 @@ public class PrepStmt extends Stmt
 		}
 
 
-		private void createJdbcStmt(String sql) throws Exception
+		private PreparedStatement createJdbcStmt(String sql) throws Exception
 		{
 			if (returnCols_ == null)
-			{
-				if (options_ == null)
-					jdbcStmt_ = con_.prepareStatement(sql);
-				else
-					jdbcStmt_ = con_.prepareStatement(sql,
-						options_.getResultType().getCode(),
-						options_.getResultConcurrency().getCode(),
-						options_.getResultHoldability().getCode());
-			}
+				return con_.prepareStatement(sql, resultType_.getCode(), concurrency_.getCode(), holdability_.getCode());
 			else if (returnCols_.getNames() != null)
-				jdbcStmt_ = con_.prepareStatement(sql, returnCols_.getNames());
+				return con_.prepareStatement(sql, returnCols_.getNames());
 			else if (returnCols_.getIndexes() != null)
-				jdbcStmt_ = con_.prepareStatement(sql, returnCols_.getIndexes());
+				return con_.prepareStatement(sql, returnCols_.getIndexes());
 			else
-				jdbcStmt_ = con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			
-			if (options_ != null)
-				options_.apply(jdbcStmt_);
-		}
-
-
-		/**
-		 * Defines which columns should be returned for INSERTs.
-		 * @param cols the columns or null if no columns should be returned
-		 * @return this
-		 */
-		@Override public Init returnCols(ReturnCols cols)
-		{
-			returnCols_ = cols;
-			return this;
+				return con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		}
 
 
@@ -334,7 +332,7 @@ public class PrepStmt extends Stmt
 	 */
 	public PrepStmt clearParams() throws JdbxException
 	{
-		CheckedRunnable.unchecked(getJdbcStmt()::clearParameters);
+		Unchecked.run(getJdbcStmt()::clearParameters);
 		return this;
 	}
 
@@ -480,7 +478,7 @@ public class PrepStmt extends Stmt
 	{
 		public ParamBatch add() throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().addBatch());
+			Unchecked.run(() -> getJdbcStmt().addBatch());
 			return this;
 		}
 

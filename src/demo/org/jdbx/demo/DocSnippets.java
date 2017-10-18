@@ -58,7 +58,7 @@ public class DocSnippets
 	public Integer readmeEx2Jdbx(Connection con, String firstName, String lastName) 
 	{
 		try (PrepStmt pstmt = new PrepStmt(con)) {
-			pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+			pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
 			pstmt.params(firstName, lastName);
 			return pstmt.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
 		}
@@ -80,9 +80,8 @@ public class DocSnippets
 		} 
 		
 		// configure
+	    stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(Concurrency.READ_ONLY);
 	    stmt.options()
-	        .setResultType(QResultType.SCROLL_SENSITIVE)
-	        .setResultConcurrency(QResultConcurrency.READ_ONLY)
 	        .setQueryTimeout(20)
 	        .setFetchSize(5000);
 	    int seconds = stmt.options().getQueryTimeout();
@@ -102,8 +101,10 @@ public class DocSnippets
 		pstmt.params("Mary", "Jane").update();
 		pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
 		
-		pstmt.options().setResultType(QResultType.SCROLL_INSENSITIVE).setResultHoldability(QResultHoldability.HOLD_OVER_COMMIT);
-		pstmt.init("SELECT * FROM Cities WHERE name LIKE ?");
+		pstmt.init()
+			.resultType(ResultType.SCROLL_INSENSITIVE)
+			.resultHoldability(Holdability.HOLD_OVER_COMMIT)
+			.sql("SELECT * FROM Cities WHERE name LIKE ?");
 	}
 	
 	
@@ -252,7 +253,7 @@ public class DocSnippets
 		    // read the result row
 		}
 		
-		stmt.options().setResultType(QResultType.SCROLL_SENSITIVE).setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(Concurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
 		qc = stmt.query("sql").cursor();
@@ -272,7 +273,7 @@ public class DocSnippets
 	
 	public void queryCursorObtain() throws Exception
 	{
-		stmt.options().setResultConcurrency(QResultConcurrency.CONCUR_UPDATABLE);
+		stmt.init().resultConcurrency(Concurrency.CONCUR_UPDATABLE);
 
 	   	qc.col("status").setString("ok"); 
 	    qc.row().update();
@@ -322,7 +323,7 @@ public class DocSnippets
         stmt.createUpdate(sql).returnCols(1, 5, 7);   
         stmt.createUpdate(sql).returnCols("id", "timestamp");
 
-        newId = pstmt.init().returnAutoKeyCols().cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
+        newId = pstmt.init().returnAutoKeyCols().sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
         	.params("John", "Doe")
         	.createUpdate()
             .runGetCol(Integer.class)

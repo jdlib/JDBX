@@ -73,7 +73,7 @@ public class PrepStmtDemo
 
 		// 2. initialize and instruct the statement to return generated keys.
 
-		pstmt.init().returnCols("id").cmd("INSERT INTO User VALUES (DEFAULT, ?, ?)");
+		pstmt.init().returnCols("id").sql("INSERT INTO User VALUES (DEFAULT, ?, ?)");
 
 	    // updating, and returning generated keys
 		Integer newUserId = pstmt
@@ -113,7 +113,7 @@ public class PrepStmtDemo
 		List<Integer> ids = new ArrayList<>();
 		try (PrepStmt pstmt = new PrepStmt(con))
 		{
-			pstmt.init().returnCols("id").cmd("INSERT INTO Cities (name) VALUES (?)");
+			pstmt.init().returnCols("id").sql("INSERT INTO Cities (name) VALUES (?)");
 			for (String name : names)
 				ids.add(pstmt.param(1, name).createUpdate().runGetCol(Integer.class).requireCount(1).requireValue());
 		}

@@ -17,9 +17,6 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbxException;
-
-
 /**
  * A functional interface like java.util.Function which
  * can throw any exception.
@@ -29,27 +26,6 @@ import org.jdbx.JdbxException;
 @FunctionalInterface
 public interface CheckedFunction<T,R>
 {
-	/**
-	 * Calls the function and converts any exception into a JdbxException
-	 * @param function a function
-	 * @param arg an argument
-	 * @param <T> the type of the input to the function
-	 * @param <R> the type of results supplied
-	 * @return the function result
-	 */
-	public static <T,R> R unchecked(CheckedFunction<T,R> function, T arg) throws JdbxException
-	{
-		try
-		{
-			return function.apply(arg);
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
-	}
-
-
     /**
      * Applies this function to the argument.
      * @param arg the argument

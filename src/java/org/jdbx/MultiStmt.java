@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedSupplier;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -67,7 +68,7 @@ public class MultiStmt implements AutoCloseable
 	{
 		checkOpen();
 		if (con_ == null)
-			con_ = CheckedSupplier.unchecked(conSupplier_);
+			con_ = Unchecked.get(conSupplier_);
 		return con_;
 	}
 

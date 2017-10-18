@@ -21,12 +21,12 @@ import java.sql.ResultSet;
 
 
 /**
- * QResultHoldability is an Enum for the JDBC constants
+ * Holdability is an Enum for the JDBC constants
  * ResultSet.HOLD_CURSORS_OVER_COMMIT and ResultSet.CLOSE_CURSORS_AT_COMMIT.
  * Given a JDBX statement object, you can configure the result holdability as follows:
- * <p><code>stmt.options().resultHoldability(QResultHoldability.nnn)</code>
+ * <p><code>stmt.options().resultHoldability(Holdability.nnn)</code>
  */
-public enum QResultHoldability implements JdbcEnum
+public enum Holdability implements JdbcEnum
 {
 	HOLD_OVER_COMMIT(ResultSet.HOLD_CURSORS_OVER_COMMIT),
 	CLOSE_AT_COMMIT(ResultSet.CLOSE_CURSORS_AT_COMMIT),
@@ -36,10 +36,10 @@ public enum QResultHoldability implements JdbcEnum
 	/**
 	 * Maps codes to enums.
 	 */
-	public static final Map<QResultHoldability> MAP = new Map<>(QResultHoldability.class, INVALID);
+	public static final Map<Holdability> MAP = new Map<>(Holdability.class, INVALID);
 
 
-	QResultHoldability(int code)
+	Holdability(int code)
 	{
 		code_ = code;
 	}

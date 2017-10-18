@@ -17,9 +17,6 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbxException;
-
-
 /**
  * A functional interface like java.util.BiConsumer which
  * can throw any exception.
@@ -28,25 +25,6 @@ import org.jdbx.JdbxException;
 @FunctionalInterface
 public interface CheckedBiConsumer<T,U>
 {
-	/**
-	 * Passes the argument to the consumer and converts any exception into a JdbxException
-	 * @param consumer a consumer
-	 * @param arg an argument
-	 * @param <T> the type of the input
-	 */
-	public static <T,U> void unchecked(CheckedBiConsumer<T,U> consumer, T t, U u) throws JdbxException
-	{
-		try
-		{
-			consumer.accept(t, u);
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
-	}
-
-
     /**
      * Performs this operation on the given argument.
      * @param t the first argument

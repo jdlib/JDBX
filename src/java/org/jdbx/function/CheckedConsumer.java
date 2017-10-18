@@ -17,9 +17,6 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbxException;
-
-
 /**
  * A functional interface like java.util.Consumer which
  * can throw any exception.
@@ -28,25 +25,6 @@ import org.jdbx.JdbxException;
 @FunctionalInterface
 public interface CheckedConsumer<T>
 {
-	/**
-	 * Passes the argument to the consumer and converts any exception into a JdbxException
-	 * @param consumer a consumer
-	 * @param arg an argument
-	 * @param <T> the type of the input
-	 */
-	public static <T> void unchecked(CheckedConsumer<T> consumer, T arg) throws JdbxException
-	{
-		try
-		{
-			consumer.accept(arg);
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
-	}
-
-
     /**
      * Performs this operation on the given argument.
      * @param arg the argument

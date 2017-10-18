@@ -20,9 +20,10 @@ package org.jdbx;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.function.Consumer;
 import javax.sql.DataSource;
-import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.CheckedSupplier;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -90,17 +91,7 @@ public class StaticStmt extends Stmt
 			checkOpen();
 			try
 			{
-				if (options_ == null)
-					jdbcStmt_ = con_.createStatement();
-				else
-				{
-					jdbcStmt_ = con_.createStatement(
-						options_.getResultType().getCode(),
-						options_.getResultConcurrency().getCode(),
-						options_.getResultHoldability().getCode()
-					);
-					options_.apply(jdbcStmt_);
-				}
+				jdbcStmt_ = createJdbcStmt();
 			}
 			catch (Exception e)
 			{
@@ -109,10 +100,31 @@ public class StaticStmt extends Stmt
 		}
 		return jdbcStmt_;
 	}
+	
+	
+	private Statement createJdbcStmt() throws Exception
+	{
+		if (options_ == null)
+			return con_.createStatement();
+		else
+		{
+			return con_.createStatement(
+				options_.getResultType().getCode(),
+				options_.getResultConcurrency().getCode(),
+				options_.getResultHoldability().getCode()
+			);
+		}
+	}
+
+
+	//------------------------------
+	// init
+	//------------------------------
 
 
 	/**
-	 * Returns true iif the statement is not closed.
+	 * Returns true if the statement is not closed.
+	 * A StaticStmt, once created is always initialized, therefore initialization via {@link #init(Consumer)} is optional.
 	 * @return true if not closed
 	 */
 	@Override public boolean isInitialized()
@@ -120,6 +132,37 @@ public class StaticStmt extends Stmt
 		return !isClosed();
 	}
 
+
+	/**
+	 * Returns a builder to initialize the statement holdability, concurrency and resultset type.
+	 * @return a init builder
+	 * @throws JdbxException if closed
+	 */
+	public Init init() throws JdbxException
+	{
+		checkOpen();
+		return new Init();
+	}
+
+	
+	/**
+	 * A Builder to initialize the StaticStmt.
+	 */
+	public class Init extends InitBase<Init>
+	{
+		private Init()
+		{
+		}
+
+	
+		@Override void setOptionsChanged() throws JdbxException
+		{
+			super.setOptionsChanged();
+			checkOpen();
+			updateOptions(StaticStmt.this); // will create options if not yet done
+			closeJdbcStmt(); // will force recreate of jdbc statement with new options
+		}
+	}
 
 	//------------------------------
 	// query
@@ -378,7 +421,7 @@ public class StaticStmt extends Stmt
 		public StaticBatch add(String sql) throws JdbxException
 		{
 			Check.notNull(sql, "sql");
-			CheckedRunnable.unchecked(() -> getJdbcStmt().addBatch(sql));
+			Unchecked.run(() -> getJdbcStmt().addBatch(sql));
 			return this;
 		}
 

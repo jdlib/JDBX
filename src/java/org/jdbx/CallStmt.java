@@ -7,15 +7,16 @@ import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLType;
+import java.sql.Statement;
 import java.util.Map;
 import javax.sql.DataSource;
-import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.CheckedSupplier;
 import org.jdbx.function.DoForName;
 import org.jdbx.function.GetForIndex;
 import org.jdbx.function.GetForName;
 import org.jdbx.function.SetForIndex;
 import org.jdbx.function.SetForName;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -111,14 +112,14 @@ public class CallStmt extends Stmt
 	 */
 	public CallStmt init(String sql) throws JdbxException
 	{
-		return init().cmd(sql);
+		return init().sql(sql);
 	}
 
 
 	/**
 	 * Init is a builder to define the SQL command and auto keys behaviour.
 	 */
-	public class Init
+	public class Init extends InitBase<Init>
 	{
 		private Init()
 		{
@@ -130,23 +131,24 @@ public class CallStmt extends Stmt
 		 * @param sql the sql command
 		 * @return the CallStmt
 		 */
-		public CallStmt cmd(String sql) throws JdbxException
+		public CallStmt sql(String sql) throws JdbxException
 		{
 			Check.notNull(sql, "sql");
 			checkOpen();
 
 			try
 			{
-				// close old statement
+				// close old statement if not null
 				if (jdbcStmt_ != null)
 				{
-					CallableStatement p = (CallableStatement)jdbcStmt_;
+					Statement old = jdbcStmt_;
 					jdbcStmt_ = null;
-					p.close();
+					old.close();
 				}
 
 				// create the new statement
-				createJdbcStmt(sql);
+				jdbcStmt_ = con_.prepareCall(sql, resultType_.getCode(), concurrency_.getCode(), holdability_.getCode());
+				updateOptions(CallStmt.this);
 
 				return CallStmt.this;
 			}
@@ -154,21 +156,6 @@ public class CallStmt extends Stmt
 			{
 				throw JdbxException.of(e);
 			}
-		}
-
-
-		private void createJdbcStmt(String sql) throws Exception
-		{
-			if (options_ == null)
-				jdbcStmt_ = con_.prepareCall(sql);
-			else
-				jdbcStmt_ = con_.prepareCall(sql,
-					options_.getResultType().getCode(),
-					options_.getResultConcurrency().getCode(),
-					options_.getResultHoldability().getCode());
-			
-			if (options_ != null)
-				options_.apply(jdbcStmt_);
 		}
 	}
 
@@ -256,35 +243,35 @@ public class CallStmt extends Stmt
 
 		@Override public IndexedParam out(int sqlType) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
 			return this;
 		}
 
 
 		@Override public IndexedParam out(int sqlType, int scale) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
 			return this;
 		}
 
 
 		@Override public IndexedParam out(SQLType sqlType) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
 			return this;
 		}
 
 
 		@Override public IndexedParam out(SQLType sqlType, int scale) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
 			return this;
 		}
 
 
 		@Override public IndexedParam out(SQLType sqlType, String typeName) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(index_, sqlType, typeName));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType, typeName));
 			return this;
 		}
 		
@@ -379,35 +366,35 @@ public class CallStmt extends Stmt
 
 		@Override public NamedParam out(int sqlType) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
 			return this;
 		}
 
 
 		@Override public NamedParam out(int sqlType, int scale) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
 			return this;
 		}
 
 
 		@Override public NamedParam out(SQLType sqlType) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
 			return this;
 		}
 
 
 		@Override public NamedParam out(SQLType sqlType, int scale) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
 			return this;
 		}
 
 
 		@Override public NamedParam out(SQLType sqlType, String typeName) throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().registerOutParameter(name_, sqlType, typeName));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType, typeName));
 			return this;
 		}
 
@@ -421,21 +408,21 @@ public class CallStmt extends Stmt
 		public void set(Object value, SQLType type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			CheckedRunnable.unchecked(() -> getJdbcStmt().setObject(name_, value, type));
+			Unchecked.run(() -> getJdbcStmt().setObject(name_, value, type));
 		}
 
 
 		public <T> void set(T value, SetForName<CallableStatement,T> setter) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
-			CheckedRunnable.unchecked(() -> setter.set(getJdbcStmt(), name_, value));
+			Unchecked.run(() -> setter.set(getJdbcStmt(), name_, value));
 		}
 
 
 		public <T> void apply(DoForName<CallableStatement> runner) throws JdbxException
 		{
 			Check.notNull(runner, "runner");
-			CheckedRunnable.unchecked(() -> runner.accept(getJdbcStmt(), name_));
+			Unchecked.run(() -> runner.accept(getJdbcStmt(), name_));
 		}
 
 
@@ -547,7 +534,7 @@ public class CallStmt extends Stmt
 	{
 		public Batch add() throws JdbxException
 		{
-			CheckedRunnable.unchecked(() -> getJdbcStmt().addBatch());
+			Unchecked.run(() -> getJdbcStmt().addBatch());
 			return this;
 		}
 

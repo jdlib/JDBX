@@ -71,7 +71,7 @@ public class TeaserDemo
 	{
 		try (PrepStmt pstmt = new PrepStmt(con))
 		{
-			pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+			pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
 			pstmt.params(firstName, lastName);
 			return pstmt.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
 		}

@@ -17,9 +17,6 @@
 package org.jdbx.function;
 
 
-import org.jdbx.JdbxException;
-
-
 /**
  * A functional interface like java.lang.Runnable which
  * can throw any exception.
@@ -27,23 +24,6 @@ import org.jdbx.JdbxException;
 @FunctionalInterface
 public interface CheckedRunnable
 {
-	/**
-	 * Runs the runnable and converts any exception into a JdbxException.
-	 * @param runnable the runnable
-	 */
-	public static void unchecked(CheckedRunnable runnable) throws JdbxException
-	{
-		try
-		{
-			runnable.run();
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
-	}
-
-
     /**
      * Performs the runnable action.
 	 * @throws Exception if an error occurs

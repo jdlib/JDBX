@@ -23,8 +23,8 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
-import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.CheckedSupplier;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -56,7 +56,7 @@ public abstract class Stmt implements AutoCloseable
 	protected Stmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbxException
 	{
 		Check.notNull(supplier, "supplier");
-		con_ 		 = CheckedSupplier.unchecked(supplier);
+		con_ 		 = Unchecked.get(supplier);
 		closeAction_ = closeCon ? CloseAction.CONNECTION : CloseAction.STATEMENT;
 	}
 
@@ -207,10 +207,10 @@ public abstract class Stmt implements AutoCloseable
 	 * Returns the statement options.
 	 * @return the options
 	 */
-	public final Options options() throws JdbxException
+	public final StmtOptions options() throws JdbxException
 	{
 		if (options_ == null)
-			options_ = new Options(this);
+			options_ = new StmtOptions(this);
 		return options_;
 	}
 
@@ -277,27 +277,14 @@ public abstract class Stmt implements AutoCloseable
 	@SuppressWarnings("unchecked")
 	protected <STMT extends Statement, T> void call(CheckedConsumer<STMT> fn) throws JdbxException
 	{
-		CheckedConsumer.unchecked(fn, (STMT)getJdbcStmt());
+		Unchecked.accept(fn, (STMT)getJdbcStmt());
 	}
 
 
 	@SuppressWarnings("unchecked")
 	protected <STMT extends Statement, T> T get(CheckedFunction<STMT,T> fn) throws JdbxException
 	{
-		return CheckedFunction.unchecked(fn, (STMT)getJdbcStmt());
-	}
-
-
-	@SuppressWarnings("unchecked")
-	protected <STMT extends Statement> void setInt(IntSetter<STMT> fn, int arg) throws JdbxException
-	{
-		CheckedRunnable.unchecked(() -> fn.set((STMT)getJdbcStmt(), arg));
-	}
-
-
-	protected <STMT extends Statement> void setBoolean(BooleanSetter<STMT> fn, boolean arg) throws JdbxException
-	{
-		CheckedRunnable.unchecked(() -> fn.set(getJdbcStmt(), arg));
+		return Unchecked.apply(fn, (STMT)getJdbcStmt());
 	}
 
 
@@ -313,5 +300,5 @@ public abstract class Stmt implements AutoCloseable
 	protected Connection con_;
 	protected Statement jdbcStmt_;
 	protected CloseAction closeAction_;
-	protected Options options_;
+	protected StmtOptions options_;
 }

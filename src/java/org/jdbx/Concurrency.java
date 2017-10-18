@@ -21,14 +21,14 @@ import java.sql.ResultSet;
 
 
 /**
- * QResultConcurrency is an Enum for the JDBC constants ResultSet.CONCUR_*.
+ * Concurrency is an Enum for the JDBC constants ResultSet.CONCUR_*.
  * Given a JDBX statement object, you can change the result concurrency as follows:
- * <p><code>stmt.options().resultConcurrency(QResultConcurrency.nnn)</code>
+ * <p><code>stmt.options().resultConcurrency(Concurrency.nnn)</code>
  *  
- * @see InitBase#resultConcurrency(QResultConcurrency)
+ * @see InitBase#resultConcurrency(Concurrency)
  * @see Stmt#options() 
  */
-public enum QResultConcurrency implements JdbcEnum
+public enum Concurrency implements JdbcEnum
 {
 	READ_ONLY(ResultSet.CONCUR_READ_ONLY),
 	CONCUR_UPDATABLE(ResultSet.CONCUR_UPDATABLE),
@@ -38,10 +38,10 @@ public enum QResultConcurrency implements JdbcEnum
 	/**
 	 * Maps codes to enums.
 	 */
-	public static final Map<QResultConcurrency> MAP = new Map<>(QResultConcurrency.class, INVALID);
+	public static final Map<Concurrency> MAP = new Map<>(Concurrency.class, INVALID);
 
 
-	QResultConcurrency(int code)
+	Concurrency(int code)
 	{
 		code_ = code;
 	}

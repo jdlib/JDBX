@@ -3,9 +3,8 @@ package org.jdbx;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
-import org.jdbx.function.CheckedFunction;
-import org.jdbx.function.CheckedRunnable;
 import org.jdbx.function.GetReturnCols;
+import org.jdbx.function.Unchecked;
 
 
 /**
@@ -91,7 +90,7 @@ public class ExecuteResult
 			}
 			catch (Exception e)
 			{
-				CheckedRunnable.unchecked(() -> updateCount_ = stmt_.getUpdateCount());
+				Unchecked.run(() -> updateCount_ = stmt_.getUpdateCount());
 			}
 			status_ = updateCount_ != -1L ? Status.HAS_UPDATERESULT : Status.AFTER_LAST;
 		}
@@ -268,7 +267,7 @@ public class ExecuteResult
 	public QueryResult getQueryResult() throws JdbxException
 	{
 		checkIsQueryResult();
-		ResultSet resultSet = CheckedFunction.unchecked(Statement::getResultSet, stmt_);
+		ResultSet resultSet = Unchecked.apply(Statement::getResultSet, stmt_);
 		return QueryResult.of(resultSet);
 	}
 

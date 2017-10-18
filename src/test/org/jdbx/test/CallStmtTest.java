@@ -20,9 +20,8 @@ package org.jdbx.test;
 import java.sql.ParameterMetaData;
 import org.jdbx.CallStmt;
 import org.jdbx.JdbxException;
-import org.jdbx.QResultType;
+import org.jdbx.ResultType;
 import org.jdbx.StaticStmt;
-import org.jdbx.Options;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -71,13 +70,13 @@ public class CallStmtTest extends JdbxTest
 
 	@Before public void before() throws JdbxException
 	{
-		stmt_ = new CallStmt(con());
+		cstmt_ = new CallStmt(con());
 	}
 
 
 	@After public void after() throws JdbxException
 	{
-		stmt_.close();
+		cstmt_.close();
 	}
 
 
@@ -87,9 +86,9 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testQueryReturnResultSet() throws JdbxException
 	{
-		stmt_.init("call GetUserAsResult(?)");
-		stmt_.param(1).setInteger(id_);
-		Object[] data = stmt_.query().row().cols();
+		cstmt_.init("call GetUserAsResult(?)");
+		cstmt_.param(1).setInteger(id_);
+		Object[] data = cstmt_.query().row().cols();
 		assertNotNull(data);
 		assertEquals(3, data.length);
 		assertEquals(id_, data[0]);
@@ -103,10 +102,10 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testExecuteReturnGenKey() throws Exception
 	{
-		stmt_.init("call CreateUser(?,?)");
-		stmt_.param("firstname").set("Alpha");
-		stmt_.param("lastname").set("Beta");
-		stmt_.createExecute().run(r -> {
+		cstmt_.init("call CreateUser(?,?)");
+		cstmt_.param("firstname").set("Alpha");
+		cstmt_.param("lastname").set("Beta");
+		cstmt_.createExecute().run(r -> {
 			assertTrue(r.next());
 			assertTrue(r.isUpdate());
 			return null;
@@ -120,9 +119,9 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testExecuteReturnResultSet() throws JdbxException
 	{
-		stmt_.init("call GetUserAsResult(?)");
-		stmt_.param(1).setInteger(id_);
-		Object[] data = stmt_.createExecute().run(r -> {
+		cstmt_.init("call GetUserAsResult(?)");
+		cstmt_.param(1).setInteger(id_);
+		Object[] data = cstmt_.createExecute().run(r -> {
 			assertTrue(r.nextQueryResult());
 			Object[] result = r.getQueryResult().row().required().cols();
 			assertFalse(r.next());
@@ -137,38 +136,42 @@ public class CallStmtTest extends JdbxTest
 
 	@Test public void testReturnOutParam() throws JdbxException
 	{
-		stmt_.init("call GetUserName(?,?,?)");
-		stmt_.param(1).setDouble(1.1);
-		stmt_.clearParams();
-		stmt_.param(1, id_);
-		stmt_.execute();
-		assertEquals("Paul",  stmt_.param(2).getString());
-		assertEquals("Smith", stmt_.param(3).getString());
+		cstmt_.init("call GetUserName(?,?,?)");
+		cstmt_.param(1).setDouble(1.1);
+		cstmt_.clearParams();
+		cstmt_.param(1, id_);
+		cstmt_.execute();
+		assertEquals("Paul",  cstmt_.param(2).getString());
+		assertEquals("Smith", cstmt_.param(3).getString());
 	}
 
 
 	@Test public void testParamMetaData() throws Exception
 	{
-		assertFalse(stmt_.isInitialized());
-		stmt_.init("call GetUserName(?,?,?)");
-		assertTrue(stmt_.isInitialized());
+		assertFalse(cstmt_.isInitialized());
+		cstmt_.init("call GetUserName(?,?,?)");
+		assertTrue(cstmt_.isInitialized());
 
-		ParameterMetaData md = stmt_.getParamMetaData();
+		ParameterMetaData md = cstmt_.getParamMetaData();
 		assertEquals(3, md.getParameterCount());
 
-		stmt_.init("call GetUserAsResult(?)");
-		assertEquals(1, stmt_.getParamMetaData().getParameterCount());
+		cstmt_.init("call GetUserAsResult(?)");
+		assertEquals(1, cstmt_.getParamMetaData().getParameterCount());
 	}
 
 
 	@Test public void testOptions() throws Exception
 	{
-		Options options = stmt_.options();
-		assertSame(QResultType.FORWARD_ONLY, options.getResultType());
-		options.setResultType(QResultType.SCROLL_SENSITIVE);
-		assertSame(QResultType.SCROLL_SENSITIVE, options.getResultType());
+		assertSame(ResultType.FORWARD_ONLY, cstmt_.options().getResultType());
+
+		// no effect if init is not called
+		cstmt_.init().resultType(ResultType.SCROLL_SENSITIVE);
+		assertSame(ResultType.FORWARD_ONLY, cstmt_.options().getResultType());
+
+		cstmt_.init().resultType(ResultType.SCROLL_SENSITIVE).sql("call GetUserAsResult(?)");
+		assertSame(ResultType.SCROLL_SENSITIVE, cstmt_.options().getResultType());
 	}
 
 
-	private CallStmt stmt_;
+	private CallStmt cstmt_;
 }
