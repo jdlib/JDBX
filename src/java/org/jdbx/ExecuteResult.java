@@ -156,7 +156,7 @@ public class ExecuteResult
 	{
 		while (next())
 		{
-			if (isUpdate())
+			if (isUpdateResult())
 				return true;
 		}
 		return false;
@@ -188,23 +188,23 @@ public class ExecuteResult
 	 * @return true if the current result provides an update result
 	 * @throws JdbxException if next() has not been called yet or if position after the last result
 	 */
-	public boolean isUpdate() throws JdbxException
+	public boolean isUpdateResult() throws JdbxException
 	{
 		checkHasResult();
 		return status_ == Status.HAS_UPDATERESULT;
 	}
 
 
-	private void checkIsUpdate() throws JdbxException
+	private void checkIsUpdateResult() throws JdbxException
 	{
-		if (!isUpdate())
+		if (!isUpdateResult())
 			throw JdbxException.illegalState("current result is not an update result");
 	}
 
 	
 	public UpdateResult<Void> getUpdateResult() throws JdbxException
 	{
-		checkIsUpdate();
+		checkIsUpdateResult();
 		return new UpdateResult<>(updateCount_);
 	}
 	
@@ -219,7 +219,7 @@ public class ExecuteResult
 	public <V> UpdateResult<V> getUpdateResult(GetReturnCols<V> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
-		checkIsUpdate();
+		checkIsUpdateResult();
 
 		try
 		{

@@ -35,4 +35,10 @@
 * introduces Enums for Statement and ResultSet int constants
 		
  		
+TODO subtle improvements in naming
+options:
+	setQueryTimeout() -> getQueryTimeoutSeconds()
+	setFetchSize()    -> setFetchRows()
+	setMaxFieldSize() -> setMaxFieldBytes()
+
 		

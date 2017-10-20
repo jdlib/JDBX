@@ -211,7 +211,8 @@ public class PrepStmt extends Stmt
 					sql = npc.getConverted();
 				}
 				
-				jdbcStmt_ = createJdbcStmt(sql);
+				jdbcStmt_ 	= createJdbcStmt(sql);
+				sql_ 		= sql;
 				updateOptions(PrepStmt.this);
 
 				return PrepStmt.this;
@@ -500,6 +501,19 @@ public class PrepStmt extends Stmt
 		return new ParamBatch();
 	}
 
+	
+	/**
+	 * Returns a descriptive string.
+	 */
+	@Override public String toString()
+	{
+		String s = super.toString();
+		if ((sql_ != null) && !isClosed())
+			s += '[' + sql_ + ']';
+		return s;
+	}
+	
 
 	private Map<String,int[]> paramMap_;
+	private String sql_;
 }

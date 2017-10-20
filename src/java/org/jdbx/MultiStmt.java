@@ -198,7 +198,7 @@ public class MultiStmt implements AutoCloseable
 			finally
 			{
 				for (Stmt stmt : statements_)
-					stmt.setClosed();
+					stmt.clearCon();
 				isClosed_		= true;
 				con_  			= null;
 				conSupplier_ 	= null;

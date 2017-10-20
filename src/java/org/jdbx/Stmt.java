@@ -28,7 +28,7 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * Common base class of StaticStmt, PrepStmt and CallStmt.
+ * Common base class of {@link StaticStmt}, {@link PrepStmt} and {@link CallStmt}.
  */
 public abstract class Stmt implements AutoCloseable
 {
@@ -55,16 +55,19 @@ public abstract class Stmt implements AutoCloseable
 
 	protected Stmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbxException
 	{
-		Check.notNull(supplier, "supplier");
-		con_ 		 = Unchecked.get(supplier);
-		closeAction_ = closeCon ? CloseAction.CONNECTION : CloseAction.STATEMENT;
+		this(Unchecked.get(Check.notNull(supplier, "supplier")), closeCon);
 	}
 
 
+	//------------------------------
+	// connection
+	//------------------------------
+
+
 	/**
-	 * Returns the connection used by the Stmt.
+	 * Returns the connection used by the statement.
 	 * @return the connection
-	 * @throws JdbxException if the Stmt is already closed.
+	 * @throws JdbxException if the statement is already closed.
 	 */
 	public Connection getConnection() throws JdbxException
 	{
@@ -73,32 +76,53 @@ public abstract class Stmt implements AutoCloseable
 	}
 
 
+	void clearCon()
+	{
+		con_ = null;
+	}
+
+
+	//------------------------------
+	// accessors
+	//------------------------------
+
+
+	/**
+	 * Returns the internal JDBC statement used by the JDBC statement.
+	 * @return the JDBC statement
+	 * @throws JdbxException if this statement was already closed or not yet initialized.
+	 * @see #isClosed()
+	 * @see #isInitialized()
+	 */
+	public abstract Statement getJdbcStmt() throws JdbxException;
+	
+	
+	//------------------------------
+	// state
+	//------------------------------
+
+
 	/**
 	 * Returns if the statement is initialized.
-	 * When initialized a statement can be executed.
+	 * When initialized a statement can be used to execute sql commands.
+	 * In implementation terms initialized means that the JDBC statement on which this statement operates was created.   
 	 * @return is the statement initialized
 	 */
 	public abstract boolean isInitialized();
 
 
 	/**
-	 * Returns the internal JDBC statement used by the JDBC statement.
-	 * @return the JDBC statement
-	 * @throws JdbxException if the statement was closed.
+	 * Tests if the statement is initialized, i.e. {@link #getJdbcStmt()} may be called.
+	 * @throws JdbxException thrown when the statement is not initialized
 	 */
-	public abstract Statement getJdbcStmt() throws JdbxException;
-
-	
-	boolean hasJdbcStmt()
+	protected void checkInitialized() throws JdbxException
 	{
-		return jdbcStmt_ != null;
+		checkOpen();
+		if (jdbcStmt_ == null)
+			throw JdbxException.illegalState("statement not initialized");
 	}
 
-	//------------------------------
-	// open/closed state
-	//------------------------------
-
-
+	
 	/**
 	 * Returns if the statement is closed.
 	 * @return is the statement closed
@@ -106,12 +130,6 @@ public abstract class Stmt implements AutoCloseable
 	public final boolean isClosed()
 	{
 		return con_ == null;
-	}
-
-
-	void setClosed()
-	{
-		con_ = null;
 	}
 
 
@@ -126,28 +144,18 @@ public abstract class Stmt implements AutoCloseable
 	}
 
 
-	/**
-	 * Tests if the statement is prepared, i.e. {@link #getJdbcStmt()} may be called.
-	 * @throws JdbxException thrown when the statement is not prepared
-	 */
-	protected void checkInitialized() throws JdbxException
-	{
-		checkOpen();
-		if (jdbcStmt_ == null)
-			throw JdbxException.illegalState("no statement prepared");
-	}
-
-
 	protected void closeJdbcStmt() throws JdbxException
 	{
-		try
+		if (jdbcStmt_ != null)
 		{
-			if (jdbcStmt_ != null)
+			try
+			{
 				call(Statement::close);
-		}
-		finally
-		{
-			jdbcStmt_ = null;
+			}
+			finally
+			{
+				jdbcStmt_ = null;
+			}
 		}
 	}
 
@@ -172,29 +180,10 @@ public abstract class Stmt implements AutoCloseable
 			}
 			finally
 			{
-				con_  = null;
+				con_  	  = null;
 				jdbcStmt_ = null;
 			}
 		}
-	}
-
-
-	/**
-	 * Returns {@link Statement#isCloseOnCompletion()}
-	 * @return the flag
-	 */
-	public boolean isCloseOnCompletion() throws JdbxException
-	{
-		return get(Statement::isCloseOnCompletion).booleanValue();
-	}
-
-
-	/**
-	 * Calls {@link Statement#closeOnCompletion()}
-	 */
-	public void closeOnCompletion() throws JdbxException
-	{
-		call(Statement::closeOnCompletion);
 	}
 
 
@@ -204,7 +193,7 @@ public abstract class Stmt implements AutoCloseable
 
 
 	/**
-	 * Returns the statement options.
+	 * Returns the statement options. 
 	 * @return the options
 	 */
 	public final StmtOptions options() throws JdbxException
@@ -222,6 +211,8 @@ public abstract class Stmt implements AutoCloseable
 
 	/**
 	 * Cancels execution of the current command.
+     * This method can be used by one thread to cancel a statement that
+     * is being executed by another thread.
 	 */
 	public void cancel() throws JdbxException
 	{
@@ -235,8 +226,9 @@ public abstract class Stmt implements AutoCloseable
 
 
 	/**
-	 * Returns the warnings collected by the JDBC statement.
-	 * @return the warnings
+	 * Returns the warnings collected by the statement.
+     * @return the first <code>SQLWarning</code> object or <code>null</code>
+     * 		if there are no warnings
 	 * @see Statement#getWarnings()
 	 */
 	public SQLWarning getWarnings() throws JdbxException
@@ -258,20 +250,8 @@ public abstract class Stmt implements AutoCloseable
 
 
 	//------------------------------
-	// helper
+	// helpers
 	//------------------------------
-
-
-	static interface BooleanSetter<STMT extends Statement>
-	{
-		public void set(Statement stmt, boolean value) throws Exception;
-	}
-
-
-	static interface IntSetter<STMT extends Statement>
-	{
-		public void set(STMT stmt, int value) throws Exception;
-	}
 
 
 	@SuppressWarnings("unchecked")
@@ -288,17 +268,8 @@ public abstract class Stmt implements AutoCloseable
 	}
 
 
-	/**
-	 * Returns a descriptive string.
-	 */
-	@Override public String toString()
-	{
-		return jdbcStmt_ != null ? jdbcStmt_.toString() : "<null>";
-	}
-
-
 	protected Connection con_;
 	protected Statement jdbcStmt_;
-	protected CloseAction closeAction_;
 	protected StmtOptions options_;
+	protected final CloseAction closeAction_;
 }

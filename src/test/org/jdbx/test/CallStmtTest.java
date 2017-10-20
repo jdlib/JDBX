@@ -107,7 +107,7 @@ public class CallStmtTest extends JdbxTest
 		cstmt_.param("lastname").set("Beta");
 		cstmt_.createExecute().run(r -> {
 			assertTrue(r.next());
-			assertTrue(r.isUpdate());
+			assertTrue(r.isUpdateResult());
 			return null;
 		});
 	}

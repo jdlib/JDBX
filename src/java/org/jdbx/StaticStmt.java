@@ -33,8 +33,30 @@ import org.jdbx.function.Unchecked;
 public class StaticStmt extends Stmt
 {
 	/**
+	 * Creates a new StaticStmt. 
+	 * Calls StaticStmt(con, false).
+	 * @param con a connection
+	 */
+	public StaticStmt(Connection con)
+	{
+		this(con, false);
+	}
+
+
+	/**
+	 * Creates a new StaticStmt using the given connection.
+	 * @param con a connection
+	 * @param closeCon determines if the connection is closed when this statement is closed.
+	 */
+	public StaticStmt(Connection con, boolean closeCon)
+	{
+		super(con, closeCon);
+	}
+
+
+	/**
 	 * Creates a new StaticStmt. It uses a connection obtained from the datasource
-	 * and closes the connection when itself is closed.
+	 * and closes that connection when itself is closed.
 	 * @param dataSource a DataSource
 	 */
 	public StaticStmt(DataSource dataSource) throws JdbxException
@@ -51,27 +73,6 @@ public class StaticStmt extends Stmt
 	public StaticStmt(CheckedSupplier<Connection> supplier, boolean closeCon) throws JdbxException
 	{
 		super(supplier, closeCon);
-	}
-
-
-	/**
-	 * Creates a new StaticStmt. Calls StaticStmt(con, false).
-	 * @param con a connection
-	 */
-	public StaticStmt(Connection con)
-	{
-		this(con, false);
-	}
-
-
-	/**
-	 * Creates a new StaticStmt. It uses the given connection.
-	 * @param con a connection
-	 * @param closeCon determines if the connection is closed when this statement is closed.
-	 */
-	public StaticStmt(Connection con, boolean closeCon)
-	{
-		super(con, closeCon);
 	}
 
 
@@ -163,6 +164,7 @@ public class StaticStmt extends Stmt
 			closeJdbcStmt(); // will force recreate of jdbc statement with new options
 		}
 	}
+	
 
 	//------------------------------
 	// query

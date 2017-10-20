@@ -2,7 +2,7 @@ JDBX User Guide
 
 1. [Intro](#intro)
 2. [Statements](#stmts)
-   * [Create, configure and close statements](#stmts-creating)
+   * [Create and close statements](#stmts-create)
    * [StaticStmt](#stmts-static)
    * [PrepStmt](#stmts-prep)
    * [CallStmt](#stmts-call)
@@ -51,7 +51,7 @@ JDBX - as JDBC - differentiates between
 `StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4), `CallStmt` can call stored procedures (5).
 
 
-### <a name="stmts-creating"></a>Create, configure and close statements
+### <a name="stmts-create"></a>Create and close statements
 
 In order to create a JDBX statement you need a `java.sql.Connection` or `javax.sql.DataSource`:
 
@@ -60,8 +60,9 @@ In order to create a JDBX statement you need a `java.sql.Connection` or `javax.s
      StaticStmt stmt  = new StaticStmt(con); // or new StaticStmt(ds) 
      PrepStmt   pstmt = new PrepStmt(con);   // or new PrepStmt(ds)
      CallStmt   cstmt = new CallStmt(con);   // or new CallStmt(ds)
-      
-Statement objects should be actively ***closed*** once they are no longer used. Since all statement classes implement `java.io.AutoCloseable` 
+     
+     
+Statement objects should be actively **closed** once they are no longer used. Since all statement classes implement `java.io.AutoCloseable` 
 the typical pattern is to create and use a statement object within a Java try-with-resources block:
 
      Connection con = ...
@@ -72,7 +73,7 @@ the typical pattern is to create and use a statement object within a Java try-wi
 Statements created from a `DataSource` will use a connection obtained from the `DataSource`. When the statement is closed the 
 connection will also be closed automatically.
 
-To ***configure*** a statement object use the builder returned by its `options()` method:      
+To **configure** a statement object use the builder returned by its `options()` method:      
 
     stmt.options()
         .setResultType(ResultType.SCROLL_SENSITIVE)

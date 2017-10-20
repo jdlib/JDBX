@@ -147,7 +147,8 @@ public class CallStmt extends Stmt
 				}
 
 				// create the new statement
-				jdbcStmt_ = con_.prepareCall(sql, resultType_.getCode(), concurrency_.getCode(), holdability_.getCode());
+				jdbcStmt_ 	= con_.prepareCall(sql, resultType_.getCode(), concurrency_.getCode(), holdability_.getCode());
+				sql_ 	   	= sql;
 				updateOptions(CallStmt.this);
 
 				return CallStmt.this;
@@ -554,4 +555,19 @@ public class CallStmt extends Stmt
 	{
 		return new CallBatch();
 	}
+
+
+	/**
+	 * Returns a descriptive string.
+	 */
+	@Override public String toString()
+	{
+		String s = super.toString();
+		if ((sql_ != null) && !isClosed())
+			s += '[' + sql_ + ']';
+		return s;
+	}
+	
+
+	private String sql_;
 }

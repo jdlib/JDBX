@@ -82,9 +82,9 @@ public class DocSnippets
 		// configure
 	    stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(Concurrency.READ_ONLY);
 	    stmt.options()
-	        .setQueryTimeout(20)
-	        .setFetchSize(5000);
-	    int seconds = stmt.options().getQueryTimeout();
+	        .setQueryTimeoutSeconds(20)
+	        .setFetchRows(5000);
+	    int seconds = stmt.options().getQueryTimeoutSeconds();
 	}
 
 

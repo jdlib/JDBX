@@ -127,7 +127,7 @@ public class StaticStmtTest extends JdbxTest
 	{
 		stmt_.createExecute("INSERT INTO STest (name) VALUES ('A')").returnAutoKeyCols().run(r -> {
 			assertTrue(r.next());
-			assertTrue(r.isUpdate());
+			assertTrue(r.isUpdateResult());
 			UpdateResult<Integer> ur = r.getUpdateResult(Integer.class);
 			assertEquals(1, ur.count());
 			assertNotNull(ur.value());
