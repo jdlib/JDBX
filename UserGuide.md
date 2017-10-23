@@ -2,16 +2,18 @@ JDBX User Guide
 
 1. [Intro](#intro)
 2. [Statements](#stmts)
+   * [Statement classes](#stmts-classes)
    * [Create and close statements](#stmts-create)
-   * [StaticStmt](#stmts-static)
-   * [PrepStmt](#stmts-prep)
-   * [CallStmt](#stmts-call)
+   * [Initialize statements](#stmts-init)
+   * [Configure statements](#stmts-options)
+   * [Setting parameters](#stmts-params)
 3. [Running SQL queries](#queries)
    * [QueryResult class](#queries-queryresult)
    * [Read a single result row](#queries-singlerow)
    * [Read all result rows](#queries-allrows)
    * [Skip rows](#queries-skipping)
    * [QueryCursor class](#queries-querycursorclass)
+   * [Converting from/to ResultSet](#queries-resultset)
 4. [Running DML or DDL updates](#updates)
    * [Run the update](#updates-run)
    * [Update class](#updates-updateclass)
@@ -32,6 +34,9 @@ Still the starting point of all its operations is a `java.sql.Connection` or `ja
 
 ## <a name="stmts"></a>2. Statements
 
+### <a name="stmts-classes"></a>Statement classes
+
+Statements are used to execute SQL commands. 
 JDBX provides three alternative statement classes to replace the corresponding JDBC classes:
 
 JDBC|JDBX|Used to 
@@ -49,7 +54,7 @@ JDBX - as JDBC - differentiates between
 5. Calling stored procedures
 
 `StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4), `CallStmt` can call stored procedures (5).
-
+Implementation-wise JDBX statements are based on their JDBC counterpart.
 
 ### <a name="stmts-create"></a>Create and close statements
 
@@ -61,7 +66,6 @@ In order to create a JDBX statement you need a `java.sql.Connection` or `javax.s
      PrepStmt   pstmt = new PrepStmt(con);   // or new PrepStmt(ds)
      CallStmt   cstmt = new CallStmt(con);   // or new CallStmt(ds)
      
-     
 Statement objects should be actively **closed** once they are no longer used. Since all statement classes implement `java.io.AutoCloseable` 
 the typical pattern is to create and use a statement object within a Java try-with-resources block:
 
@@ -70,58 +74,94 @@ the typical pattern is to create and use a statement object within a Java try-wi
           ... // use the statement
      }   
 
-Statements created from a `DataSource` will use a connection obtained from the `DataSource`. When the statement is closed the 
+Statements created from a `DataSource` will use a connection obtained from the `DataSource`. When the statement is closed that 
 connection will also be closed automatically.
 
-To **configure** a statement object use the builder returned by its `options()` method:      
+### <a name="stmts-init"></a>Initialize statements
 
-    stmt.options()
-        .setResultType(ResultType.SCROLL_SENSITIVE)
-        .setResultConcurrency(Concurrency.READ_ONLY);
-        .setQueryTimeout(20)
-	    .setFetchSize(5000);
-	int seconds = stmt.options().getQueryTimeout();
-
-
-### <a name="stmts-static"></a>StaticStmt
-
-`org.jdbx.StaticStmt` can execute static (non-parameterized) SQL commands. Example:
-
-    StaticStmt stmt = ...
-    int count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')");
-    
-### <a name="stmts-prep"></a>PrepStmt
-
-`org.jdbx.PrepStmt` can execute precompiled, parameterized SQL commands. After it is initialized it can
-be executed multiple times using different parameter values. 
-Contrary to `java.sql.PreparedStatement` you can also re-initialize the command. Example:
+For `PrepStmt` and `CallStmt` you need to specify a SQL command before the statement can be executed.
 
     PrepStmt pstmt = ...
     pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-    pstmt.params("John", "Doe").update();
-    pstmt.params("Mary", "Jane").update();
-    pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
-    ...
-     
-    
-Like in `StaticStmt` you can use the builder returned by the `options()` method to configure the `PrepStmt`.
-      
-    pstmt.options()
-        .setResultType(ResultType.SCROLL_INSENSITIVE)
-        .setResultHoldability(Holdability.HOLD_OVER_COMMIT);
-     
-
-### <a name="stmts-call"></a>CallStmt
-
-`org.jdbx.CallStmt` can call stored procedures. After it is initialized it can
-be executed multiple times using different parameter values. Example:
-
+  
     CallStmt cstmt = ...
-    cstmt.init("{call getUserName(?, ?)");
-    cstmt.param(1).setInt(12045);
-    cstmt.param(2).out(Types.VARCHAR);
-	cstmt.execute();
-	String userName = cstmt.param(2).getString();
+    cstmt.init("{call getUserName(?, ?)}");
+    
+For more initialization options call the `init()` method on these statements which will return a initialization builder.
+The terminal call to the builders method `sql(String)` is mandatory in order to perform the initialization:
+
+    // instruct the statement to return the value of the 'id' column (see the chapter on running updates)
+    PrepStmt pstmt = ...
+    pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+
+    // instruct the statement to produce a scroll sensitive result cursor 
+    CallStmt cstmt = ...
+    cstmt.init().resultType(ResultType.SCROLL_SENSITIVE).sql("{call getUsers()}");
+    
+A `StaticStmt` is already initialized when it is created but you might want to override the defaults:
+
+    StaticStmt stmt = ...
+    stmt.init().resultType(ResultType.SCROLL_INSENSITIVE).resultHoldability(Holdability.HOLD_OVER_COMMIT);
+
+Implementation-wise initialization of a JDBX statement is the equivalent of creating a JDBC statement
+and the init-builder allows to specify the create parameters.
+You may reinitialize a JDBX statement at any time which internally will recreate a new JDBC statement.    
+
+### <a name="stmts-options"></a>Configure statements
+
+Once initialized you can set or retrieve statement options. Use the builder returned by its `options()` method:      
+
+    stmt.options().setQueryTimeoutSeconds(20).setFetchRows(5000);
+    int timeoutSecs = stmt.options().getQueryTimeoutSeconds();
+
+### <a name="stmts-params"></a>Setting parameters
+
+The sql command of a `PrepStmt`and `CallStmt` can contain parameters:
+ 
+    PrepStmt pstmt = ...
+    pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+    
+Before running the command you need to provide values for its parameters. Parameters are referred to sequentially by number,
+with the first parameter being 1:
+
+    pstmt.param(1).setString("John");     
+    pstmt.param(2).setString("Doe");
+    
+The builder returned by `param(int)` provides setters for various types. In most cases the JDBC driver
+is able to recognize the type, so you can skip the explicit setter and simply pass parameters as objects: 
+  
+    pstmt.param(1, "John").param(2, "Doe");
+    
+or even shorter 
+    
+    pstmt.params("John", "Doe");
+    
+JDBX - unlike JDBC - also supports named parameters. When initializing call the `namedParams()` method of
+the init-builder and specify parameters as a colon followed by the parameter name. The same named parameter may occur
+several times. To set a named parameter value call `param(String)` using the parameter name and then call the appropriate
+setter:
+
+    pstmt.init().namedParams()
+        .sql("INSERT INTO Users VALUES (DEFAULT, :lastname, :firstname, :lastname + ', ' + :firstname)");
+    pstmt.param("lastname").setString("John");     
+    pstmt.param("firstname").setString("Doe");
+
+Settings parameters on a `CallStmt` works the same way. Additionally you can register OUT and INOUT parameters, and 
+read the values of OUT and INOUT parameters after the statement has been executed:
+
+    Integer id = ... 
+	 cstmt.init("{call GetUserName(?,?,?)}");         // the SQL cmd has three parameters 
+	 cstmt.param(1).setInteger(id);                   // set the value of the in parameter 1
+    cstmt.param(2).out(java.sql.Types.VARCHAR);      // register type of out parameter 2
+    cstmt.param(3).out(java.sql.Types.VARCHAR);      // register type of out parameter 3
+    cstmt_.execute();                                // explained in next chapters
+    String lastName  = cstmt.param(2).getString();   // read the value of out parameter 2 
+    String firstName = cstmt.param(3).getString();   // read the value of out parameter 3
+            
+To *clear* current parameters of a `PrepStmt` or `CallStmt` call
+
+    pstmt.clearParams();              
+    cstmt.clearParams();              
 
 
 ## <a name="queries"></a>3. Run SQL queries
@@ -175,18 +215,13 @@ JDBX uses fluent APIs and functional programming to avoid most of the boilerplat
 
 ### <a name="queries-queryresult">QueryResult class
 
-In order to execute a SQL query you need a `StaticStmt` or `PrepStmt`. 
+To execute a SQL query you need an [initialized](#stmts-init) JDBX statement. 
 
-`StaticStmt.query(String)` and `PrepStmt.query()` return a `org.jdbx.QueryResult` object
+`StaticStmt.query(String)`, `PrepStmt.query()`, `CallStmt.query()` return a `org.jdbx.QueryResult` object
 which provides a fluent API to extract values from the result:
 
-     QueryResult qr = stmt.query(sql);
-     QueryResult qr = pstmt.init(sql).params("a", "b").query();
-     
-If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a `QueryResult` for easy value extraction:
-
-    java.sql.ResultSet resultSet = ...
-    List<String> names = QueryResult.of(resultSet).rows().col("name").getString();
+     QueryResult qr = stmt.query("SELECT * FROM Cities WHERE id = 1");
+     QueryResult qr = pstmt.init("SELECT * FROM Cities WHERE id = ?).params(1).query();
      
 In the following variable `qr` represents a `QueryResult` object obtained from a `StaticStmt` or `PrepStmt`.     
 But because of its fluent API you rarely will need to store a `QueryResult` in a local variable but rather chain
@@ -197,7 +232,7 @@ Also note that the actual JDBC query is usually not run until you invoke the ter
 
 ### <a name="queries-singlerow">Read a single result row
 
-Call `QueryResult.row()` to retrieve a builder to read values from the first result row:     
+Call `QueryResult.row()` to retrieve a builder to read values from the **first result row**:     
      
     qr.row()...     
     qr.row().col()...              // returns a builder to retrieve a value of the first column
@@ -216,7 +251,7 @@ If you want rule out this case use `QueryResult.row().required()`:
      // will throw an exception if the result contains no rows
      qr.row().required().col().getString()
      
-You may also want detect the case when the result contains more than one row, using `QueryResult.row().unique()`:
+You may also want to detect the case when the result contains more than one row, using `QueryResult.row().unique()`:
      
      // will throw an exception if the result contains more than one row
      qr.row().unique().col().getString()
@@ -244,7 +279,7 @@ You may also limit the number of processed rows if this is not done within the S
 
 ### <a name="queries-skipping"></a>Skip rows
 
-Call `Queryresult.skip(int)` if you want to skip a number of rows before you extract values 
+Call `QueryResult.skip(int)` if you want to skip a number of rows before you extract values 
 by calling `QueryResult.row()`, `.rows()` or `.rows(int)`:
 
     qr.skip(3).rows()...   // all rows after the first three rows
@@ -255,13 +290,13 @@ by calling `QueryResult.row()`, `.rows()` or `.rows(int)`:
 As shown above the `QueryResult` class makes it easy to extract a column value or an array of column values from a result row
 using the various `col()` and `cols()` builder methods.
 
-For more complicated cases JDBX provides the `QueryCursor` class which replaces/wraps `java.sql.ResultSet` and allows
+For more complicated cases JDBX provides the `org.jdbx.QueryCursor` class which replaces/wraps `java.sql.ResultSet` and allows
 you to navigate thought the result rows and read values from each row.
 
 When positioned on a result row, `QueryCursor` offers similar methods like the builder returned by `QueryResult.row()` to extract values 
 from the row:
 
-    QueryCursor qc = ...         // a QueryCursor, positioned on a result row (as explained later)
+    QueryCursor qc = ...         // a QueryCursor, positioned on a result row
     qc.col()...                  // first column
     qc.col().getString();        // first column as String
     qc.col(3)...                 // column by index
@@ -272,7 +307,7 @@ from the row:
     qc.map();                    // returns a Map<String,Object>
 
 Given this API it is easy to create a function which obtains a `QueryCursor` and returns a complex
-value constructed from row values:
+value constructed from the values of the current row:
 
     public class City {
          public static City read(QueryCursor qc) {
@@ -320,7 +355,7 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
 	// and run the query
 	try (QueryCursor qc = stmt.query(sql).cursor()) {
 	    // read position
-	    qc.position().isBeforeFirst() 
+	    boolean beforeLast = qc.position().isBeforeFirst() 
 	    // also: .isAfterLast(), .isLast()  
 
 	    // move current row
@@ -334,32 +369,38 @@ by using the service objects returned by `QueryCursor.position()` and `.move()`:
     
 If your cursor is updatable, you can or update or delete the current row, or insert a new row:
 
-	// configure the result to be updatable
-	StaticStmt stmt = ....
-	stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
-	QueryCursor qc = stmt.query(sql).cursor();
+    // configure the result to be updatable
+    StaticStmt stmt = ....
+    stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
+    QueryCursor qc = stmt.query(sql).cursor();
 	
-	// position row
-	... 
+    // position row
+    ... 
 	
-   	qc.col("status").setString("ok"); 
+    qc.col("status").setString("ok"); 
     qc.row().update();
     qc.row().refresh();
     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
      
      
-#### Access the ResultSet  
+### <a name="queries-resultset"></a>Converting from/to ResultSet  
       
 You can still obtain the underlying `java.sql.ResultSet` of a query cursor if you need to:
  
     ResultSet resultSet = qc.resultSet();
     while (resultSet.next())
         ... 
-    
+
+If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a query cursor or query result using
+the factory methods `QueryCursor.of(ResultSet)` and `QueryResult.of(ResultSet)` for easy value extraction:
+
+    java.sql.ResultSet resultSet = ...
+    List<String> names = QueryResult.of(resultSet).rows().col("name").getString();
+
+
 ## <a name="updates"></a>4. Run DML or DDL updates
 
-JDBX - as JDBC - uses the term *update* for running DML commands (i.e. UPDATE, INSERT, DELETE), DDL commands and all SQL commands which
-return nothing. 
+JDBX - as JDBC - uses the term *update* for running DML commands (i.e. UPDATE, INSERT, DELETE), DDL commands. 
 
 Running an update command returns the number of affected records and optionally the values of changed columns, e.g.
 most important the auto-generated values of primary key columns.
@@ -368,7 +409,7 @@ most important the auto-generated values of primary key columns.
 
 Updates are executed by either using a `StaticStmt` or a `PrepStmt`.
 
-If you just want to run an update command and are not interested in returned column values then call
+If you just want to run an update command and are not interested in returned column values then simply call
 `StaticStmt.update(String)` or `PrepStmt.update()`:
 
    	String sql      = ... 
@@ -376,7 +417,7 @@ If you just want to run an update command and are not interested in returned col
 	stmt.update(sql);
 	
 	// or: 
-   	PrepStmt ptmt   = ...
+   	PrepStmt ptmt   = ... // pstmt is initialized
    	pstmt.update();
    	
 Both calls return the update result as an `org.jdbx.UpdateResult` object. The method `UpdateResult.count()` 
@@ -394,9 +435,9 @@ Testing the update count can be shortened by calling `UpdateResult.requireCount`
 
 ### <a name="updates-updateclass">Update class
 
-If you want to retrieve returned columns values, e.g. auto-generated primary key values, or want to enable large (`long`) update counts, 
-then call `StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` which returns a `org.jdbx.Update` object.
-The `Update` class provides a fluent API to configure and then run the update to return a `UpdateResult`:
+If you want to retrieve returned columns values, e.g. auto-generated primary key values, or want to enable large update counts 
+(represented as `long` value), then call `StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` which returns a `org.jdbx.Update` object.
+The `Update` class provides a fluent API to first configure and then run the update to return a `UpdateResult`:
     
      Update u = stmt.createUpdate(sql);
      Update u = pstmt.init(sql).params("1", "2").createUpdate();
@@ -416,7 +457,7 @@ If you are interested to read returned column values, e.g. auto-generated primar
 For `StaticStmt` steps 1) and 2) are done by configuring the `Update` object:
   
     StaticStmt stmt = ...
-    UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
+    UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')")
         .returnAutoKeyCols()        // step 1: tell the Update to return the auto-generated key columns
         .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key column as Integer 
     int inserted  = result.count();
@@ -428,8 +469,8 @@ This allows to write:
     Integer newId = stmt.createUpdate("INSERT INTO ...")
         .returnAutoKeyCols()
         .runGetCol(Integer.class)
-        .requireCount(1)  // could throw an Exception
-        .requireValue();  // could throw an Exception
+        .requireCount(1)  // throws an Exception if update count != 1
+        .requireValue();  // throws an Exception if returned col value is null
 
 For step 1 there are alternative ways to specify the returned columns, for instance by using column indexes or names:
 
@@ -451,7 +492,7 @@ For `PrepStmt` step 1) must be done during the initialization phase:
 
     PrepStmt pstmt = ...
     pstmt.init().returnAutoKeyCols().cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
-    Integer newId  = pstmt.params("John", "Doe").createUpdate()
+    Integer newId = pstmt.params("John", "Doe").createUpdate()
         .runGetCol(Integer.class)
         .requireValue();
         
@@ -471,19 +512,19 @@ JDBC drivers support this feature JDBX gives optional access to large count valu
 JDBX - as JDBC - uses the term *execute* for running SQL commands with yet unknown result type - update or query - or which can return multiple
 update and query results.
 
-You can execute a command by calling `StaticStmt.execute(String sql)` or `PrepStmt.execute()` on a initialized `PrepStmt`.
-Both methods return a `org.jdbx.ExecuteResult` which allows you to loop through the individual results, detect if they are
-update or query results and evaluate the `UpdateResult` or `QueryResult`.  
+Given an initialized statement you can execute a command by calling `StaticStmt.execute(String sql)`, `PrepStmt.execute()` or `CallStmt.execute()`.
+These methods return a `org.jdbx.ExecuteResult` which allows you to loop through the individual results, detect the result type
+and evaluate the `UpdateResult` or `QueryResult`.  
 
-	String sql = ...
-	StaticStmt stmt = ...
-	ExecuteResult result = stmt.execute(sql);
-	while (result.next()) {
-	    if (result.isQuery())
-            // process result.getQueryResult() 
-	    else
-	        // process result.getUpdateResult()
-	}  	
+    String sql = ...
+    StaticStmt stmt = ...
+    ExecuteResult result = stmt.execute(sql);
+    while (result.next()) {
+        if (result.isQuery())
+            ... // process result.getQueryResult() 
+        else
+            ... // process result.getUpdateResult()
+    }  	
 
 When doing updates the update result may return column values from the update. If you want to obtain these column values,
 TODO  
@@ -501,18 +542,18 @@ When the Batch is run it returns a `org.jdbx.BatchResult` which similar to `Upda
         .add("INSERT INTO BatchDemo (name) VALUES ('A')")
         .add("INSERT INTO BatchDemo (name) VALUES ('B'), ('C'), ('D')")
         .run()  // returns a BatchResult
-		.requireSize(2)
-		.requireCount(0, 1)
-		.requireCount(1, 3);
+        .requireSize(2)      // check that the batch result has 2 entries
+        .requireCount(0, 1)  // check the update count of result entry 0 
+        .requireCount(1, 3); // check the update count of result entry 1
        
     PStmt pstmt = ... 
     pstmt.init("INSERT INTO BatchDemo (name) VALUES (?)");
     pstmt.params("A").batch().add();
     pstmt.params("B").batch().add()
         .run()  // returns a BatchResult
-		.requireSize(2)
-		.requireCount(0, 1;
-		.requireCount(1, 1);
+        .requireSize(2)      // check that the batch result has 2 entries
+        .requireCount(0, 1;  // check the update count of result entry 0
+        .requireCount(1, 1); // check the update count of result entry 1 
 		
 
 ## <a name="exceptions"></a>7. Exceptions
@@ -523,8 +564,8 @@ JDBX has a fundamental stance to favor unchecked exceptions and therefore introd
 `org.jdbx.JdbxException` which can be thrown by its operations. Especially any `SQLException` thrown by
 the underlying JDBC operations is wrapped into a `JdbxException` and reported as its exception cause.  
 
-For easier exception handling a `JdbxExeption` contains a enum `JdbxExeption.Reason` to classify the exception
-context. If based on a `SQLException` it also contains a enum `JdbxExeption.SqlExType` to classify the 
+For easier exception handling a `JdbxExeption` contains an enum `JdbxExeption.Reason` to classify the exception
+context. If based on a `SQLException` it also contains an enum `JdbxExeption.SqlExType` to classify the 
 the `SQLException`.
 
 ## <a name="single-cmd"></a>8. Run a single command
@@ -548,4 +589,3 @@ org.jdbx.demo package
 resultiterator
 querycursor config: setfetchdirection
 multistmt
-named params

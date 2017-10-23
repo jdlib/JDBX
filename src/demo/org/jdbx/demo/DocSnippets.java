@@ -65,7 +65,7 @@ public class DocSnippets
 	}
 
 	
-	public void stmtsCreateConfigureClose()
+	public void stmtsCreateClose()
 	{
 		// createing
 		new StaticStmt(con); 
@@ -88,33 +88,48 @@ public class DocSnippets
 	}
 
 
-	public void stmtsStaticStmt()
-	{
-		long count = stmt.update("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')").count();
-	}
-
-
-	public void stmtsPrepStmt()
+	public void stmtsInit()
 	{
 		pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-		pstmt.params("John", "Doe").update();
-		pstmt.params("Mary", "Jane").update();
-		pstmt.init("UPDATE Users SET name = ? WHERE id = ?");
+		cstmt.init("{call getUserName(?, ?)}");
 		
-		pstmt.init()
-			.resultType(ResultType.SCROLL_INSENSITIVE)
-			.resultHoldability(Holdability.HOLD_OVER_COMMIT)
-			.sql("SELECT * FROM Cities WHERE name LIKE ?");
+		pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+		cstmt.init().resultType(ResultType.SCROLL_SENSITIVE).sql("{call getUsers()}");
+		
+		stmt.init().resultType(ResultType.SCROLL_INSENSITIVE).resultHoldability(Holdability.HOLD_OVER_COMMIT);
+	}
+	
+
+	public void stmtsOptions()
+	{
+		stmt.options().setQueryTimeoutSeconds(20).setFetchRows(5000);
+		int timeoutSecs = stmt.options().getQueryTimeoutSeconds();
 	}
 	
 	
-	public void stmtsCallStmt()
+	public void stmtsParams()
 	{
-		cstmt.init("{call getUserName(?, ?)");
-		cstmt.param(1).setInt(12045);
-		cstmt.param(2).out(Types.VARCHAR);
-		cstmt.execute();
-		String userName = cstmt.param(2).getString();
+		pstmt.param(1).setString("John"); 
+		pstmt.param(1).setString("Doe");
+	    pstmt.param(1, "John").param(2, "Doe");
+		
+		pstmt.params("John", "Doe");
+
+	    pstmt.init().namedParams().sql("INSERT INTO Users VALUES (DEFAULT, :lastname, :firstname, :lastname + ', ' + :firstname)");
+	    pstmt.param("lastname").setString("John");     
+	    pstmt.param("firstname").setString("Doe");
+	    
+	    Integer id = null;
+		cstmt.init("{call GetUserName(?,?,?)}");
+		cstmt.param(1).setInteger(id);
+		cstmt.param(2).out(java.sql.Types.VARCHAR);
+		cstmt.param(3).out(java.sql.Types.VARCHAR);
+		cstmt.execute(); // explained in next chapters
+		String lastName  = cstmt.param(2).getString();
+		String firstName = cstmt.param(3).getString();
+
+	    pstmt.clearParams();              
+	    cstmt.clearParams();              
 	}
 	
 	

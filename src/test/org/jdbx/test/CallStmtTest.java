@@ -86,7 +86,7 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testQueryReturnResultSet() throws JdbxException
 	{
-		cstmt_.init("call GetUserAsResult(?)");
+		cstmt_.init("{call GetUserAsResult(?)}");
 		cstmt_.param(1).setInteger(id_);
 		Object[] data = cstmt_.query().row().cols();
 		assertNotNull(data);
@@ -102,7 +102,7 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testExecuteReturnGenKey() throws Exception
 	{
-		cstmt_.init("call CreateUser(?,?)");
+		cstmt_.init("{call CreateUser(?,?)}");
 		cstmt_.param("firstname").set("Alpha");
 		cstmt_.param("lastname").set("Beta");
 		cstmt_.createExecute().run(r -> {
@@ -119,7 +119,7 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testExecuteReturnResultSet() throws JdbxException
 	{
-		cstmt_.init("call GetUserAsResult(?)");
+		cstmt_.init("{call GetUserAsResult(?)}");
 		cstmt_.param(1).setInteger(id_);
 		Object[] data = cstmt_.createExecute().run(r -> {
 			assertTrue(r.nextQueryResult());
@@ -136,8 +136,10 @@ public class CallStmtTest extends JdbxTest
 
 	@Test public void testReturnOutParam() throws JdbxException
 	{
-		cstmt_.init("call GetUserName(?,?,?)");
+		cstmt_.init("{call GetUserName(?,?,?)}");
 		cstmt_.param(1).setDouble(1.1);
+		cstmt_.param(2).out(java.sql.Types.VARCHAR);
+		cstmt_.param(3).out(java.sql.Types.VARCHAR);
 		cstmt_.clearParams();
 		cstmt_.param(1, id_);
 		cstmt_.execute();
@@ -149,13 +151,13 @@ public class CallStmtTest extends JdbxTest
 	@Test public void testParamMetaData() throws Exception
 	{
 		assertFalse(cstmt_.isInitialized());
-		cstmt_.init("call GetUserName(?,?,?)");
+		cstmt_.init("{call GetUserName(?,?,?)}");
 		assertTrue(cstmt_.isInitialized());
 
 		ParameterMetaData md = cstmt_.getParamMetaData();
 		assertEquals(3, md.getParameterCount());
 
-		cstmt_.init("call GetUserAsResult(?)");
+		cstmt_.init("{call GetUserAsResult(?)}");
 		assertEquals(1, cstmt_.getParamMetaData().getParameterCount());
 	}
 

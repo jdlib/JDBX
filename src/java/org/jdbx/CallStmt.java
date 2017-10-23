@@ -70,7 +70,7 @@ public class CallStmt extends Stmt
 
 	/**
 	 * Returns the JDBC CallableStatement used by the CallStmt.
-	 * This method can only be called if {@link #isInitialized()} returns true.
+	 * This method can only be called if {@link #isInitialized() initialized}.
 	 */
 	@Override public CallableStatement getJdbcStmt() throws JdbxException
 	{
