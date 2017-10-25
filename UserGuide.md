@@ -27,12 +27,13 @@ JDBX User Guide
 
 ## <a name="stmts"></a>1. Intro
 
-JDBX offers an alternative way to execute SQL or DDL commands and read query or update results.
-For that it wraps JDBC statement and result-set classes with an own API.
+JDBX offers an alternative way to execute SQL commands and read query or update results.
+For that it replaces JDBC `Statement` and `ResultSet` classes with an own API.
 Still the starting point of all its operations is a `java.sql.Connection` or `javax.sql.DataSource` object. 
  
 
 ## <a name="stmts"></a>2. Statements
+
 
 ### <a name="stmts-classes"></a>2.1 Statement classes
 
@@ -48,13 +49,14 @@ JDBC|JDBX|Used to
 
 JDBX - as JDBC - differentiates between
 
-1. Running SQL queries, returning results
-2. Running SQL UPDATE, DELETE, INSERT commands or DDL commands, returning update counts and automatically generated keys
-3. Running SQL commands which can return multiple results
+1. Running a SQL query command (SELECT), returning a result
+2. Running a SQL update command (INSERT, UPDATE, DELETE or DDL command or other non SELECT commands), returning an update count and updated column values
+3. Running a SQL command whose result type is unknown or which can return multiple query and/or update results
 4. Running SQL commands in a batch
-5. Calling stored procedures
+5. Calling stored procedures, returning values of OUT parameters and/or query results.
 
-`StaticStmt` and `PrepStmt` can run SQL or DDL commands (1-4), `CallStmt` can call stored procedures (5).
+`StaticStmt` and `PrepStmt` can be used running commands as described in (1-4), `CallStmt` can call stored procedures (5).
+
 
 ### <a name="stmts-create"></a>2.2 Create and close statements
 
@@ -66,7 +68,7 @@ In order to create a JDBX statement you need a `java.sql.Connection` or `javax.s
      PrepStmt   pstmt = new PrepStmt(con);   // or new PrepStmt(ds)
      CallStmt   cstmt = new CallStmt(con);   // or new CallStmt(ds)
      
-Statement objects should be actively **closed** once they are no longer used. Since all statement classes implement `java.io.AutoCloseable` 
+Statement objects should be actively **closed** once they are no longer used. Since all JDBX statement classes implement `java.io.AutoCloseable` 
 the typical pattern is to create and use a statement object within a Java try-with-resources block:
 
      Connection con = ...
@@ -79,7 +81,8 @@ connection will also be closed automatically.
 
 ### <a name="stmts-init"></a>2.3 Initialize statements
 
-For `PrepStmt` and `CallStmt` you need to specify a SQL command before the statement can be executed.
+You need to initialize `PrepStmt` and `CallStmt` by calling its `init(String)` method with a SQL command before you can execute the statement. 
+The SQL command string uses `?` as placeholder for statement parameters:
 
     PrepStmt pstmt = new PrepStmt(con);
     pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
@@ -88,7 +91,8 @@ For `PrepStmt` and `CallStmt` you need to specify a SQL command before the state
     cstmt.init("{call getUserName(?, ?)}");
     
 For more initialization options call the `init()` method on these statements which will return a initialization builder.
-The terminal call to the builders method `sql(String)` is mandatory in order to perform the initialization:
+The builder allows you to define properties of the query result (for query commands) or update result (for update commands). 
+The terminal call of the `.sql(String)` method to specify a SQL command is mandatory in order to complete the initialization:
 
     // instruct the statement to return the value of the 'id' column (see the chapter on running updates)
     pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
@@ -114,15 +118,17 @@ the statement:
 
     stmt.options().setQueryTimeoutSeconds(20).setFetchRows(5000);
     int timeoutSecs = stmt.options().getQueryTimeoutSeconds();
+    
+Once you reinitialize a JDBX statement all its options are reset to their defaults.    
 
 ### <a name="stmts-params"></a>2.5 Setting parameters
 
-The SQL command of a `PrepStmt`and `CallStmt` can (or should) contain parameters:
+The SQL command string of a `PrepStmt`and `CallStmt` can (or should) contain parameters, specified as `?`: 
  
     PrepStmt pstmt = ...
-    pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+    pstmt.init("INSERT INTO Users (id, firstname, lastname) VALUES (DEFAULT, ?, ?)");
     
-Before running the command you need to provide values for its parameters. Parameters are referred to sequentially by number,
+Before running the command you need to provide parameter values. Parameters are referred to sequentially by number,
 with the first parameter being 1:
 
     pstmt.param(1).setString("John");     
@@ -133,28 +139,28 @@ is able to recognize the type, so you can skip the explicit setter and simply pa
   
     pstmt.param(1, "John").param(2, "Doe");
     
-or even shorter 
+or even shorter if setting all parameter values:
     
     pstmt.params("John", "Doe");
     
 JDBX - unlike JDBC - also supports named parameters. When initializing call the `namedParams()` method of
-the init-builder and specify parameters as a colon followed by the parameter name. The same named parameter may occur
+the init-builder and specify parameters as a colon followed by the parameter name. A named parameter may occur
 several times. To set a named parameter value call `param(String)` using the parameter name and then call the appropriate
 setter:
 
     pstmt.init().namedParams()
-        .sql("INSERT INTO Users VALUES (DEFAULT, :lastname, :firstname, :lastname|| ', ' || :firstname)");
+        .sql("INSERT INTO Users (id, lastname, firstname, fullname) VALUES (DEFAULT, :lastname, :firstname, :lastname|| ', ' || :firstname)");
     pstmt.param("lastname").setString("John");     
     pstmt.param("firstname").setString("Doe");
 
-Settings parameters on a `CallStmt` works the same way. Additionally you can register OUT and INOUT parameters, and 
+Setting parameters on a `CallStmt` works exactly the same. Additionally you can register OUT and INOUT parameters, and 
 read the values of OUT and INOUT parameters after the statement has been executed:
 
     Integer id = ... 
     cstmt.init("{call GetUserName(?,?,?)}");         // the SQL cmd has three parameters 
     cstmt.param(1).setInteger(id);                   // set the value of IN parameter 1
-    cstmt.param(2).out(java.sql.Types.VARCHAR);      // register type of OUT parameter 2
-    cstmt.param(3).out(java.sql.Types.VARCHAR);      // register type of OUT parameter 3
+    cstmt.param(2).out(java.sql.Types.VARCHAR);      // register type of OUT parameter 2, maybe optional depending on the JDBC driver
+    cstmt.param(3).out(java.sql.Types.VARCHAR);      // register type of OUT parameter 3, maybe optional depending on the JDBC driver
     cstmt_.execute();                                // execute the command, explained in next chapters
     String lastName  = cstmt.param(2).getString();   // read the value of OUT parameter 2 
     String firstName = cstmt.param(3).getString();   // read the value of OUT parameter 3

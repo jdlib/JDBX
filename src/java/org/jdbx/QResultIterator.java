@@ -23,10 +23,8 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * QResultIterator is a lightweight wrapper around a QueryCursor.
- * It allows easy reading of subsequent columns - it maintains
- * a column index, and at each get operation it reads the value
- * from the ResultSet and then increments the index.
+ * QResultIterator is a lightweight wrapper around a QueryResult.
+ * It allows easy reading of subsequent result row values.
  */
 public class QResultIterator implements GetResult, AutoCloseable
 {
