@@ -110,7 +110,8 @@ public class DocSnippets
 	public void stmtsParams()
 	{
 		pstmt.param(1).setString("John"); 
-		pstmt.param(1).setString("Doe");
+		pstmt.param(2).setString("Doe");
+		pstmt.param(2).setInt(42);
 	    pstmt.param(1, "John").param(2, "Doe");
 		
 		pstmt.params("John", "Doe");

@@ -49,8 +49,8 @@ JDBC|JDBX|Used to
 
 JDBX - as JDBC - differentiates between
 
-1. Running a SQL query command (SELECT), returning a result
-2. Running a SQL update command (INSERT, UPDATE, DELETE or DDL command or other non SELECT commands), returning an update count and updated column values
+1. Running a SQL SELECT query, returning a result
+2. Running a SQL update command (INSERT, UPDATE, DELETE or DDL command or other non SELECT command), returning an update count and updated column values
 3. Running a SQL command whose result type is unknown or which can return multiple query and/or update results
 4. Running SQL commands in a batch
 5. Calling stored procedures, returning values of OUT parameters and/or query results.
@@ -90,7 +90,7 @@ The SQL command string uses `?` as placeholder for statement parameters:
     CallStmt cstmt = new CallStmt(con);
     cstmt.init("{call getUserName(?, ?)}");
     
-For more initialization options call the `init()` method on these statements which will return a initialization builder.
+For more initialization options call the `init()` method on these statements which will return an initialization builder.
 The builder allows you to define properties of the query result (for query commands) or update result (for update commands). 
 The terminal call of the `.sql(String)` method to specify a SQL command is mandatory in order to complete the initialization:
 
@@ -126,22 +126,22 @@ Once you reinitialize a JDBX statement all its options are reset to their defaul
 The SQL command string of a `PrepStmt`and `CallStmt` can (or should) contain parameters, specified as `?`: 
  
     PrepStmt pstmt = ...
-    pstmt.init("INSERT INTO Users (id, firstname, lastname) VALUES (DEFAULT, ?, ?)");
+    pstmt.init("INSERT INTO Rooms (id, name, area) VALUES (DEFAULT, ?, ?)");
     
 Before running the command you need to provide parameter values. Parameters are referred to sequentially by number,
 with the first parameter being 1:
 
-    pstmt.param(1).setString("John");     
-    pstmt.param(2).setString("Doe");
+    pstmt.param(1).setString("Living Room");     
+    pstmt.param(3).setInt(51);
     
 The builder returned by `param(int)` provides setters for various types. In most cases the JDBC driver
 is able to recognize the type, so you can skip the explicit setter and simply pass parameters as objects: 
   
-    pstmt.param(1, "John").param(2, "Doe");
+    pstmt.param(1, "Living Room").param(2, 51);
     
 or even shorter if setting all parameter values:
     
-    pstmt.params("John", "Doe");
+    pstmt.params("Living Room", 51);
     
 JDBX - unlike JDBC - also supports named parameters. When initializing call the `namedParams()` method of
 the init-builder and specify parameters as a colon followed by the parameter name. A named parameter may occur
