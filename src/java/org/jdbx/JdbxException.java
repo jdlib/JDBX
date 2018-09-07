@@ -69,6 +69,18 @@ public class JdbxException extends RuntimeException
 		GENERAL(SQLException.class);
 
 
+		public static SqlExType of(SQLException exception)
+		{
+			Check.notNull(exception, "exception");
+	    	for (SqlExType type : SqlExType.values())
+	    	{
+	    		if (type.getExClass().isInstance(exception))
+	    			return type;
+	    	}
+	       	return GENERAL;
+		}
+		
+		
 		SqlExType(Class<? extends SQLException> exClass)
 		{
 			exClass_ = exClass;
@@ -171,6 +183,16 @@ public class JdbxException extends RuntimeException
 	{
 		return new JdbxException(message, Reason.INVALID_RESULT);
 	}
+	
+	
+	private static String getMessage(Throwable cause)
+	{
+		if (cause == null)
+			return null;
+		
+		String message = cause.getMessage();
+		return message != null ? message : cause.toString();
+	}
 
 
     public JdbxException(String message, Reason reason)
@@ -181,7 +203,7 @@ public class JdbxException extends RuntimeException
 
     public JdbxException(Throwable cause, Reason reason)
     {
-        this(null, cause, reason);
+        this(getMessage(cause), cause, reason);
     }
 
 
@@ -205,6 +227,7 @@ public class JdbxException extends RuntimeException
     /**
      * Returns if the cause of this exception is a SQLException
      * @return is the cause of this exception a SQLException?
+     * @see #getSqlExCause()
      */
     public boolean hasSqlExCause()
     {
@@ -215,6 +238,7 @@ public class JdbxException extends RuntimeException
     /**
      * Returns the cause of this exception as SQLException or null.
      * @return the cause of this exception as SQLException or null.
+     * @see #hasSqlExCause()
      */
     public SQLException getSqlExCause()
     {
@@ -229,15 +253,7 @@ public class JdbxException extends RuntimeException
     public SqlExType getSqlExType()
     {
     	SQLException cause = getSqlExCause();
-    	if (cause == null)
-    		return null;
-
-    	for (SqlExType type : SqlExType.values())
-    	{
-    		if (type.getExClass().isInstance(cause))
-    			return type;
-    	}
-    	return SqlExType.GENERAL;
+    	return cause != null ? SqlExType.of(cause) : null;
     }
 
 

@@ -6,8 +6,9 @@ import org.jdbx.function.CheckedFunction;
 
 
 /**
- * Execute is a builder class to configure and run a SQL or DDL command
- * which can return multiple results.
+ * Execute is the JDBC and JDBX term for executing a SQL or DDL command
+ * whose result type (query or update) is not known or which can return
+ * multiple (query or update) results. 
  * @see StaticStmt#createExecute(String)
  * @see PrepStmt#createExecute()
  * @see CallStmt#createExecute()

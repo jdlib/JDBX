@@ -30,7 +30,8 @@ import org.jdbx.PrepStmt;
 
 
 /**
- * Demonstrates how to use {@link PrepStmt}.
+ * Demonstrates the use pf {@link PrepStmt}
+ * to run parameterized SQL commands.
  */
 @SuppressWarnings("unused")
 public class PrepStmtDemo
@@ -56,12 +57,26 @@ public class PrepStmtDemo
 	}
 
 
+	/**
+	 * How to set and get options. 
+	 */
+	public void optionsDemo(PrepStmt stmt)
+	{
+		stmt.options()
+			.setCursorName("temp")
+			.setQueryTimeoutSeconds(15);
+		
+		int queryTimeOut = stmt.options().getQueryTimeoutSeconds();
+	}
+		
+		
 	// TODO copy other methods from StaticStmtDemo
 
 
 	/**
 	 * How to run update commands.
 	 * For more update demos, see {@link UpdateDemo}
+	 * See {@link UpdateDemo} for more details on how to configure the update and extract update results.
 	 */
 	public void updateDemo(PrepStmt pstmt)
 	{

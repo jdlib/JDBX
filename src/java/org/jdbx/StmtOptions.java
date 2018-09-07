@@ -235,10 +235,12 @@ public class StmtOptions
 
 	/**
 	 * Calls {@link Statement#closeOnCompletion()}
+	 * @return this
 	 */
-	public void setCloseOnCompletion() throws JdbxException
+	public StmtOptions setCloseOnCompletion() throws JdbxException
 	{
 		stmt_.call(Statement::closeOnCompletion);
+		return this;
 	}
 
 

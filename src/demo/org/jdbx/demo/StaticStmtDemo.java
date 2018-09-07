@@ -20,14 +20,17 @@ package org.jdbx.demo;
 import java.sql.Connection;
 import javax.sql.DataSource;
 import org.jdbx.BatchResult;
+import org.jdbx.Concurrency;
 import org.jdbx.ExecuteResult;
+import org.jdbx.FetchDirection;
 import org.jdbx.QueryResult;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
 
 
 /**
- * Demonstrates {@link StaticStmt}.
+ * Demonstrates the use of {@link StaticStmt} to
+ * execute parameterless SQL or DDL commands.
  */
 @SuppressWarnings("unused")
 public class StaticStmtDemo
@@ -51,11 +54,27 @@ public class StaticStmtDemo
 			// do stuff
 		}
 	}
-
-
+	
+	
+	/**
+	 * How to set and get options. 
+	 */
+	public void optionsDemo(StaticStmt stmt)
+	{
+		stmt.options()
+			.setCloseOnCompletion()
+			.setFetchDirection(FetchDirection.REVERSE)
+			.setQueryTimeoutSeconds(15);
+		stmt.init().resultConcurrency(Concurrency.CONCUR_UPDATABLE);
+		
+		int queryTimeOut = stmt.options().getQueryTimeoutSeconds();
+	}
+		
+		
 	/**
 	 * How to run a SQL query.
 	 * For more query demos, see {@link QueryDemo}
+	 * See {@link QueryDemo} for more details on how to configure the query and extract query results.
 	 */
 	public void queryDemo(StaticStmt stmt)
 	{
@@ -67,6 +86,7 @@ public class StaticStmtDemo
 	/**
 	 * How to run an updating SQL or DDL command.
 	 * For more update demos, see {@link UpdateDemo}
+	 * See {@link UpdateDemo} for more details on how to configure the update and extract update results.
 	 */
 	public void updateDemo(StaticStmt stmt)
 	{
@@ -88,6 +108,7 @@ public class StaticStmtDemo
 	/**
 	 * How to run a SQL command which may return multiple result sets.
 	 * For more update demos, see {@link ExecuteDemo}
+	 * See {@link ExecuteDemo} for more details on how to configure the execute and extract execute results.
 	 */
 	public void executeDemo(StaticStmt stmt, String sql)
 	{
@@ -100,12 +121,12 @@ public class StaticStmtDemo
 			if (result.isUpdateResult())
 			{
 				UpdateResult<Void> ur = result.getUpdateResult();
-				// evaluate the update result
+				// ... evaluate the update result
 			}
 			else
 			{
 				QueryResult qr = result.getQueryResult();
-				// read values from query result 
+				// ... read values from query result 
 			}
 		}
 	}
@@ -113,6 +134,7 @@ public class StaticStmtDemo
 
 	/**
 	 * How to run static commands in a batch.
+	 * See {@link BatchDemo} for more details on how to configure the batch and extract batch results.
 	 */
 	public void batchDemo(StaticStmt stmt)
 	{

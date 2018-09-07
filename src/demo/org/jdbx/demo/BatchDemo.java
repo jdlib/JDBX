@@ -26,6 +26,8 @@ import org.jdbx.StaticStmt;
 
 /**
  * BatchDemo shows how to use SQL batch processing with JDBX.
+ * For a basic unterstandig how to invoke batches for the various statements 
+ * see {@link StaticStmtDemo#batchDemo(StaticStmt)} and {@link PrepStmtDemo#batchDemo(PrepStmt, int...)}.
  */
 @SuppressWarnings("unused")
 public class BatchDemo
