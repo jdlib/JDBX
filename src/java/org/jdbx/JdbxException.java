@@ -93,7 +93,7 @@ public class JdbxException extends RuntimeException
 		}
 
 
-		private Class<? extends SQLException> exClass_;
+		private final Class<? extends SQLException> exClass_;
 	}
 
 

@@ -27,6 +27,8 @@ import org.jdbx.function.GetReturnCols;
 /**
  * Update is a builder class to configure and run a DML or DDL command
  * which updates or changes the database.
+ * @see StaticStmt#createUpdate(String)
+ * @see PrepStmt#createUpdate()
  */
 public abstract class Update extends StmtRunnable
 {

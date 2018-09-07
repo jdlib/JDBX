@@ -1,6 +1,9 @@
 package org.jdbx;
 
 
+/**
+ * Base class for the various Stmt initializers.
+ */
 class InitBase<P extends InitBase<P>>
 {
 	void updateOptions(Stmt stmt)

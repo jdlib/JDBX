@@ -24,6 +24,9 @@ import java.util.Objects;
  * UpdateResult is returned by various {@link Update} methods.
  * It stores the update count and a value representing returned columns.
  * @param <V> the type of the result value.
+ * @see StaticStmt#update(String)
+ * @see PrepStmt#update()
+ * @see Update#run()
  */
 public class UpdateResult<V>
 {
@@ -100,7 +103,7 @@ public class UpdateResult<V>
 	 * @return this
 	 * @throws JdbxException if the counts do not match
 	 */
-	public UpdateResult<V> requireCount(int minExpected, int maxExpected) throws JdbxException
+	public UpdateResult<V> requireCount(long minExpected, long maxExpected) throws JdbxException
 	{
 		if ((count_ < minExpected) || (count_ > maxExpected))
 			throw JdbxException.invalidResult("expected update count in [" + minExpected + ',' + maxExpected + "], but was " + count_);

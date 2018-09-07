@@ -319,7 +319,7 @@ public class PrepStmt extends Stmt
 		Check.notNull(name, "name");
 		checkInitialized();
 		if (paramMap_ == null)
-			throw new IllegalArgumentException("statement is not named: use prepare().named().cmd(sql) to create a named statement");
+			throw new IllegalArgumentException("statement is not named: use init().named().cmd(sql) to create a named statement");
 		int[] indexes = paramMap_.get(name);
 		if (indexes == null)
 			throw new IllegalArgumentException("sql command does not contain parameter '" + name + '\'');
@@ -363,7 +363,7 @@ public class PrepStmt extends Stmt
 		}
 
 
-		private int index_;
+		private final int index_;
 	}
 
 
@@ -393,7 +393,7 @@ public class PrepStmt extends Stmt
 		}
 		
 		
-		private int[] indexes_;
+		private final int[] indexes_;
 	}
 
 

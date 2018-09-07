@@ -40,5 +40,5 @@ class PrepStmtUpdate extends Update
 	}
 
 
-	private CheckedSupplier<PreparedStatement> stmtSupplier_;
+	private final CheckedSupplier<PreparedStatement> stmtSupplier_;
 }

@@ -31,5 +31,5 @@ class PrepStmtQuery extends QueryResult
 	}
 
 
-	private CheckedSupplier<PreparedStatement> supplier_;
+	private final CheckedSupplier<PreparedStatement> supplier_;
 }

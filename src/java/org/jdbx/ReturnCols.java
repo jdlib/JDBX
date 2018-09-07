@@ -16,6 +16,7 @@
  */
 package org.jdbx;
 
+
 /**
  * ReturnCols represents the columns which should be returned
  * when a INSERT command is executed.

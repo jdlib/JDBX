@@ -508,7 +508,7 @@ public class QResultRows
 		}
 
 
-		private int index_;
+		private final int index_;
 	}
 
 
@@ -555,7 +555,7 @@ public class QResultRows
 		}
 
 
-		private String name_;
+		private final String name_;
 	}
 
 

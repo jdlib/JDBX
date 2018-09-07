@@ -295,7 +295,7 @@ public class QResultOneRow
 	}
 
 
-	private QueryResult result_;
+	private final QueryResult result_;
 	private boolean required_;
 	private boolean unique_;
 }

@@ -64,16 +64,16 @@ public class Jdbx
 		}
 
 
-		private void checkNotUsed()
+		private void checkNotRun()
 		{
 			if ((con_ == null) || (stmt_ != null))
-				throw new IllegalStateException("already used");
+				throw new IllegalStateException("already run");
 		}
 
 
 		public Update createUpdate() throws JdbxException
 		{
-			checkNotUsed();
+			checkNotRun();
 			if (params_ == null)
 			{
 				stmt_ = new StaticStmt(con_);
@@ -89,7 +89,7 @@ public class Jdbx
 
 		public QueryResult query() throws JdbxException
 		{
-			checkNotUsed();
+			checkNotRun();
 			if (params_ == null)
 			{
 				stmt_ = new StaticStmt(con_);

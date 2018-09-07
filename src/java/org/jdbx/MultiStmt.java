@@ -9,7 +9,7 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * MultiStmt allows to create Stmt instances.
+ * MultiStmt allows to create multiple Stmt instances.
  * It keeps track of these statements and when closed
  * automatically also closes the statements.
  */
@@ -120,6 +120,7 @@ public class MultiStmt implements AutoCloseable
 
 	private <S extends Stmt> S add(S stmt)
 	{
+		checkOpen();
 		statements_.add(stmt);
 		return stmt;
 	}
@@ -188,8 +189,14 @@ public class MultiStmt implements AutoCloseable
 		{
 			try
 			{
-				if (closeCon_ && (con_ != null))
+				if (!closeCon_)
+					closeStmts();
+				else if (con_ != null)
+				{
+					for (Stmt stmt : statements_)
+						stmt.clearCon();
 					con_.close();
+				}
 			}
 			catch (Exception e)
 			{
@@ -197,12 +204,10 @@ public class MultiStmt implements AutoCloseable
 			}
 			finally
 			{
-				for (Stmt stmt : statements_)
-					stmt.clearCon();
 				isClosed_		= true;
 				con_  			= null;
 				conSupplier_ 	= null;
-				statements_		= null;
+				statements_.clear();
 			}
 		}
 	}
@@ -212,5 +217,5 @@ public class MultiStmt implements AutoCloseable
 	private CheckedSupplier<Connection> conSupplier_;
 	private boolean closeCon_;
 	private boolean isClosed_;
-	private ArrayList<Stmt> statements_ = new ArrayList<>();
+	private final ArrayList<Stmt> statements_ = new ArrayList<>();
 }
