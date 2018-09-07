@@ -24,8 +24,8 @@ import org.jdbx.JdbxException;
 
 
 /**
- * Code snippets how to use Fdbc for very simple queries and updates.
- * The Fdbc class provides static methods to issue simple queries and updates.
+ * Code snippets how to use Jdbx for very simple queries and updates.
+ * The Jdbx class provides static methods to issue simple queries and updates.
  * All you need is an open JDBC connection.
  * Statements, PreparedStatements and ResultSet are transparently opened as needed.
  * and are guaranteed to be closed.

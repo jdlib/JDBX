@@ -23,6 +23,7 @@ import org.jdbx.BatchResult;
 import org.jdbx.ExecuteResult;
 import org.jdbx.QueryResult;
 import org.jdbx.StaticStmt;
+import org.jdbx.UpdateResult;
 
 
 /**
@@ -34,7 +35,7 @@ public class StaticStmtDemo
 	/**
 	 * How to create a StaticStmt.
 	 */
-	public void create(Connection con, DataSource ds)
+	public void createDemo(Connection con, DataSource ds)
 	{
 		// create a StaticStmt from a connection
 		try (StaticStmt stmt = new StaticStmt(con))
@@ -56,7 +57,7 @@ public class StaticStmtDemo
 	 * How to run a SQL query.
 	 * For more query demos, see {@link QueryDemo}
 	 */
-	private void query(StaticStmt stmt)
+	public void queryDemo(StaticStmt stmt)
 	{
 		// SQL query string is passed to StaticStmt.query()
 		int userCount = stmt.query("SELECT count(*) FROM Users").row().col().getInt();
@@ -67,7 +68,7 @@ public class StaticStmtDemo
 	 * How to run an updating SQL or DDL command.
 	 * For more update demos, see {@link UpdateDemo}
 	 */
-	private void update(StaticStmt stmt)
+	public void updateDemo(StaticStmt stmt)
 	{
 		// SQL command string is passed to StaticStmt.update or StaticStmt.createUpdate
 
@@ -77,10 +78,10 @@ public class StaticStmtDemo
 	    // updating, and returning generated keys
 		Integer newUserId = stmt
 			.createUpdate("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')")	// the cmd
-			.returnCols("id") // contains the auto generated key
-			.runGetCol(Integer.class) // and we want it as integer
-			.requireCount(1) // assert that 1 one record was inserted
-			.requireValue(); // assert that an id was generated and return the value
+			.returnCols("id") 			// contains the auto generated key
+			.runGetCol(Integer.class) 	// and we want it as integer
+			.requireCount(1) 			// assert that 1 one record was inserted
+			.requireValue(); 			// assert that an id was generated and return the value
 	}
 
 
@@ -88,19 +89,18 @@ public class StaticStmtDemo
 	 * How to run a SQL command which may return multiple result sets.
 	 * For more update demos, see {@link ExecuteDemo}
 	 */
-	private void execute(StaticStmt stmt)
+	public void executeDemo(StaticStmt stmt, String sql)
 	{
-		// SQL command string is passed to StaticStmt.createExecute or StaticStmt.createUpdate
-
-		String sql = null; // assume command which is not know what it returns
+		// SQL command string is passed to StaticStmt.createExecute or StaticStmt.execute.
+		// The command may return multiple result or we don't know what it returns
 
 		ExecuteResult result = stmt.createExecute(sql).run();
 		while (result.next())
 		{
 			if (result.isUpdateResult())
 			{
-				result.getUpdateResult();
-				// evaluate updateCount
+				UpdateResult<Void> ur = result.getUpdateResult();
+				// evaluate the update result
 			}
 			else
 			{
@@ -112,17 +112,15 @@ public class StaticStmtDemo
 
 
 	/**
-	 * How to run commands in a batch.
-	 * For more batch demos, see {@link BatchDemo}
+	 * How to run static commands in a batch.
 	 */
-	private void batch(StaticStmt stmt)
+	public void batchDemo(StaticStmt stmt)
 	{
-		// SQL command string is passed to StaticStmt.Batch.add
-
 		BatchResult<Void> result = stmt.batch()
 			.add("UPDATE Status1 SET flag1 = 1")
 			.add("UPDATE Status2 SET flag2 = 2")
 			.add("UPDATE Status3 SET flag3 = 3")
 			.run();
+		// ... evaluate result
 	}
 }

@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.DataSource;
+import org.jdbx.BatchResult;
 import org.jdbx.JdbxException;
 import org.jdbx.PrepStmt;
 
@@ -37,7 +38,7 @@ public class PrepStmtDemo
 	/**
 	 * How to create a PrepStmt.
 	 */
-	public void create(Connection con, DataSource ds)
+	public void createDemo(Connection con, DataSource ds)
 	{
 		// create a PrepStmt from a connection
 		try (PrepStmt stmt = new PrepStmt(con))
@@ -62,7 +63,7 @@ public class PrepStmtDemo
 	 * How to run update commands.
 	 * For more update demos, see {@link UpdateDemo}
 	 */
-	private void update(PrepStmt pstmt)
+	public void updateDemo(PrepStmt pstmt)
 	{
 		// 1. SQL command string is passed to PrepStmt.init()
 		pstmt.init("UPDATE Colors SET used = 1 WHERE name = ?");
@@ -70,9 +71,7 @@ public class PrepStmtDemo
 		// simply getting the update count
 		int updated = pstmt.params("red").update().count();
 
-
 		// 2. initialize and instruct the statement to return generated keys.
-
 		pstmt.init().returnCols("id").sql("INSERT INTO User VALUES (DEFAULT, ?, ?)");
 
 	    // updating, and returning generated keys
@@ -85,7 +84,11 @@ public class PrepStmtDemo
 	}
 
 
-	public List<Integer> jdbcCreateCities(Connection con, List<String> names) throws SQLException
+	/**
+	 * Shows a typical code snippet how plain JDBC uses PreparedStatement.
+	 * Compare this to {@link #jdbxCodeDemo(Connection, List)}
+	 */
+	public List<Integer> jdbcCodeDemo(Connection con, List<String> names) throws SQLException
 	{
 		List<Integer> ids = new ArrayList<>();
 		try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO Cities (name) VALUES (?)", new String[] { "id "}))
@@ -108,7 +111,11 @@ public class PrepStmtDemo
 	}
 
 
-	public List<Integer> jdbxCreateCities(Connection con, List<String> names) throws JdbxException
+	/**
+	 * Shows a typical code snippet how JDBX uses PrepStats.
+	 * Compare this to {@link #jdbcCodeDemo(Connection, List)}
+	 */
+	public List<Integer> jdbxCodeDemo(Connection con, List<String> names) throws JdbxException
 	{
 		List<Integer> ids = new ArrayList<>();
 		try (PrepStmt pstmt = new PrepStmt(con))
@@ -118,5 +125,21 @@ public class PrepStmtDemo
 				ids.add(pstmt.param(1, name).createUpdate().runGetCol(Integer.class).requireCount(1).requireValue());
 		}
 		return ids;
+	}
+
+
+	/**
+	 * How to run prepared commands with different parameters in a batch.
+	 */
+	public void batchDemo(PrepStmt stmt, int... ids) throws JdbxException
+	{
+		stmt.init("UPDATE Status SET flag = 1 WHERE id = ?");
+		for (int id : ids)
+		{
+			stmt.param(1).setInt(id);
+			stmt.batch().add();
+		}
+		BatchResult<Void> result = stmt.batch().run();
+		// ... evaluate result
 	}
 }

@@ -42,6 +42,7 @@ public class BatchDemo
 				.add("UPDATE StatusB SET flag = 1")
 				.add("UPDATE StatusC SET flag = 2")
 				.run();
+			// ... evaluate result
 		}
 	}
 
@@ -60,6 +61,7 @@ public class BatchDemo
 				stmt.batch().add();
 			}
 			BatchResult<Void> result = stmt.batch().run();
+			// ... evaluate result
 		}
 	}
 }
