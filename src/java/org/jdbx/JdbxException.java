@@ -66,7 +66,7 @@ public class JdbxException extends RuntimeException
 			TRANSIENT_CONNECTION(SQLTransientConnectionException.class),
 			TRANSIENT(BatchUpdateException.class),
 		WARNING(SQLWarning.class),
-		BASIC(SQLException.class);
+		GENERAL(SQLException.class);
 
 
 		SqlExType(Class<? extends SQLException> exClass)
@@ -237,9 +237,9 @@ public class JdbxException extends RuntimeException
     		if (type.getExClass().isInstance(cause))
     			return type;
     	}
-    	return SqlExType.BASIC;
+    	return SqlExType.GENERAL;
     }
 
 
-    private Reason reason_;
+    private final Reason reason_;
 }

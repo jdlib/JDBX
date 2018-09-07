@@ -475,9 +475,12 @@ public class PrepStmt extends Stmt
 	/**
 	 * A Batch implementation for PrepStmt.
 	 */
-	public class ParamBatch extends Batch
+	public class PrepBatch extends Batch
 	{
-		public ParamBatch add() throws JdbxException
+		/**
+		 * Adds a statement to the batch using the current parameters.
+		 */
+		public PrepBatch add() throws JdbxException
 		{
 			Unchecked.run(() -> getJdbcStmt().addBatch());
 			return this;
@@ -496,9 +499,9 @@ public class PrepStmt extends Stmt
 	 * execute the batch.
 	 * @return the batch
 	 */
-	public ParamBatch batch()
+	public PrepBatch batch()
 	{
-		return new ParamBatch();
+		return new PrepBatch();
 	}
 
 	
