@@ -185,7 +185,7 @@ public class StmtOptions
 	 */
 	public StmtOptions setFetchDirection(FetchDirection direction) throws JdbxException
 	{
-		Check.valid(direction);
+		Check.valid(direction, "direction");
 		set(StmtOption.FETCHDIRECTION, Integer.valueOf(direction.getCode()));
 		return this;
 	}

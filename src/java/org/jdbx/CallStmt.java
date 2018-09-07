@@ -70,7 +70,7 @@ public class CallStmt extends Stmt
 
 	/**
 	 * Returns the JDBC CallableStatement used by the CallStmt.
-	 * This method can only be called if {@link #isInitialized() initialized}.
+	 * This method can only be called if {@link #init() initialized}.
 	 */
 	@Override public CallableStatement getJdbcStmt() throws JdbxException
 	{
@@ -163,6 +163,7 @@ public class CallStmt extends Stmt
 
 	/**
 	 * Returns if the CallStmt is initialized.
+	 * @see #init()
 	 */
 	@Override public boolean isInitialized()
 	{
@@ -201,8 +202,8 @@ public class CallStmt extends Stmt
 
 	
 	/**
-	 * Returns a parameter object to set the value of a parameter by index.
-	 * @return the parameter object
+	 * Returns a IndexedParam object to set or get the value of a parameter by index.
+	 * @return the IndexedParam
 	 */
 	public IndexedParam param(int index)
 	{
@@ -232,7 +233,7 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * A builder class to set parameter values.
+	 * A builder class to manage a parameter value specified by a parameter index.
 	 */
 	public class IndexedParam implements GetValue, RegisterOut<IndexedParam>, SetParam<CallableStatement>
 	{
@@ -355,7 +356,7 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * A builder class to set parameter value.
+	 * A builder class to manage a parameter value specified by a parameter name.
 	 */
 	public class NamedParam implements GetValue, RegisterOut<NamedParam>
 	{

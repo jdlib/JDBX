@@ -34,5 +34,5 @@ public enum FetchDirection implements JdbcEnum
 	}
 
 
-	private int code_;
+	private final int code_;
 }

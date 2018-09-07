@@ -18,7 +18,7 @@ class InitBase<P extends InitBase<P>>
 	@SuppressWarnings("unchecked")
 	public P resultType(ResultType value)
 	{
-		if (changed(resultType_, value))
+		if (changed(resultType_, value, "resultType"))
 		{
 			resultType_ = value;
 			setOptionsChanged();
@@ -30,7 +30,7 @@ class InitBase<P extends InitBase<P>>
 	@SuppressWarnings("unchecked")
 	public P resultConcurrency(Concurrency value)
 	{
-		if (changed(concurrency_, value))
+		if (changed(concurrency_, value, "concurrency"))
 		{
 			concurrency_ = value;
 			setOptionsChanged();
@@ -42,7 +42,7 @@ class InitBase<P extends InitBase<P>>
 	@SuppressWarnings("unchecked")
 	public P resultHoldability(Holdability value)
 	{
-		if (changed(holdability_, value)) 
+		if (changed(holdability_, value, "holdability")) 
 		{
 			holdability_ = value;
 			setOptionsChanged();
@@ -51,9 +51,9 @@ class InitBase<P extends InitBase<P>>
 	}
 
 
-	protected <E extends JdbcEnum> boolean changed(E currentValue, E newValue)
+	protected <E extends JdbcEnum> boolean changed(E currentValue, E newValue, String what)
 	{
-		Check.valid(newValue);
+		Check.valid(newValue, what);
 		return currentValue != newValue;
 	}
 

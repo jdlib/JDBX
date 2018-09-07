@@ -25,7 +25,7 @@ public abstract class Batch
 
 	/**
 	 * Executes the batched SQL commands.
-	 * @return an array of update counts
+	 * @return a BatchResult
 	 * @see Statement#executeBatch()
 	 */
 	public BatchResult<Void> run() throws JdbxException
@@ -36,7 +36,7 @@ public abstract class Batch
 
 	/**
 	 * Runs the command and returns a list of auto generated keys.
-	 * @param keyType the type of the generated keys
+	 * @param colType the type of the generated keys
 	 * @param <V> the type of the value returned by the AutoKeysReader
 	 * @return an UpdateResult holding the update count and the key list
 	 */
@@ -60,7 +60,8 @@ public abstract class Batch
 		try
 		{
 			int[] counts = runImpl();
-			try (ResultSet rs = stmt().getJdbcStmt().getGeneratedKeys()) { 
+			try (ResultSet rs = stmt().getJdbcStmt().getGeneratedKeys()) 
+			{ 
 				V value = reader.read(counts != null ? counts.length : 0, QueryResult.of(rs));
 				return new BatchResult<>(value, counts);
 			}

@@ -2,45 +2,45 @@ package org.jdbx;
 
 
 import java.sql.Statement;
+import org.jdbx.function.GetReturnCols;
 
 
 /**
  * BatchResult is returned by various {@link Batch} methods.
  * It stores the update count of the batch and information
  * about automatically generated keys.
- * @see Batch#runGetAutoKeys(org.jdbx.Batch.AutoKeysReader)
- * @see Batch#runGetAutoKeys(Class)
- * @see Batch#runGetAutoKey(Class)
+ * @see Batch#runGetCols(org.jdbx.function.GetReturnCols)
+ * @see Batch#runGetCols(Class)
  */
 public class BatchResult<V>
 {
 	/**
-	 * UpdateType categorizes update counts
+	 * CountType categorizes update counts.
 	 */
-	public enum UpdateType
+	public enum CountType
 	{
 		/**
-		 * The type for all update counts >= 0.
+		 * All update counts have been >= 0.
 		 */
 		SUCCESS,
 
 		/**
-		 * The type for update count {@link Statement#SUCCESS_NO_INFO}.
+		 * Corresponds to {@link Statement#SUCCESS_NO_INFO}.
 		 */
 		SUCCESS_NO_INFO,
 
 		/**
-		 * The type for update count {@link Statement#EXECUTE_FAILED}.
+		 * Corresponds to {@link Statement#EXECUTE_FAILED}.
 		 */
 		EXECUTE_FAILED,
 
 		/**
-		 * The type for an invaid update count return by the JDBC driver.
+		 * The JDBC driver returned an invalid update count.
 		 */
 		INVALID;
 		
 		
-		public static UpdateType forCount(int count)
+		public static CountType forCount(int count)
 		{
 			if (count >= 0)
 				return SUCCESS;
@@ -87,8 +87,9 @@ public class BatchResult<V>
 
 
 	/**
-	 * Returns the number of update counts in this BatchResult.
-	 * @return the number of update counts
+	 * Checks that the {@link #size()} has the given value.
+	 * @throws JdbxException thrown if the actual size does not match the expected size
+	 * @return this
 	 */
 	public BatchResult<V> requireSize(int size)
 	{
@@ -125,9 +126,9 @@ public class BatchResult<V>
 	 * @see Statement#SUCCESS_NO_INFO
 	 * @see Statement#EXECUTE_FAILED
 	 */
-	public UpdateType getCountType(int index)
+	public CountType getCountType(int index)
 	{
-		return UpdateType.forCount(getCount(index));
+		return CountType.forCount(getCount(index));
 	}
 
 
@@ -136,30 +137,32 @@ public class BatchResult<V>
 	 * @return this
 	 * @throws JdbxException thrown if the actual value does not match the expected value
 	 */
-	public BatchResult<V> requireCount(int index, int count) throws JdbxException
+	public BatchResult<V> requireCount(int index, int expectedCount) throws JdbxException
 	{
-		if (getCount(index) != count)
-			throw JdbxException.invalidResult("#" + index + ": expected update count " + count + ", but was " + getCount(index));
+		int actualCount = getCount(index); 
+		if (actualCount != expectedCount)
+			throw JdbxException.invalidResult("#" + index + ": expected update count " + expectedCount + ", but was " + actualCount);
 		return this;
 	}
 
 
 	/**
-	 * Checks that the update count  type with the given index equals the given type.
+	 * Checks that the update count type with the given index equals the given type.
 	 * @return this
 	 * @throws JdbxException thrown if the actual type does not match the expected type
 	 */
-	public BatchResult<V> requireCountType(int index, UpdateType type) throws JdbxException
+	public BatchResult<V> requireCountType(int index, CountType expectedType) throws JdbxException
 	{
-		if (getCountType(index) != type)
-			throw JdbxException.invalidResult("#" + index + ": expected update count type " + type + ", but was " + getCountType(index));
+		CountType actualType = getCountType(index); 
+		if (actualType != expectedType)
+			throw JdbxException.invalidResult("#" + index + ": expected update count type " + expectedType + ", but was " + actualType);
 		return this;
 	}
 
 
 	/**
 	 * Checks that the value of this BatchResult is not null.
-	 * @throws JdbxException thrown if the actual value does not match the expected value
+	 * @throws JdbxException thrown if the actual value is null
 	 */
 	public V requireValue() throws JdbxException
 	{
@@ -181,7 +184,7 @@ public class BatchResult<V>
 	private final int[] counts_;
 
 	/**
-	 * Stores the value returned by the AutoKeysReader.
+	 * Stores the value returned by the {@link GetReturnCols} reader passed to {@link Batch#runGetCols(org.jdbx.function.GetReturnCols)}.
 	 */
 	private final V value_;
 }

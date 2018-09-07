@@ -8,6 +8,9 @@ import org.jdbx.function.CheckedFunction;
 /**
  * Execute is a builder class to configure and run a SQL or DDL command
  * which can return multiple results.
+ * @see StaticStmt#createExecute(String)
+ * @see PrepStmt#createExecute()
+ * @see CallStmt#createExecute()
  */
 public abstract class Execute extends StmtRunnable
 {

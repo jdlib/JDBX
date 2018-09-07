@@ -24,6 +24,10 @@ import org.jdbx.function.Unchecked;
  *     }
  * }
  * </code></pre>
+ * @see Execute#run()
+ * @see StaticStmt#execute(String)
+ * @see PrepStmt#execute()
+ * @see CallStmt#execute()
  */
 public class ExecuteResult
 {
@@ -115,7 +119,7 @@ public class ExecuteResult
 	public boolean next(Current current) throws JdbxException
 	{
 		checkNotLast();
-		Check.valid(current);
+		Check.valid(current, "current");
 		if (status_ == Status.BEFORE_FIRST)
 			initNext(hasQueryResult_);
 		else
@@ -223,7 +227,8 @@ public class ExecuteResult
 
 		try
 		{
-			try (ResultSet rs = stmt_.getGeneratedKeys()) { 
+			try (ResultSet rs = stmt_.getGeneratedKeys()) 
+			{ 
 				V value = reader.read(updateCount_, QueryResult.of(rs));
 				return new UpdateResult<>(updateCount_, value);
 			}

@@ -25,11 +25,11 @@ class Check
 	 * Checks that a JdbcEnum is not null and valid.
 	 * @exception IllegalArgumentException if the object is null or invalid.
 	 */
-	public static <V extends JdbcEnum> V valid(V value)
+	public static <V extends JdbcEnum> V valid(V value, String what)
 	{
 		Check.notNull(value, "value");
 		if (value.isInvalid())
-			throw new IllegalArgumentException("not valid: " + value);
+			throw new IllegalArgumentException("not a valid " + what + ": " + value);
 		return value;
 	}
 
