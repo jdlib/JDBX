@@ -23,9 +23,9 @@ import java.sql.ResultSet;
 /**
  * A QueryResult based on a JDBC ResultSet.
  */
-class ResultSetQuery extends QueryResult
+class ResultSetQResult extends QueryResult
 {
-	public ResultSetQuery(ResultSet result)
+	public ResultSetQResult(ResultSet result)
 	{
 		result_ = Check.notNull(result, "result");
 	}

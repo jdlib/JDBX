@@ -474,7 +474,7 @@ public class CallStmt extends Stmt
 	public QueryResult query() throws JdbxException
 	{
 		checkInitialized();
-		return new PrepStmtQuery(this::getJdbcStmt);
+		return new PrepStmtQResult(this::getJdbcStmt);
 	}
 
 

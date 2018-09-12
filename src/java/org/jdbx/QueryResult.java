@@ -20,7 +20,7 @@ public abstract class QueryResult extends StmtRunnable
 	 */
 	public static QueryResult of(ResultSet resultSet)
 	{
-		return new ResultSetQuery(resultSet);
+		return new ResultSetQResult(resultSet);
 	}
 
 
