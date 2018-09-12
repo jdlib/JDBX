@@ -18,6 +18,8 @@ package org.jdbx;
 
 
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import org.jdbx.function.Unchecked;
 
 
@@ -27,6 +29,11 @@ import org.jdbx.function.Unchecked;
  */
 public class StmtOptions
 {
+	static final ResultType DEFAULT_RESULT_TYPE 	= ResultType .FORWARD_ONLY;
+	static final Concurrency DEFAULT_CONCURRENCY 	= Concurrency.READ_ONLY;
+	static final Holdability DEFAULT_HOLDABILITY 	= Holdability.CLOSE_AT_COMMIT;
+	
+	
 	StmtOptions(Stmt stmt)
 	{
 		stmt_ = stmt;
@@ -244,6 +251,12 @@ public class StmtOptions
 	}
 
 
+	static Holdability getResultHoldability(StmtOptions options)
+	{
+		return options != null ? options.getResultHoldability() : DEFAULT_HOLDABILITY;
+	}
+
+
 	/**
 	 * Returns {@link Statement#getResultSetHoldability()} as enum value.
 	 * You can set the holdability when you initialize the JDBX statement.
@@ -255,9 +268,24 @@ public class StmtOptions
 	}
 
 
-	void setResultHoldability(Holdability value)
+	/**
+	 * Sets the result set holdability.
+	 * This will close the current JDBC statement associated with the JDBX statement.
+	 */
+	public StmtOptions setResultHoldability(Holdability value)
 	{
-		holdability_ = value;
+		if (holdability_ != value)
+		{
+			holdability_ = Check.valid(value, "holdability");
+			stmt_.closeJdbcStmt();
+		}
+		return this;
+	}
+
+
+	static Concurrency getResultConcurrency(StmtOptions options)
+	{
+		return options != null ? options.getResultConcurrency() : DEFAULT_CONCURRENCY;
 	}
 
 
@@ -270,11 +298,26 @@ public class StmtOptions
 	{
 		return concurrency_;
 	}
-
-
-	void setResultConcurrency(Concurrency value)
+	
+	
+	/**
+	 * Sets the result set concurrency.
+	 * This will close the current JDBC statement associated with the JDBX statement.
+	 */
+	public StmtOptions setResultConcurrency(Concurrency value)
 	{
-		concurrency_ = value;
+		if (concurrency_ != value)
+		{
+			concurrency_ = Check.valid(value, "concurrency");
+			stmt_.closeJdbcStmt();
+		}
+		return this;
+	}
+
+
+	static ResultType getResultType(StmtOptions options)
+	{
+		return options != null ? options.getResultType() : DEFAULT_RESULT_TYPE;
 	}
 
 
@@ -285,30 +328,119 @@ public class StmtOptions
 	 */
 	public ResultType getResultType()
 	{
-		return resultSetType_;
+		return resultType_;
 	}
 
 
-	void setResultType(ResultType value)
+	/**
+	 * Sets the result set tyüe.
+	 * This will close the current JDBC statement associated with the JDBX statement.
+	 */
+	public StmtOptions setResultType(ResultType value)
 	{
-		resultSetType_ = value;
+		if (resultType_ != value)
+		{
+			resultType_ = Check.valid(value, "resultType");
+			stmt_.closeJdbcStmt();
+		}
+		return this;
 	}
 	
 	
 	private <T> void set(StmtOption<T> option, T value)
 	{
-		Unchecked.accept(option.setter, stmt_.getJdbcStmt(), value);
+		stmt_.checkOpen();
+		getOptionValue(option, true).set(value);
+		if (stmt_.jdbcStmt_ != null)
+			Unchecked.accept(option.setter, stmt_.getJdbcStmt(), value);
 	}
 
 
 	private <T> T get(StmtOption<T> option)
 	{
-		return Unchecked.apply(option.getter, stmt_.getJdbcStmt());
+		stmt_.checkOpen();
+		
+		// if we have a statement use that to retrieve the option value
+		if (stmt_.jdbcStmt_ != null) 
+			return Unchecked.apply(option.getter, stmt_.jdbcStmt_);
+		
+		// if the option was explicitly set return that value;
+		OptionValue<T> v = getOptionValue(option, false);
+		if (v != null)
+			return v.value;
+		
+		// fallback to the default value. Unfortunately some options
+		// are implementation dependent, and this can throw an exception
+		return option.getDefaultValue();
+	}
+
+	
+	/**
+	 * Apply all explicitly set options to the statement.
+	 * @param statement
+	 */
+	<T> void applyOptionValues(Statement statement)
+	{
+		if (optionValues_ != null)
+		{
+			for (OptionValue<?> v : optionValues_)
+			{
+				@SuppressWarnings("unchecked")
+				OptionValue<T> tv = (OptionValue<T>)v; 
+				Unchecked.accept(tv.option.setter, statement, tv.value);
+			}
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private <T> OptionValue<T> getOptionValue(StmtOption<T> option, boolean create)
+	{
+		if (optionValues_ != null)
+		{
+			for (OptionValue<?> v : optionValues_)
+			{
+				if (v.option == option)
+					return (OptionValue<T>)v;
+			}
+		}
+		return create ? createOptionValue(option) : null;
+	}
+	
+	
+	private <T> OptionValue<T> createOptionValue(StmtOption<T> option)
+	{
+		if (optionValues_ == null)
+			optionValues_ = new ArrayList<>(3);
+		OptionValue<T> v = new OptionValue<>(option);
+		optionValues_.add(v);
+		return v;
+	}
+	
+	
+	private static class OptionValue<T>
+	{
+		public OptionValue(StmtOption<T> option)
+		{
+			this.option = option;
+		}
+		
+		
+		public OptionValue<T> set(T value)
+		{
+			this.value = value;
+			return this;
+		}
+		
+		
+		public final StmtOption<T> option;
+		public T value;
 	}
 
 	
 	private final Stmt stmt_;
-	private ResultType resultSetType_ = ResultType.FORWARD_ONLY;
-	private Concurrency concurrency_ = Concurrency.READ_ONLY;
-	private Holdability holdability_ = Holdability.CLOSE_AT_COMMIT;
+	private ResultType resultType_ 		= DEFAULT_RESULT_TYPE;
+	private Concurrency concurrency_ 	= DEFAULT_CONCURRENCY;
+	private Holdability holdability_ 	= DEFAULT_HOLDABILITY;
+	private List<OptionValue<?>> optionValues_;
 }

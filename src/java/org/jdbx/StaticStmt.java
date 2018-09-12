@@ -109,11 +109,13 @@ public class StaticStmt extends Stmt
 			return con_.createStatement();
 		else
 		{
-			return con_.createStatement(
+			Statement statement = con_.createStatement(
 				options_.getResultType().getCode(),
 				options_.getResultConcurrency().getCode(),
 				options_.getResultHoldability().getCode()
 			);
+			options_.applyOptionValues(statement);
+			return statement;
 		}
 	}
 
@@ -133,38 +135,6 @@ public class StaticStmt extends Stmt
 		return !isClosed();
 	}
 
-
-	/**
-	 * Returns a builder to initialize the statement holdability, concurrency and resultset type.
-	 * @return a init builder
-	 * @throws JdbxException if closed
-	 */
-	public Init init() throws JdbxException
-	{
-		checkOpen();
-		return new Init();
-	}
-
-	
-	/**
-	 * A Builder to initialize the StaticStmt.
-	 */
-	public class Init extends InitBase<Init>
-	{
-		private Init()
-		{
-		}
-
-	
-		@Override void setOptionsChanged() throws JdbxException
-		{
-			super.setOptionsChanged();
-			checkOpen();
-			updateOptions(StaticStmt.this); // will create options if not yet done
-			closeJdbcStmt(); // will force recreate of jdbc statement with new options
-		}
-	}
-	
 
 	//------------------------------
 	// query

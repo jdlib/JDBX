@@ -80,10 +80,11 @@ public class DocSnippets
 		} 
 		
 		// configure
-	    stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(Concurrency.READ_ONLY);
 	    stmt.options()
 	        .setQueryTimeoutSeconds(20)
-	        .setFetchRows(5000);
+	        .setFetchRows(5000)
+	        .setResultType(ResultType.SCROLL_SENSITIVE)
+	        .setResultConcurrency(Concurrency.READ_ONLY);
 	    int seconds = stmt.options().getQueryTimeoutSeconds();
 	}
 
@@ -94,9 +95,7 @@ public class DocSnippets
 		cstmt.init("{call getUserName(?, ?)}");
 		
 		pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-		cstmt.init().resultType(ResultType.SCROLL_SENSITIVE).sql("{call getUsers()}");
-		
-		stmt.init().resultType(ResultType.SCROLL_INSENSITIVE).resultHoldability(Holdability.HOLD_OVER_COMMIT);
+		pstmt.init().namedParams().sql("UPDATE Users SET name = :name");
 	}
 	
 
@@ -269,7 +268,7 @@ public class DocSnippets
 		    // read the result row
 		}
 		
-		stmt.init().resultType(ResultType.SCROLL_SENSITIVE).resultConcurrency(Concurrency.CONCUR_UPDATABLE);
+		stmt.options().setResultType(ResultType.SCROLL_SENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
 		qc = stmt.query("sql").cursor();
@@ -289,7 +288,7 @@ public class DocSnippets
 	
 	public void queryCursorObtain() throws Exception
 	{
-		stmt.init().resultConcurrency(Concurrency.CONCUR_UPDATABLE);
+		stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 
 	   	qc.col("status").setString("ok"); 
 	    qc.row().update();

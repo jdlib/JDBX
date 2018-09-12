@@ -46,7 +46,7 @@ public class QueryCursorTest extends JdbxTest
 	
 	@Test public void testScroll()
 	{
-		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE);
+		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE);
 		try (QueryCursor cursor = stmt_.query("SELECT name FROM QRTest ORDER BY name").cursor())
 		{
 			assertSame(ResultType.SCROLL_INSENSITIVE, cursor.getType());
@@ -64,7 +64,7 @@ public class QueryCursorTest extends JdbxTest
 
 	@Test public void testUpdate() throws Exception
 	{
-		stmt_.init().resultType(ResultType.SCROLL_INSENSITIVE).resultConcurrency(Concurrency.CONCUR_UPDATABLE);
+		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 		try (QueryCursor cursor = stmt_.query("SELECT name FROM QRTest").cursor())
 		{
 			assertSame(Concurrency.CONCUR_UPDATABLE, cursor.getConcurrency());

@@ -78,7 +78,7 @@ public class CallStmt extends Stmt
 		return (CallableStatement)jdbcStmt_;
 	}
 
-
+	
 	/**
 	 * Returns the ParameterMetaData.
 	 * @return the meta data
@@ -95,69 +95,50 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * Returns a builder to initialize the CallStmt.
-	 * @return the builder
-	 */
-	public Init init() throws JdbxException
-	{
-		checkOpen();
-		return new Init();
-	}
-
-
-	/**
 	 * Initializes the SQL command which is executed by the CallStmt.
 	 * @param sql the sql command
 	 * @return this
 	 */
 	public CallStmt init(String sql) throws JdbxException
 	{
-		return init().sql(sql);
+		Check.notNull(sql, "sql");
+		checkOpen();
+
+		try
+		{
+			// close old statement if not null
+			if (jdbcStmt_ != null)
+			{
+				Statement old = jdbcStmt_;
+				jdbcStmt_ = null;
+				old.close();
+			}
+
+			// create the new statement
+			jdbcStmt_ 	= createJdbcStmt(sql);
+			// assign the sql once the jdbc statement creation succeeded
+			sql_ 	   	= sql;
+
+			return this;
+		}
+		catch (Exception e)
+		{
+			throw JdbxException.of(e);
+		}
 	}
 
 
-	/**
-	 * Init is a builder to define the SQL command and auto keys behaviour.
-	 */
-	public class Init extends InitBase<Init>
+	private CallableStatement createJdbcStmt(String sql) throws Exception
 	{
-		private Init()
-		{
-		}
-
-
-		/**
-		 * Initializes the SQL command which is executed by the CallStmt.
-		 * @param sql the sql command
-		 * @return the CallStmt
-		 */
-		public CallStmt sql(String sql) throws JdbxException
-		{
-			Check.notNull(sql, "sql");
-			checkOpen();
-
-			try
-			{
-				// close old statement if not null
-				if (jdbcStmt_ != null)
-				{
-					Statement old = jdbcStmt_;
-					jdbcStmt_ = null;
-					old.close();
-				}
-
-				// create the new statement
-				jdbcStmt_ 	= con_.prepareCall(sql, resultType_.getCode(), concurrency_.getCode(), holdability_.getCode());
-				sql_ 	   	= sql;
-				updateOptions(CallStmt.this);
-
-				return CallStmt.this;
-			}
-			catch (Exception e)
-			{
-				throw JdbxException.of(e);
-			}
-		}
+		CallableStatement stmt = con_.prepareCall(sql, 
+			StmtOptions.getResultType(options_).getCode(),
+			StmtOptions.getResultConcurrency(options_).getCode(),
+			StmtOptions.getResultHoldability(options_).getCode());
+		
+		if (options_ != null)
+			options_.applyOptionValues(stmt);
+		
+		return stmt;
 	}
 
 

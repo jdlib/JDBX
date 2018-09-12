@@ -90,37 +90,28 @@ The SQL command string uses `?` as placeholder for statement parameters:
     CallStmt cstmt = new CallStmt(con);
     cstmt.init("{call getUserName(?, ?)}");
     
-For more initialization options call the `init()` method on these statements which will return an initialization builder.
-The builder allows you to define properties of the query result (for query commands) or update result (for update commands). 
+PrepStmt allows for more initialization options: Call the `init()` method on a PrepStmt which will return an initialization builder.
+The builder allows you to the returned columns or if the sql statement uses named parameters.
 The terminal call of the `.sql(String)` method to specify a SQL command is mandatory in order to complete the initialization:
 
     // instruct the statement to return the value of the 'id' column (see the chapter on running updates)
     pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+    // use named parameters instead of indexed parameters
+    pstmt.init().namedParams().sql("UPDATE Users SET name = :name WHERE id = :id");
 
-    // instruct the statement to produce a scroll sensitive result cursor 
-    cstmt.init().resultType(ResultType.SCROLL_SENSITIVE).sql("{call getUsers()}");
-    
 A `StaticStmt` is already initialized when it is created. (The SQL command which is executed by the `StaticStmt`
 is not precompiled and passed to the statement when you run a query or update).
-But still you might want to override default initialization settings: 
-
-    StaticStmt stmt = new StaticStmt(con);
-    stmt.init().resultType(ResultType.SCROLL_INSENSITIVE).resultHoldability(Holdability.HOLD_OVER_COMMIT);
 
 Implementation-wise initialization of a JDBX statement is the equivalent of creating a JDBC statement
-and the init-builder allows to specify the create parameters.
 You may reinitialize a JDBX statement at any time which internally will recreate a new JDBC statement.    
 
 ### <a name="stmts-options"></a>2.4 Configure statements
 
-Once initialized you can set or retrieve statement options by using the builder returned by its `options()` method of
-the statement:      
+To set or retrieve statement options use the builder returned by statements `options()` method:
 
-    stmt.options().setQueryTimeoutSeconds(20).setFetchRows(5000);
+    stmt.options().setQueryTimeoutSeconds(20).setFetchRows(5000).setResultType(ResultType.SCROLL_INSENSITIVE);
     int timeoutSecs = stmt.options().getQueryTimeoutSeconds();
     
-Once you reinitialize a JDBX statement all its options are reset to their defaults.    
-
 ### <a name="stmts-params"></a>2.5 Setting parameters
 
 The SQL command string of a `PrepStmt`and `CallStmt` can (or should) contain parameters, specified as `?`: 

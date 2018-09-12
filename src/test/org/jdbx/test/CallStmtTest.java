@@ -166,11 +166,7 @@ public class CallStmtTest extends JdbxTest
 	{
 		assertSame(ResultType.FORWARD_ONLY, cstmt_.options().getResultType());
 
-		// no effect if init is not called
-		cstmt_.init().resultType(ResultType.SCROLL_SENSITIVE);
-		assertSame(ResultType.FORWARD_ONLY, cstmt_.options().getResultType());
-
-		cstmt_.init().resultType(ResultType.SCROLL_SENSITIVE).sql("call GetUserAsResult(?)");
+		cstmt_.options().setResultType(ResultType.SCROLL_SENSITIVE);
 		assertSame(ResultType.SCROLL_SENSITIVE, cstmt_.options().getResultType());
 	}
 

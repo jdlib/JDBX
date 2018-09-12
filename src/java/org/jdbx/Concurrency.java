@@ -24,9 +24,9 @@ import java.sql.ResultSet;
  * Concurrency is an Enum for the JDBC constants ResultSet.CONCUR_*.
  * Given a JDBX statement object, you can change the result concurrency as follows:
  * <p><code>stmt.options().resultConcurrency(Concurrency.nnn)</code>
- *  
- * @see InitBase#resultConcurrency(Concurrency)
  * @see Stmt#options() 
+ * @see StmtOptions#setResultConcurrency(Concurrency)
+ * @see StmtOptions#getResultConcurrency()
  */
 public enum Concurrency implements JdbcEnum
 {

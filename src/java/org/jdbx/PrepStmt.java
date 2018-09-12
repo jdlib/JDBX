@@ -138,7 +138,7 @@ public class PrepStmt extends Stmt
 	/**
 	 * A Builder to initialize the PrepStmt.
 	 */
-	public class Init extends InitBase<Init> implements ReturnCols.Builder<Init>
+	public class Init implements ReturnCols.Builder<Init>
 	{
 		private Init()
 		{
@@ -213,7 +213,6 @@ public class PrepStmt extends Stmt
 				
 				jdbcStmt_ 	= createJdbcStmt(sql);
 				sql_ 		= sql;
-				updateOptions(PrepStmt.this);
 
 				return PrepStmt.this;
 			}
@@ -226,14 +225,25 @@ public class PrepStmt extends Stmt
 
 		private PreparedStatement createJdbcStmt(String sql) throws Exception
 		{
+			PreparedStatement stmt;
 			if (returnCols_ == null)
-				return con_.prepareStatement(sql, resultType_.getCode(), concurrency_.getCode(), holdability_.getCode());
+			{
+				stmt = con_.prepareStatement(sql,
+					StmtOptions.getResultType(options_).getCode(),
+					StmtOptions.getResultConcurrency(options_).getCode(),
+					StmtOptions.getResultHoldability(options_).getCode());
+			}
 			else if (returnCols_.getNames() != null)
-				return con_.prepareStatement(sql, returnCols_.getNames());
+				stmt = con_.prepareStatement(sql, returnCols_.getNames());
 			else if (returnCols_.getIndexes() != null)
-				return con_.prepareStatement(sql, returnCols_.getIndexes());
+				stmt = con_.prepareStatement(sql, returnCols_.getIndexes());
 			else
-				return con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				stmt = con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			
+			if (options_ != null)
+				options_.applyOptionValues(stmt);
+			
+			return stmt;
 		}
 
 

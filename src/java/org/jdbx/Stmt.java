@@ -88,7 +88,7 @@ public abstract class Stmt implements AutoCloseable
 
 
 	/**
-	 * Returns the internal JDBC statement used by the JDBC statement.
+	 * Returns the internal JDBC statement used by the JDBX statement.
 	 * @return the JDBC statement
 	 * @throws JdbxException if this statement was already closed or not yet initialized.
 	 * @see #isClosed()
@@ -110,7 +110,7 @@ public abstract class Stmt implements AutoCloseable
 	 */
 	public abstract boolean isInitialized();
 
-
+	
 	/**
 	 * Tests if the statement is initialized, i.e. {@link #getJdbcStmt()} may be called.
 	 * @throws JdbxException thrown when the statement is not initialized
@@ -198,6 +198,7 @@ public abstract class Stmt implements AutoCloseable
 	 */
 	public final StmtOptions options() throws JdbxException
 	{
+		checkOpen();
 		if (options_ == null)
 			options_ = new StmtOptions(this);
 		return options_;
