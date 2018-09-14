@@ -14,6 +14,7 @@
 		<dependency conf="test->master" org="org.jacoco" name="org.jacoco.core" rev="0.7.6.201602180812"/>
 		<dependency conf="test->master" org="org.jacoco" name="org.jacoco.ant" rev="0.7.6.201602180812"/>
 		<dependency conf="test->master" org="org.jacoco" name="org.jacoco.report" rev="0.7.6.201602180812"/>
+		<dependency conf="test->master" org="org.jacoco" name="org.jacoco.agent" rev="0.7.6.201602180812"/>
 		<dependency conf="test->default" org="org.ow2.asm" name="asm-all" rev="5.1"/>
 		<dependency conf="test->default" org="org.hsqldb" name="hsqldb" rev="2.4.0"/>
 	</dependencies>    
