@@ -489,6 +489,7 @@ public class PrepStmt extends Stmt
 	{
 		/**
 		 * Adds a statement to the batch using the current parameters.
+		 * @return this
 		 */
 		public PrepBatch add() throws JdbxException
 		{

@@ -42,6 +42,7 @@ public class ReturnCols
 		
 		/**
 		 * The columns which contain auto generated keys (decided by the JDBC driver/database) are returned.
+		 * @return this
 		 */
 		public default I returnAutoKeyCols()
 		{

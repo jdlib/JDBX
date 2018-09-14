@@ -70,7 +70,7 @@ public class CallStmt extends Stmt
 
 	/**
 	 * Returns the JDBC CallableStatement used by the CallStmt.
-	 * This method can only be called if {@link #init() initialized}.
+	 * This method can only be called if {@link #init(String) initialized}.
 	 */
 	@Override public CallableStatement getJdbcStmt() throws JdbxException
 	{
@@ -144,7 +144,7 @@ public class CallStmt extends Stmt
 
 	/**
 	 * Returns if the CallStmt is initialized.
-	 * @see #init()
+	 * @see #init(String)
 	 */
 	@Override public boolean isInitialized()
 	{
@@ -184,6 +184,7 @@ public class CallStmt extends Stmt
 	
 	/**
 	 * Returns a IndexedParam object to set or get the value of a parameter by index.
+	 * @param index the 1-based parameter index 
 	 * @return the IndexedParam
 	 */
 	public IndexedParam param(int index)
@@ -328,6 +329,7 @@ public class CallStmt extends Stmt
 
 	/**
 	 * Returns a parameter object to set the value of a parameter by name.
+	 * @param name the parameter name
 	 * @return the parameter object
 	 */
 	public NamedParam param(String name)

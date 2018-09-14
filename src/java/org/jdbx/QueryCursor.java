@@ -73,8 +73,8 @@ public class QueryCursor implements AutoCloseable
 
 	/**
 	 * Skips n rows.
-	 * @param count the number of rows to skip. If <= 0 this call has no effect.
-	 * @return true, if the amount of rows have been skipped or count was <= 0, false
+	 * @param count the number of rows to skip. If &lt;= 0 this call has no effect.
+	 * @return true, if the amount of rows have been skipped or count was &lt;= 0, false
 	 * 		if the result had less rows than then given row count
 	 */
 	public boolean skip(int count)
@@ -183,6 +183,7 @@ public class QueryCursor implements AutoCloseable
 	
 	/**
 	 * Calls {@link #col(int)} with column index 1.
+	 * @return the column
 	 */
 	public IndexedColumn col()
 	{
@@ -850,6 +851,7 @@ public class QueryCursor implements AutoCloseable
 
 	/**
 	 * Returns if the internal ResultSet should be closed when this QueryCursor is closed.
+	 * @return the close result flag
 	 */
 	public boolean isCloseResult()
 	{

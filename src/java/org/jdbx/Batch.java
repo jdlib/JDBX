@@ -14,6 +14,7 @@ public abstract class Batch
 {
 	/**
 	 * Clears the batch.
+	 * @return this
 	 * @see Statement#clearBatch()
 	 */
 	public Batch clear() throws JdbxException

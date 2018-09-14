@@ -80,7 +80,7 @@ public class StmtOptions
 	/**
 	 * Sets the limit for the maximum number of bytes that can be returned for
      * character and binary column values in a result produced by this statement.
-	 * @param size the maximum number of bytes
+	 * @param bytes the maximum number of bytes
 	 * @see Statement#setMaxFieldSize(int)
 	 * @return this
 	 */
@@ -271,6 +271,8 @@ public class StmtOptions
 	/**
 	 * Sets the result set holdability.
 	 * This will close the current JDBC statement associated with the JDBX statement.
+	 * @param value the holdability
+	 * @return this
 	 */
 	public StmtOptions setResultHoldability(Holdability value)
 	{
@@ -303,6 +305,8 @@ public class StmtOptions
 	/**
 	 * Sets the result set concurrency.
 	 * This will close the current JDBC statement associated with the JDBX statement.
+	 * @param value the concurrency
+	 * @return this
 	 */
 	public StmtOptions setResultConcurrency(Concurrency value)
 	{
@@ -333,8 +337,10 @@ public class StmtOptions
 
 
 	/**
-	 * Sets the result set tyüe.
+	 * Sets the result type.
 	 * This will close the current JDBC statement associated with the JDBX statement.
+	 * @param value the result type 
+	 * @return this
 	 */
 	public StmtOptions setResultType(ResultType value)
 	{

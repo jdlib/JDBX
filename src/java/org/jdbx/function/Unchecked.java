@@ -49,8 +49,10 @@ public class Unchecked
 	/**
 	 * Passes the argument to the consumer and converts any exception into a JdbxException
 	 * @param consumer a consumer
-	 * @param arg an argument
-	 * @param <T> the type of the input
+	 * @param t an argument
+	 * @param u an argument
+	 * @param <T> the type of input 1
+	 * @param <U> the type of input 2
 	 */
 	public static <T,U> void accept(CheckedBiConsumer<T,U> consumer, T t, U u) throws JdbxException
 	{

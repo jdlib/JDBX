@@ -88,6 +88,7 @@ Perform a parameterized INSERT, return the auto generated primary key, convert a
 
 * [User Guide](https://github.com/jdlib/JDBX/blob/master/UserGuide.md): explains how to use JDBX.
 * [Design](https://github.com/jdlib/JDBX/blob/master/Design.md): Discusses the design of JDBX and the refactorings applied to JDBC. 
+* [Build:](https://github.com/jdlib/JDBX/blob/master/Build.md): How to build JDBX. 
 
 
 ## <a name="license"></a>License

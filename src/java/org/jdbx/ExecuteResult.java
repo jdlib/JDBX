@@ -19,7 +19,7 @@ import org.jdbx.function.Unchecked;
  *         // process query result
  *     }
  *     else {
- *         UpdateResult<Void> ur = result.getUpdateResult();
+ *         UpdateResult&lt;Void&gt; ur = result.getUpdateResult();
  *         // process update result
  *     }
  * }

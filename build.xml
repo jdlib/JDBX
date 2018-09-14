@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JDBX" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="compile">
+<project name="JDBX" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="help">
 
 	<property file="${basedir}/build.properties"/>
 	<property name="lib"               value="${basedir}/lib"/>
@@ -52,6 +52,11 @@
 	
 	<!-- targets -->
 		
+	<target name="help" description="help">
+    	<echo>Ant targets: clear | compile | coverage | javadoc | jar | dist | resolve</echo>
+    </target>
+	
+	
 	<target name="clear" description="clears the build directory">
     	<delete dir="${build}"/>	
     </target>

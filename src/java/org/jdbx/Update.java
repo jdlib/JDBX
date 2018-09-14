@@ -87,7 +87,7 @@ public abstract class Update extends StmtRunnable
 
 	/**
 	 * Runs the command and returns a list of auto generated keys.
-	 * @param keyType the type of the generated keys
+	 * @param colType the type of the generated keys
 	 * @param <V> the type of the value returned by the AutoKeysReader
 	 * @return an UpdateResult holding the update count and the key list
 	 */

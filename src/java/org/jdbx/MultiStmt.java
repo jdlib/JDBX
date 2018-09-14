@@ -100,6 +100,7 @@ public class MultiStmt implements AutoCloseable
 
 	/**
 	 * Returns a new initialized PrepStmt.
+	 * @param sql a SQL command
 	 * @return the statement
 	 */
 	public PrepStmt newPrepStmt(String sql) throws JdbxException
@@ -120,6 +121,7 @@ public class MultiStmt implements AutoCloseable
 
 	/**
 	 * Returns a new initialized CallStmt.
+	 * @param sql a SQL command
 	 * @return the statement
 	 */
 	public CallStmt newCallStmt(String sql) throws JdbxException

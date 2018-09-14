@@ -63,6 +63,7 @@ public class UpdateResult<V>
 
 	/**
 	 * Returns the number of affected records.
+	 * @return the update count
 	 */
 	public int count()
 	{
@@ -74,7 +75,8 @@ public class UpdateResult<V>
 	 * Returns the number of affected records as long.
 	 * Unless you actively activate large updates, the returned value will also 
 	 * be in the int range.
-	 * @see Update#large()
+	 * @return the update count as long
+	 * @see Update#returnLargeCount()
 	 */
 	public long largeCount()
 	{
@@ -113,6 +115,7 @@ public class UpdateResult<V>
 	
 	/**
 	 * Returns the value of the update result.
+	 * @return the value
 	 */
 	public V value()
 	{
@@ -135,6 +138,8 @@ public class UpdateResult<V>
 
 	/**
 	 * Checks that the actual result value equals the expected value.
+	 * @param expected the expected value
+	 * @return this
 	 * @throws JdbxException if the actual and expected value are not equal
 	 */
 	public UpdateResult<V> requireValue(V expected) throws JdbxException

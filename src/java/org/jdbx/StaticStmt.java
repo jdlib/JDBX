@@ -20,7 +20,6 @@ package org.jdbx;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.function.Consumer;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedSupplier;
 import org.jdbx.function.Unchecked;
@@ -127,7 +126,7 @@ public class StaticStmt extends Stmt
 
 	/**
 	 * Returns true if the statement is not closed.
-	 * A StaticStmt, once created is always initialized, therefore initialization via {@link #init(Consumer)} is optional.
+	 * A StaticStmt, once created is always initialized.
 	 * @return true if not closed
 	 */
 	@Override public boolean isInitialized()
@@ -308,12 +307,12 @@ public class StaticStmt extends Stmt
 
 		/**
 		 * Defines which columns should be returned for INSERTs.
-		 * @param cols the columns or null if no columns should be returned
+		 * @param returnCols the columns or null if no columns should be returned
 		 * @return this
 		 */
-		@Override public StaticExecute returnCols(ReturnCols autoKeys)
+		@Override public StaticExecute returnCols(ReturnCols returnCols)
 		{
-			autoKeys_ = autoKeys;
+			returnCols_ = returnCols;
 			return this;
 		}
 
@@ -324,12 +323,12 @@ public class StaticStmt extends Stmt
 			{
 				Statement stmt = getJdbcStmt();
 				boolean hasResultSet;
-				if (autoKeys_ == null)
+				if (returnCols_ == null)
 					hasResultSet = stmt.execute(sql_);
-				else if (autoKeys_.getNames() != null)
-					hasResultSet = stmt.execute(sql_, autoKeys_.getNames());
-				else if (autoKeys_.getIndexes() != null)
-					hasResultSet = stmt.execute(sql_, autoKeys_.getIndexes());
+				else if (returnCols_.getNames() != null)
+					hasResultSet = stmt.execute(sql_, returnCols_.getNames());
+				else if (returnCols_.getIndexes() != null)
+					hasResultSet = stmt.execute(sql_, returnCols_.getIndexes());
 				else
 					hasResultSet = stmt.execute(sql_, Statement.RETURN_GENERATED_KEYS);
 				return new ExecuteResult(stmt, hasResultSet);
@@ -348,7 +347,7 @@ public class StaticStmt extends Stmt
 
 
 		private String sql_;
-		private ReturnCols autoKeys_;
+		private ReturnCols returnCols_;
 	}
 
 
@@ -367,6 +366,7 @@ public class StaticStmt extends Stmt
 
 	/**
 	 * Executes a SQL command and returns the result
+	 * @param sql a SQL command
 	 * @return the ExecuteResult
 	 */
 	public ExecuteResult execute(String sql)

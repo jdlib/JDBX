@@ -118,7 +118,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 	/**
 	 * Sets the current column index.
-	 * @param index the index (>= 1)
+	 * @param index the index (&gt;= 1)
 	 */
 	public void setIndex(int index)
 	{
