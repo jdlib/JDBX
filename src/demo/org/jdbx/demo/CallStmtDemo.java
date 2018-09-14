@@ -32,7 +32,7 @@ import org.jdbx.JdbxException;
 public class CallStmtDemo
 {
 	/**
-	 * How to create a PrepStmt.
+	 * How to create a CallStmt.
 	 */
 	public void createDemo(Connection con, DataSource ds)
 	{

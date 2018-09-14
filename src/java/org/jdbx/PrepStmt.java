@@ -488,6 +488,31 @@ public class PrepStmt extends Stmt
 	public class PrepBatch extends Batch
 	{
 		/**
+		 * Sets the parameters. Calls {@link PrepStmt#params(Object...)}
+		 * @param values the parameter values
+		 * @return this
+		 */
+		public PrepBatch params(Object... values) throws JdbxException
+		{
+			stmt().params(values);
+			return this;
+		}
+		
+		
+		/**
+		 * Sets the value of the parameter with the given index.  Calls {@link PrepStmt#param(int, Object)}
+		 * @param index a parameter index, starting at 1.
+		 * @param value a parameter value
+		 * @return this
+		 */
+		public PrepBatch param(int index, Object value) throws JdbxException
+		{
+			stmt().param(index, value);
+			return this;
+		}
+
+
+		/**
 		 * Adds a statement to the batch using the current parameters.
 		 * @return this
 		 */
