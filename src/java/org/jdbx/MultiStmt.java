@@ -99,6 +99,16 @@ public class MultiStmt implements AutoCloseable
 
 
 	/**
+	 * Returns a new initialized PrepStmt.
+	 * @return the statement
+	 */
+	public PrepStmt newPrepStmt(String sql) throws JdbxException
+	{
+		return newPrepStmt().init(sql);
+	}
+
+	
+	/**
 	 * Returns a new CallStmt.
 	 * @return the statement
 	 */
@@ -108,6 +118,16 @@ public class MultiStmt implements AutoCloseable
 	}
 
 
+	/**
+	 * Returns a new initialized CallStmt.
+	 * @return the statement
+	 */
+	public CallStmt newCallStmt(String sql) throws JdbxException
+	{
+		return newCallStmt().init(sql);
+	}
+
+	
 	/**
 	 * Returns the number of statements stored by this MultiStmt.
 	 * @return the number

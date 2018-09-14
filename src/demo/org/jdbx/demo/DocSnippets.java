@@ -58,9 +58,9 @@ public class DocSnippets
 	public Integer readmeEx2Jdbx(Connection con, String firstName, String lastName) 
 	{
 		try (PrepStmt pstmt = new PrepStmt(con)) {
-			pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-			pstmt.params(firstName, lastName);
-			return pstmt.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
+			return pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
+				.params(firstName, lastName)
+				.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
 		}
 	}
 
@@ -119,9 +119,8 @@ public class DocSnippets
 	    pstmt.param("lastname").setString("John");     
 	    pstmt.param("firstname").setString("Doe");
 	    
-	    Integer id = null;
 		cstmt.init("{call GetUserName(?,?,?)}");
-		cstmt.param(1).setInteger(id);
+		cstmt.param(1).setLong(831L);
 		cstmt.param(2).out(java.sql.Types.VARCHAR);
 		cstmt.param(3).out(java.sql.Types.VARCHAR);
 		cstmt.execute(); // explained in next chapters
@@ -392,9 +391,18 @@ public class DocSnippets
 		int cityCount = Jdbx.query(con, "SELECT COUNT(*) FROM Cities").row().col().getInt();
 		
 		Jdbx.update(con, "INSERT INTO Status (flag) VALUES (?)", "F").requireCount(1);
-		
 	}
 	
+	
+	public void multiStmts() throws Exception
+	{
+		try (MultiStmt mstmt = new MultiStmt(con)) 
+		{
+			StaticStmt s1 = mstmt.newStaticStmt();
+			PrepStmt s2   = mstmt.newPrepStmt();
+		} 
+	}
+
 	
 	private String sql;
 	private StaticStmt stmt;

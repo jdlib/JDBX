@@ -16,7 +16,7 @@ JDBX requires Java 8+, has no external dependencies and is released under the Ap
 
 ## <a name="examples"></a>Examples
 
-The following snippets show two examples of typical JDBC code and the JDBX rewrite, giving you a impression
+The following snippets show two examples of typical JDBC code and the JDBX rewrite, to give you an impression
 how JDBX reduces boilerplate database code:
 
 **Example 1:** 
@@ -71,9 +71,9 @@ Perform a parameterized INSERT, return the auto generated primary key, convert a
 
     public Integer createUser(Connection con, String firstName, String lastName) {
         try (PrepStmt pstmt = new PrepStmt(con)) {
-            pstmt.init().returnCols("id").cmd("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
-            pstmt.params(firstName, lastName);
-            return pstmt.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
+            return pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
+            	.params(firstName, lastName);
+            	.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
         }
     }
 	
