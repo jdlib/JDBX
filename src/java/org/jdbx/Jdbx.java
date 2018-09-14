@@ -12,6 +12,25 @@ import java.sql.ResultSet;
 public class Jdbx
 {
 	/**
+	 * The current JDBX version.
+	 */
+	public static final String VERSION = "0.8.0";
+
+	
+	/**
+	 * Prints the version number to System.out. If the first argument equals "-v", then a property like line
+	 * "milo.version = (version)" is printed.
+	 */
+	public static void main(String[] args)
+	{
+		boolean verbose = (args.length > 0) && args[0].equals("-v");
+		if (verbose)
+			System.out.print("JDBX.version = ");
+		System.out.println(VERSION);
+	}
+	
+	
+	/**
 	 * Runs a query.
 	 * @param con a connection
 	 * @param sql a SQL command

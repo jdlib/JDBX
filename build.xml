@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="JDBX" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="help">
 
-	<property file="${basedir}/build.properties"/>
 	<property name="lib"               value="${basedir}/lib"/>
 	<property name="src"               value="${basedir}/src"/>
 	<property name="src.java"          value="${src}/java"/>
@@ -18,8 +17,6 @@
 	<property name="reports.xml.dir"   value="${reports.dir}/junit-xml"/>
 	<property name="reports.html.dir"  value="${reports.dir}/junit-html"/>
 	<property name="reports.coverage"  value="${reports.dir}/coverage"/>
-	<property name="jdbx.zip"          value="jdbx-${version}.zip"/>
-	<property name="jdbx.jar"          value="jdbx-${version}.jar"/>
 	
 	
 	<description>
@@ -135,6 +132,7 @@
 
 	
  	<target name="dist" description="creates distribution zip" depends="jar">
+ 		<property name="jdbx.zip" value="jdbx-${version}.zip"/>
 		<zip destfile="${build}/${jdbx.zip}">
 			<fileset dir="${build}" includes="*.jar"/>
 			<fileset dir="${build}" includes="javadoc/**"/>
@@ -149,7 +147,8 @@
 	</target>
 
 		
-	<target name="jar" description="builds the JDBX jar file" depends="compile.java">
+	<target name="jar" description="builds the JDBX jar file" depends="version">
+		<property name="jdbx.jar" value="jdbx-${version}.jar"/>
 		<jar destfile="${build}/${jdbx.jar}">
     		<fileset dir="${build.bin.java}"/>
 			<manifest>
@@ -172,6 +171,12 @@
 
 	<target name="resolve" description="retrieve dependencies with ivy">
 		<ivy:retrieve pattern="lib/[conf]/[artifact]-[revision].[ext]"/>
+	</target>
+	
+	
+    <target name="version" description="set version property" depends="compile.java">
+		<java classpathref="run.path" classname="org.jdbx.Jdbx" outputproperty="version"/>
+		<echo>JDBX version ${version}</echo>
 	</target>
 	
 	
