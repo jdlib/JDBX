@@ -584,13 +584,13 @@ But if you need to run a couple of SQL commands it is more efficient to create a
 
 ## <a name="multi-stmts"></a>9. Handling multiple statements
 
-`org.jdbx.MultiStmt` is a utility class which creates and keeps track of a couple of statements.
-When the `MultiStmt` object is closed, it automatically closes all created statements:
+`org.jdbx.MultiStmt` is a utility class which creates and keeps track of multiple statements.
+When the `MultiStmt` object is closed it automatically closes all created statements:
 
     Connection con = ...
     try (MultiStmt mstmt = new MultiStmt(con)) {
-        StaticStmt s1 = mstmt.newStaticStmt();
-        PrepStmt s2   = mstmt.newPrepStmt();
+        StaticStmt s1 = mstmt.newStaticStmt();  // no need to close explicitly
+        PrepStmt s2   = mstmt.newPrepStmt();    // no need to close explicitly
         ... // use s1 and s2
 	} 
 
