@@ -31,15 +31,6 @@ import java.util.Objects;
 public class UpdateResult<V>
 {
 	/**
-	 * Creates a new empty UpdateResult.
-	 */
-	public UpdateResult()
-	{
-		this(0);
-	}
-
-
-	/**
 	 * Creates a new UpdateResult and initializes the count.
 	 * @param count the update count
 	 */
