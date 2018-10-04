@@ -30,7 +30,7 @@ import org.jdbx.PrepStmt;
 
 
 /**
- * Contains the examples from readme.md
+ * Contains the examples from README.md
  */
 public class TeaserDemo
 {
