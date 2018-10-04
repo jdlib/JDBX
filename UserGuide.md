@@ -71,7 +71,7 @@ In order to create a JDBX statement you need a `java.sql.Connection` or `javax.s
      CallStmt   cstmt = new CallStmt(con);   // or new CallStmt(ds)
      
 Statement objects should be actively **closed** once they are no longer used. Since all JDBX statement classes implement `java.io.AutoCloseable` 
-the typical pattern is to create and use a statement object within a Java try-with-resources block:
+the typical pattern is to create and use a statement object within a try-with-resources block:
 
      Connection con = ...
      try (StaticStmt stmt = new StaticStmt(con)) {
@@ -92,17 +92,18 @@ The SQL command string uses `?` as placeholder for statement parameters:
     CallStmt cstmt = new CallStmt(con);
     cstmt.init("{call getUserName(?, ?)}");
     
-PrepStmt allows for more initialization options: Call the `init()` method on a PrepStmt which will return an initialization builder.
+PrepStmt allows for more initialization options: Calling `init()` on a PrepStmt which will return an initialization builder.
 The builder allows you to define the returned columns or if the sql statement uses named parameters.
 The terminal call of the `.sql(String)` method to specify a SQL command is mandatory in order to complete the initialization:
 
     // instruct the statement to return the value of the 'id' column (see the chapter on running updates)
     pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
+    
     // use named parameters instead of indexed parameters
     pstmt.init().namedParams().sql("UPDATE Users SET name = :name WHERE id = :id");
 
-A `StaticStmt` is already initialized when it is created. (The SQL command which is executed by the `StaticStmt`
-is not precompiled and passed to the statement when you run a query or update).
+A `StaticStmt` is already initialized when it is created- the SQL command which is executed by the `StaticStmt`
+is not precompiled and passed to the statement when you run a query or update.
 
 Implementation-wise initialization of a JDBX statement is the equivalent of creating a JDBC statement
 You may reinitialize a JDBX statement at any time which internally will recreate a new JDBC statement object.    
@@ -116,7 +117,7 @@ To set or retrieve statement options use the builder returned by the `options()`
     
 ### <a name="stmts-params"></a>2.5 Setting parameters
 
-The SQL command string of a `PrepStmt`and `CallStmt` can (or should) contain parameters, specified as `?`: 
+The SQL command string of a `PrepStmt`and `CallStmt` can (or should) contain parameters, specified as `?` within the SQL string: 
  
     PrepStmt pstmt = ...
     pstmt.init("INSERT INTO Rooms (id, name, area) VALUES (DEFAULT, ?, ?)");
@@ -136,8 +137,8 @@ or even shorter, setting all parameter values in one call:
     
     pstmt.params("Living Room", 51);
     
-JDBX - unlike JDBC - also supports named parameters. When initializing the `PrepStmt` call the `namedParams()` method of
-the init-builder and specify parameters as a colon followed by the parameter name. A named parameter may occur
+JDBX - unlike JDBC - also supports named parameters. On the builder returned by `PrepStmt.init()` call the method `namedParams()`
+and in the SQL string specify parameters as a colon followed by the parameter name. A named parameter may occur
 several times. To set a named parameter value call `param(String)` using the parameter name and then call the appropriate
 setter:
 
