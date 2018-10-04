@@ -5,7 +5,7 @@ import java.sql.Statement;
 import org.jdbx.QueryResult;
 
 
-/*
+/**
  * A functional interface for a service which reads the returned column values
  * from an update result.
  */
