@@ -33,13 +33,12 @@ import org.jdbx.function.GetReturnCols;
 public abstract class Update extends StmtRunnable
 {
 	/**
-	 * Instructs the Update to retrieve the update count as long value.
-	 * The large count can be retrieved from the result by calling {@link UpdateResult#largeCount()}
+	 * Instructs the Update to enable large update counts.
 	 * @see Statement#executeUpdate(String)
 	 * @see Statement#executeLargeUpdate(String)
 	 * @return this
 	 */
-	public Update returnLargeCount()
+	public Update enableLargeCount()
 	{
 		large_ = true;
 		return this;

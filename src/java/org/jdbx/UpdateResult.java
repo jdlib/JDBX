@@ -56,23 +56,11 @@ public class UpdateResult<V>
 	 * Returns the number of affected records.
 	 * @return the update count
 	 */
-	public int count()
+	public long count()
 	{
-		return (int)count_;
+		return count_;
 	}
 	
-	
-	/**
-	 * Returns the number of affected records as long.
-	 * Unless you {@link Update#returnLargeCount() activate large updates}, the returned value will 
-	 * be in the int range.
-	 * @return the update count as long
-	 */
-	public long largeCount()
-	{
-		return (int)count_;
-	}
-
 	
 	/**
 	 * Checks if the count stored in the result matches the expected count.

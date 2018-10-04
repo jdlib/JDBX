@@ -57,7 +57,7 @@ public class StaticStmtTest extends JdbxTest
 	@Test public void testQuery() throws JdbxException
 	{
 		String sql;
-		int count;
+		long count;
 
 		sql   = "SELECT COUNT(*) FROM STest";
 		count = stmt_.query(sql).row ().col().getInt();
@@ -105,7 +105,7 @@ public class StaticStmtTest extends JdbxTest
 	@Test public void testUpdate() throws JdbxException
 	{
 		String sql;
-		int count;
+		long count;
 
 		sql = "INSERT INTO STest (name) VALUES ('A'), ('B')";
 		UpdateResult<List<Integer>> result = stmt_.createUpdate(sql)

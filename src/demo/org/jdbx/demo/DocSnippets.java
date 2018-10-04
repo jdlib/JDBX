@@ -304,7 +304,7 @@ public class DocSnippets
 	
 	public void updateRun() throws Exception
 	{
-		int count;
+		long count;
 		
    		count = stmt.update(null).count();
    	   	count = pstmt.update().count();
@@ -325,7 +325,7 @@ public class DocSnippets
         UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
             .returnAutoKeyCols()        // step 1: tell the Update to return auto-generated key columns
             .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key value as Integer 
-        int inserted  = result.count();
+        long inserted = result.count();
         Integer newId = result.value(); 
 
         newId = stmt.createUpdate("INSERT INTO ...")
@@ -348,9 +348,9 @@ public class DocSnippets
 	public void updateAutoGen() throws Exception
 	{
 	    long updated = stmt.createUpdate("UPDATE MegaTable SET timestamp = NOW()") 
-	        .returnLargeCount()  // configures the Update 
+	        .enableLargeCount()  // configures the Update 
 	        .run()               // runs the Update and returns the UpdateResult
-	        .largeCount();       // returns the count as long
+	        .count();            // returns update count
 	}   
 
 

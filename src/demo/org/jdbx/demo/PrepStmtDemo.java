@@ -84,7 +84,7 @@ public class PrepStmtDemo
 		pstmt.init("UPDATE Colors SET used = 1 WHERE name = ?");
 
 		// simply getting the update count
-		int updated = pstmt.params("red").update().count();
+		long updated = pstmt.params("red").update().count();
 
 		// 2. initialize and instruct the statement to return generated keys.
 		pstmt.init().returnCols("id").sql("INSERT INTO User VALUES (DEFAULT, ?, ?)");

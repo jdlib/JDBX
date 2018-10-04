@@ -93,7 +93,7 @@ public class StaticStmtDemo
 		// SQL command string is passed to StaticStmt.update or StaticStmt.createUpdate
 
 		// simply getting the update count
-		int updated = stmt.update("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')").count();
+		long updated = stmt.update("INSERT INTO User VALUES (DEFAULT, 'John', 'Doe')").count();
 
 	    // updating, and returning generated keys
 		Integer newUserId = stmt

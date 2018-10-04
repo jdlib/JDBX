@@ -37,7 +37,7 @@ public class SimpleDemo
 
 		// query without params - read a single int value
 		sql = "SELECT COUNT(*) FROM Cities";
-		int count =	Jdbx.query(con, sql)
+		int nrOfCities = Jdbx.query(con, sql)
 			.row()				// only read first row
 			.col()				// get first column
 			.getInt();			// and return as int
@@ -58,9 +58,9 @@ public class SimpleDemo
 			.read(City::read);	// and create a city object for each row
 
 
+		long count;
 		// run a parameterless update
 		count = Jdbx.update(con, "UPDATE Status SET flag = 'T' WHERE flag = 'F'").count();
-
 
 		// run a parameterized insert
 		count = Jdbx.update(con, "INSERT INTO Status (flag) VALUES (?)", "F").count();

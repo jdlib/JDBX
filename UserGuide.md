@@ -424,8 +424,8 @@ If you just want to run an update command and are not interested in returned col
 Both calls return the update result as an `org.jdbx.UpdateResult` object. The method `UpdateResult.count()` 
 gives the update count, i.e. the number of affected records:
 
-	String sql   = "INSERT INTO ...";
-	int inserted = stmt.update(sql).count();
+	String sql    = "INSERT INTO ...";
+	long inserted = stmt.update(sql).count();
 	if (inserted != 1)
 	    throw new IllegalStateException("insert failed");
 
@@ -437,7 +437,7 @@ Testing the update count can be shortened by calling `UpdateResult.requireCount`
 ### <a name="updates-updateclass">4.2 Update class
 
 If you want to retrieve returned columns values, e.g. auto-generated primary key values, or want to enable large update counts 
-(represented as `long` value), then call `StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` which returns a `org.jdbx.Update` object.
+then call `StaticStmt.createUpdate(String)` and `PrepStmt.createUpdate()` which returns a `org.jdbx.Update` object.
 The `Update` class provides a fluent API to first configure and then run the update to return a `UpdateResult`:
     
      Update u = stmt.createUpdate(sql);
@@ -461,7 +461,7 @@ For `StaticStmt` steps 1) and 2) are done by configuring the `Update` object:
     UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe')")
         .returnAutoKeyCols()        // step 1: tell the Update to return the auto-generated key columns
         .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key column as Integer 
-    int inserted  = result.count();
+    long inserted = result.count();
     Integer newId = result.value();
     
 The convenience method `UpdateResult.requireValue` tests if the column value stored in the result is not null and returns the value.
@@ -499,13 +499,14 @@ For `PrepStmt` step 1) must be done during the initialization phase:
         
 ### <a name="updates-large">4.4 Return large update counts
 
-Since version 4.2 JDBC has an API for large update counts, represented as `long` values. Since not all
-JDBC drivers support this feature JDBX gives optional access to large count values:       
-
+JDBC reports the update count as `int` value. Since version 4.2 JDBC can also return large update counts as a `long` value.
+JDBX always reports the update count as `long` but since not all JDBC drivers support large update counts you will
+need to explicitly ask for large update counts - else the returned count will always be in the `int` range.
+ 
     long updated = stmt.createUpdate("UPDATE MegaTable SET timestamp = NOW()") 
-        .returnLargeCount()  // configures the Update to retrieve large counts 
+        .enableLargeCount()  // configures the Update to retrieve large counts 
         .run()               // runs the Update and returns the UpdateResult
-        .largeCount();       // returns the update count as long   
+        .count();            // returns the update count
         
 
 ## <a name="execute"></a>5. Execute arbitrary SQL commands
