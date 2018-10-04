@@ -323,7 +323,7 @@ public class DocSnippets
 	public void updateReturnCols() throws Exception
 	{
         UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
-            .returnAutoKeyCols()        // step 1: tell the Update to return auto-generated key value
+            .returnAutoKeyCols()        // step 1: tell the Update to return auto-generated key columns
             .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key value as Integer 
         int inserted  = result.count();
         Integer newId = result.value(); 

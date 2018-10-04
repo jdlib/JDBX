@@ -23,17 +23,20 @@ package org.jdbx;
  */
 public class ReturnCols
 {
+	/**
+	 * A ReturnCols constant representing the auto-generated columns.
+	 */
 	public static final ReturnCols AUTOGEN = new ReturnCols();
 	
 	
 	/**
-	 * A Builder interface to define which columns should be reported.
+	 * A Builder interface to define which columns should be reported when a INSERT is executed.
 	 * @param <I> the concrete builder implementation
 	 */
 	public static interface Builder<I extends Builder<I>>
 	{
 		/**
-		 * The columns defined by the ReturnCols object are returned.
+		 * The columns defined by the given ReturnCols object are returned.
 		 * @param cols the ReturnCols object or null if no columns should be returned
 		 * @return this
 		 */
@@ -41,7 +44,8 @@ public class ReturnCols
 
 		
 		/**
-		 * The columns which contain auto generated keys (decided by the JDBC driver/database) are returned.
+		 * The columns which contain auto generated keys are returned.
+		 * Ultimately the JDBC driver or database determine which columns are returned.   
 		 * @return this
 		 */
 		public default I returnAutoKeyCols()
@@ -51,7 +55,7 @@ public class ReturnCols
 
 
 		/**
-		 * Defines the indexes of the columns which are returned.
+		 * Specifies the indexes of the columns which are returned.
 		 * @param colIndexes the indexes
 		 * @return this
 		 */
@@ -62,7 +66,7 @@ public class ReturnCols
 
 
 		/**
-		 * Defines the names of the columns which should be returned.
+		 * Specifies the names of the columns which should be returned.
 		 * @param colNames the names
 		 * @return this
 		 */
@@ -76,7 +80,7 @@ public class ReturnCols
 	/**
 	 * Creates a new ReturnCols object representing the auto generated key columns.
 	 */
-	public ReturnCols()
+	private ReturnCols()
 	{
 		this(null, null);
 	}
