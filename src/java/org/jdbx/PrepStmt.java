@@ -4,6 +4,7 @@ package org.jdbx;
 import java.sql.Connection;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.Map;
@@ -436,7 +437,7 @@ public class PrepStmt extends Stmt
 	public Update createUpdate() throws JdbxException
 	{
 		checkInitialized();
-		return new PrepStmtUpdate(this::getJdbcStmt);
+		return new PrepUpdate();
 	}
 
 
@@ -448,6 +449,36 @@ public class PrepStmt extends Stmt
 	{
 		return createUpdate().run();
 	}
+	
+	
+	private class PrepUpdate extends Update
+	{
+		@Override protected long runUpdateImpl(boolean large) throws Exception
+		{
+			PreparedStatement pstmt = getJdbcStmt();
+			return large ?
+				pstmt.executeLargeUpdate() :
+				pstmt.executeUpdate();
+		}
+
+
+		@Override protected ResultSet getGeneratedKeys() throws Exception
+		{
+			return getJdbcStmt().getGeneratedKeys();
+		}
+
+
+		@Override protected void cleanup() throws Exception
+		{
+		}
+
+
+		@Override protected String toDescription()
+		{
+			return sql_;
+		}
+	}
+
 
 
 	//------------------------------
