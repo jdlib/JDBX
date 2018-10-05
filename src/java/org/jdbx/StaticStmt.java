@@ -233,7 +233,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		@Override protected long runUpdateImpl(boolean large) throws Exception
+		@Override protected long run(boolean large) throws Exception
 		{
 			return large ? runLargeUpdate() : runNormalUpdate();
 		}

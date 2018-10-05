@@ -188,10 +188,10 @@ public class Jdbx
 		}
 
 
-		@Override protected long runUpdateImpl(boolean large) throws Exception
+		@Override protected long run(boolean large) throws Exception
 		{
 			update_ = provider_.createUpdate();
-			return update_.runUpdate(large);
+			return update_.run(large);
 		}
 
 

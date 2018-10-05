@@ -53,21 +53,7 @@ public abstract class Update extends StmtRunnable
 	 */
 	public UpdateResult<Void> run() throws JdbxException
 	{
-		long count = 0L;
-		Exception ex = null;
-		try
-		{
-			count = runUpdate(large_);
-		}
-		catch(Exception e)
-		{
-			ex = e;
-		}
-		finally
-		{
-			cleanup(ex);
-		}
-		return new UpdateResult<>(count);
+		return runGetCols((GetReturnCols<Void>)null);
 	}
 
 
@@ -105,17 +91,20 @@ public abstract class Update extends StmtRunnable
 	 */
 	public <V> UpdateResult<V> runGetCols(GetReturnCols<V> reader) throws JdbxException
 	{
-		Check.notNull(reader, "reader");
-		UpdateResult<V> result = null;
+		V value = null;
+		long count = 0L;
 
 		Exception ex = null;
 		try
 		{
-			long count = (int)runUpdate(false);
-			try (ResultSet rs = getGeneratedKeys()) 
-			{ 
-				V value = reader.read(count, QueryResult.of(rs));
-				result  = new UpdateResult<>(count, value);
+			registerRun();
+			count = run(large_);
+			if (reader != null)
+			{
+				try (ResultSet rs = getGeneratedKeys()) 
+				{ 
+					value = reader.read(count, QueryResult.of(rs));
+				}
 			}
 		}
 		catch (Exception e)
@@ -126,21 +115,14 @@ public abstract class Update extends StmtRunnable
 		{
 			cleanup(ex);
 		}
-		return result;
-	}
-
-
-	protected final long runUpdate(boolean large) throws Exception
-	{
-		registerRun();
-		return runUpdateImpl(large);
+		return new UpdateResult<>(count, value);
 	}
 
 
 	/**
-	 * May only be called by {@link #runUpdate()}
+	 * May only be called by {@link #runGetCols()}
 	 */
-	protected abstract long runUpdateImpl(boolean large) throws Exception;
+	protected abstract long run(boolean large) throws Exception;
 
 
 	/**

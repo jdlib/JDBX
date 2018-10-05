@@ -453,7 +453,7 @@ public class PrepStmt extends Stmt
 	
 	private class PrepUpdate extends Update
 	{
-		@Override protected long runUpdateImpl(boolean large) throws Exception
+		@Override protected long run(boolean large) throws Exception
 		{
 			PreparedStatement pstmt = getJdbcStmt();
 			return large ?
