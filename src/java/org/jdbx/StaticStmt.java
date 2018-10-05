@@ -284,7 +284,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		private String sql_;
+		private final String sql_;
 		private ReturnCols returnCols_;
 	}
 
