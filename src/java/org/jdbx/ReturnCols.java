@@ -19,12 +19,12 @@ package org.jdbx;
 
 /**
  * ReturnCols represents the columns which should be returned
- * when a INSERT command is executed.
+ * when a sql INSERT or UPDATE command is executed.
  */
 public class ReturnCols
 {
 	/**
-	 * A ReturnCols constant representing the auto-generated columns.
+	 * A ReturnCols constant representing the columns with auto-generated values.
 	 */
 	public static final ReturnCols AUTOGEN = new ReturnCols();
 	
@@ -108,8 +108,8 @@ public class ReturnCols
 
 	private ReturnCols(int[] indexes, String[] names)
 	{
-		indexes_ 	= indexes;
-		names_ 		= names;
+		indexes_ = indexes;
+		names_ 	 = names;
 	}
 
 	
