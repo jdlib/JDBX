@@ -55,13 +55,35 @@ public class ReturnCols
 
 
 		/**
-		 * Specifies the indexes of the columns which are returned.
+		 * Specifies the 1-based index of the column which is returned.
+		 * @param colIndex the index
+		 * @return this
+		 */
+		public default I returnCol(int colIndex)
+		{
+			return returnCols(colIndex);
+		}
+
+
+		/**
+		 * Specifies the 1-based indexes of the columns which are returned.
 		 * @param colIndexes the indexes
 		 * @return this
 		 */
 		public default I returnCols(int... colIndexes)
 		{
 			return returnCols(new ReturnCols(colIndexes));
+		}
+
+
+		/**
+		 * Specifies the name of the columns which should be returned.
+		 * @param colName the name
+		 * @return this
+		 */
+		public default I returnCol(String colName)
+		{
+			return returnCols(colName);
 		}
 
 
