@@ -171,7 +171,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		@Override protected String toDescription()
+		@Override protected String describe()
 		{
 			return sql_;
 		}
@@ -278,7 +278,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		@Override protected String toDescription()
+		@Override protected String describe()
 		{
 			return sql_;
 		}
@@ -340,7 +340,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		@Override protected String toDescription()
+		@Override protected String describe()
 		{
 			return sql_;
 		}

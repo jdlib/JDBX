@@ -489,7 +489,7 @@ public class PrepStmt extends Stmt
 		}
 
 
-		@Override protected String toDescription()
+		@Override protected String describe()
 		{
 			return sql_;
 		}

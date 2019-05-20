@@ -47,7 +47,7 @@ class PrepStmtExecute extends Execute
 	}
 
 
-	@Override protected String toDescription()
+	@Override protected String describe()
 	{
 		return supplier_.toString();
 	}

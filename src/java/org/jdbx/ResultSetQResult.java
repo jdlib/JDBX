@@ -42,7 +42,7 @@ class ResultSetQResult extends QueryResult
 	}
 
 
-	@Override protected String toDescription()
+	@Override protected String describe()
 	{
 		return result_.toString();
 	}

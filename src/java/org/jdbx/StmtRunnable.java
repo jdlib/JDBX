@@ -30,7 +30,7 @@ abstract class StmtRunnable
 	protected abstract String getRunnableType();
 
 
-	protected abstract String toDescription();
+	protected abstract String describe();
 
 
 	/**
@@ -39,7 +39,7 @@ abstract class StmtRunnable
 	 */
 	@Override public final String toString()
 	{
-		return getRunnableType() + ':' + toDescription();
+		return getRunnableType() + ':' + describe();
 	}
 
 

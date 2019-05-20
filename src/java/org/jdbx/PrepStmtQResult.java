@@ -44,7 +44,7 @@ class PrepStmtQResult extends QueryResult
 	}
 
 
-	@Override protected String toDescription()
+	@Override protected String describe()
 	{
 		return supplier_.toString();
 	}

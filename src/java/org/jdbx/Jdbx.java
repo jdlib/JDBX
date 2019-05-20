@@ -186,7 +186,7 @@ public class Jdbx
 		}
 
 
-		@Override protected String toDescription()
+		@Override protected String describe()
 		{
 			return provider_.toString();
 		}
@@ -224,7 +224,7 @@ public class Jdbx
 		}
 
 
-		@Override protected String toDescription()
+		@Override protected String describe()
 		{
 			return provider_.toString();
 		}
