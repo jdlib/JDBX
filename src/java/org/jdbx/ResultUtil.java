@@ -25,7 +25,7 @@ import java.util.Map;
 
 
 /**
- * Provides helper methods to read values from a ResultSet.
+ * Provides helper methods to read values from a JDBC ResultSet.
  */
 class ResultUtil
 {
