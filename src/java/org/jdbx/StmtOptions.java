@@ -204,7 +204,7 @@ public class StmtOptions
 	 */
 	public FetchDirection getFetchDirection() throws JdbxException
 	{
-		return FetchDirection.MAP.forCode(get(StmtOption.FETCHDIRECTION));
+		return JdbcEnumMap.FETCH_DIRECTION.forCode(get(StmtOption.FETCHDIRECTION));
 	}
 
 

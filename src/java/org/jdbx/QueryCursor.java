@@ -31,7 +31,7 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * QueryCursor represents the result cursor of a SQL query. 
+ * QueryCursor represents the result of a SQL query. 
  * It is a wrapper class for java.sql.ResultSet.
  */
 public class QueryCursor implements AutoCloseable
@@ -386,7 +386,7 @@ public class QueryCursor implements AutoCloseable
 
 
 	/**
-	 * Sets the fetch size of the ResultSet.
+	 * Sets the fetch size of the cursor.
 	 * @param size the fetch size
 	 */
 	public void setFetchSize(int size) throws JdbxException
@@ -396,18 +396,18 @@ public class QueryCursor implements AutoCloseable
 
 
 	/**
-	 * Returns the fetch direction of the ResultSet.
+	 * Returns the fetch direction of the cursor.
 	 * @return the fetch direction as enum value
 	 */
 	public FetchDirection getFetchDirection() throws JdbxException
 	{
-		return FetchDirection.MAP.forCode(toInt(ResultSet::getFetchDirection));
+		return JdbcEnumMap.FETCH_DIRECTION.forCode(toInt(ResultSet::getFetchDirection));
 	}
 
 
 
 	/**
-	 * Sets the fetch direction of the ResultSet.
+	 * Sets the fetch direction of the cursor.
 	 * @param dir the fetch direction as enum value
 	 */
 	public void setFetchDirection(FetchDirection dir) throws JdbxException
@@ -418,12 +418,12 @@ public class QueryCursor implements AutoCloseable
 
 
 	/**
-	 * Returns the concurrency of the ResultSet.
+	 * Returns the concurrency of the cursor.
 	 * @return the concurrency as enum value
 	 */
 	public Concurrency getConcurrency() throws JdbxException
 	{
-		return Concurrency.MAP.forCode(toInt(ResultSet::getConcurrency));
+		return JdbcEnumMap.CONCURRENCY.forCode(toInt(ResultSet::getConcurrency));
 	}
 
 
@@ -433,17 +433,17 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public Holdability getHoldability() throws JdbxException
 	{
-		return Holdability.MAP.forCode(toInt(ResultSet::getHoldability));
+		return JdbcEnumMap.HOLDABILITY.forCode(toInt(ResultSet::getHoldability));
 	}
 
 
 	/**
-	 * Returns the type of the ResultSet.
+	 * Returns the result type of the ResultSet.
 	 * @return the type as enum value
 	 */
 	public ResultType getType() throws JdbxException
 	{
-		return ResultType.MAP.forCode(toInt(ResultSet::getType));
+		return JdbcEnumMap.RESULT_TYPE.forCode(toInt(ResultSet::getType));
 	}
 
 

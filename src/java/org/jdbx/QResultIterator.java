@@ -23,8 +23,8 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * QResultIterator is a lightweight wrapper around a QueryResult.
- * It allows easy reading of subsequent result row values.
+ * QResultIterator is a lightweight wrapper around a QueryCursor.
+ * It allows easy reading of subsequent cursor rows.
  */
 public class QResultIterator implements GetResult, AutoCloseable
 {
@@ -32,7 +32,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 * Returns a QResultIterator for the result
 	 * which does not close the Result when it is closed.
 	 * Use this factory method to avoid compiler warnings
-	 * for unclosed resources when you don't want to close the ResultSet.
+	 * for unclosed resources when you don't want to close the cursor.
 	 * @param cursor the cursor which is iterated
 	 * @return the new QResultIterator
 	 */

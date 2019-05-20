@@ -30,15 +30,18 @@ import java.sql.ResultSet;
  */
 public enum Concurrency implements JdbcEnum
 {
+	/**
+	 * See {@link ResultSet#CONCUR_READ_ONLY}.
+	 */
 	READ_ONLY(ResultSet.CONCUR_READ_ONLY),
-	CONCUR_UPDATABLE(ResultSet.CONCUR_UPDATABLE),
-	INVALID(-1);
-
 
 	/**
-	 * Maps codes to enums.
+	 * See {@link ResultSet#CONCUR_UPDATABLE}.
 	 */
-	public static final Map<Concurrency> MAP = new Map<>(Concurrency.class, INVALID);
+	CONCUR_UPDATABLE(ResultSet.CONCUR_UPDATABLE),
+	
+	
+	INVALID(-1);
 
 
 	Concurrency(int code)

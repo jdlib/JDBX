@@ -22,7 +22,7 @@ import java.sql.ResultSet;
 
 /**
  * Holdability is an Enum for the JDBC constants
- * ResultSet.HOLD_CURSORS_OVER_COMMIT and ResultSet.CLOSE_CURSORS_AT_COMMIT.
+ * {@link ResultSet#HOLD_CURSORS_OVER_COMMIT} and {@link ResultSet#CLOSE_CURSORS_AT_COMMIT}.
  * Given a JDBX statement object, you can configure the result holdability as follows:
  * <p><code>stmt.options().resultHoldability(Holdability.nnn)</code>
  */
@@ -33,21 +33,12 @@ public enum Holdability implements JdbcEnum
 	INVALID(-1);
 
 
-	/**
-	 * Maps codes to enums.
-	 */
-	public static final Map<Holdability> MAP = new Map<>(Holdability.class, INVALID);
-
-
 	Holdability(int code)
 	{
 		code_ = code;
 	}
 
 
-	/**
-	 * Returns the JDBC constant associated with the enum.
-	 */
 	@Override public int getCode()
 	{
 		return code_;

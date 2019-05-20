@@ -48,5 +48,5 @@ class ResultSetQResult extends QueryResult
 	}
 
 
-	private ResultSet result_;
+	private final ResultSet result_;
 }

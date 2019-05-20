@@ -85,8 +85,8 @@ public abstract class Update extends StmtRunnable
 
 	/**
 	 * Runs the command and passes the result-set of the generated keys to the reader.
-	 * @param reader a reader functions. It read the keys from the update result-set and returns it as object of type V.
-	 * @param <V> the type of the value returned by the AutoKeysReader
+	 * @param reader a reader which receives the result-set, extracts the generated keys and returns them as object of type V.
+	 * @param <V> the type of the value returned by the reader
 	 * @return an UpdateResult holding the update count and the column values
 	 */
 	public <V> UpdateResult<V> runGetCols(GetReturnCols<V> reader) throws JdbxException

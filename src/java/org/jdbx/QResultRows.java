@@ -51,7 +51,7 @@ public class QResultRows
 
 	/**
 	 * Loops through all rows of the ResultSet and calls
-	 * the ResultSet consumer for each row.
+	 * the consumer for each row.
 	 * @param consumer a ResultSet consumer
 	 */
 	public void forEach(CheckedConsumer<QueryCursor> consumer) throws JdbxException
@@ -106,7 +106,7 @@ public class QResultRows
 
 
 	/**
-	 * Loops through all rows of the ResultSet, creates a Map for every row and
+	 * Loops through all rows of the result, creates a Map for every row and
 	 * returns a List of these maps.
 	 * @return the list. Each Map entry in the list maps column name to column value.
 	 */
