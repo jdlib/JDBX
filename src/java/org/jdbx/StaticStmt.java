@@ -202,7 +202,7 @@ public class StaticStmt extends Stmt
 	/**
 	 * Executes an update operation.
 	 * @param sql a SQL command
-	 * @return the number of affected records.
+	 * @return a UpdateResult containing the number of affected records.
 	 */
 	public UpdateResult<Void> update(String sql) throws JdbxException
 	{
