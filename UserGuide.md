@@ -29,7 +29,7 @@ JDBX User Guide
 
 ## <a name="stmts"></a>1. Intro
 
-JDBX offers an alternative way to execute SQL commands and read query or update results.
+JDBX offers a JDBC  alternative to to execute SQL commands and read query or update results.
 For that it replaces JDBC `Statement` and `ResultSet` classes with an own API.
 Still the starting point of all its operations is a `java.sql.Connection` or `javax.sql.DataSource` object. 
  
@@ -41,7 +41,7 @@ Still the starting point of all its operations is a `java.sql.Connection` or `ja
 
 Statements are used to execute SQL commands. 
 JDBX provides three alternative statement classes to replace the corresponding JDBC classes. 
-(Implementation-wise the JDBX statements wrap their JDBC counterpart):
+Implementation-wise the JDBX statements wrap their JDBC counterpart:
 
 JDBC|JDBX|Used to 
 ----|----|-------
@@ -84,7 +84,7 @@ connection will also be closed automatically.
 ### <a name="stmts-init"></a>2.3 Initialize statements
 
 You need to initialize `PrepStmt` and `CallStmt` by calling its `init(String)` method with a SQL command before you can execute the statement. 
-The SQL command string uses `?` as placeholder for statement parameters:
+The SQL command string uses `?` as placeholder for positional parameters:
 
     PrepStmt pstmt = new PrepStmt(con);
     pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
@@ -102,7 +102,7 @@ The terminal call of the `.sql(String)` method to specify a SQL command is manda
     // use named parameters instead of indexed parameters
     pstmt.init().namedParams().sql("UPDATE Users SET name = :name WHERE id = :id");
 
-A `StaticStmt` is already initialized when it is created- the SQL command which is executed by the `StaticStmt`
+A `StaticStmt` is already initialized when it is created - the SQL command which is executed by the `StaticStmt`
 is not precompiled and passed to the statement when you run a query or update.
 
 Implementation-wise initialization of a JDBX statement is the equivalent of creating a JDBC statement
@@ -117,7 +117,7 @@ To set or retrieve statement options use the builder returned by the `options()`
     
 ### <a name="stmts-params"></a>2.5 Setting parameters
 
-The SQL command string of a `PrepStmt`and `CallStmt` can (or should) contain parameters, specified as `?` within the SQL string: 
+The SQL command string of a `PrepStmt`and `CallStmt` can (or should) contain positional parameters, specified as `?` within the SQL string: 
  
     PrepStmt pstmt = ...
     pstmt.init("INSERT INTO Rooms (id, name, area) VALUES (DEFAULT, ?, ?)");
