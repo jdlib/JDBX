@@ -72,8 +72,8 @@ Perform a parameterized INSERT, return the auto generated primary key, convert a
     public Integer createUser(Connection con, String firstName, String lastName) {
         try (PrepStmt pstmt = new PrepStmt(con)) {
             return pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
-            	.params(firstName, lastName);
-            	.createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
+                .params(firstName, lastName);
+                .createUpdate().runGetCol(Integer.class).requireCount(1).requireValue();
         }
     }
 	

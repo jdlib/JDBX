@@ -92,7 +92,7 @@ The SQL command string uses `?` as placeholder for positional parameters:
     CallStmt cstmt = new CallStmt(con);
     cstmt.init("{call getUserName(?, ?)}");
     
-PrepStmt allows for more initialization options: Calling `init()` on a PrepStmt which will return an initialization builder.
+PrepStmt allows for more initialization options: Calling `init()` on a PrepStmt will return an initialization builder.
 The builder allows you to define the returned columns or if the sql statement uses named parameters.
 The terminal call of the `.sql(String)` method to specify a SQL command is mandatory in order to complete the initialization:
 
@@ -224,11 +224,11 @@ which provides a fluent API to extract values from the result:
      QueryResult qr = stmt.query("SELECT * FROM Cities WHERE id = 51");
      QueryResult qr = pstmt.init("SELECT * FROM Cities WHERE id = ?").params(51).query();
      
-In the following variable `qr` represents a `QueryResult` object obtained from a call to a statements `query` method.     
-But because of its fluent API you rarely will need to store a `QueryResult` in a local variable but rather chain
+In the following variable `qr` represents a `QueryResult` object obtained from a call to a statement's `query` method.     
+Thanks to its fluent API you rarely will need to store a `QueryResult` in a local variable but rather chain
 method calls until you receive the result value of the query.      
 
-Also note that the actual JDBC query is usually not run until you invoke the terminal method of the fluent call chain.
+Note that the actual JDBC query is usually not run until you invoke the terminal method of the fluent call chain.
 
 
 ### <a name="queries-singlerow">3.2 Read a single result row
