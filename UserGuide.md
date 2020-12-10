@@ -233,7 +233,7 @@ Note that the actual JDBC query is usually not run until you invoke the terminal
 
 ### <a name="queries-singlerow">3.2 Read a single result row
 
-Call `QueryResult.row()` to retrieve a builder to read values from the **first result row**:     
+Call `QueryResult.row()` to retrieve a `QResultOneRow` builder to read values from the **first result row**:     
      
     qr.row()...     
     qr.row().col()...              // returns a builder to retrieve a value of the first column
@@ -260,7 +260,7 @@ You may also want to detect the case when the result contains more than one row,
 
 ### <a name="queries-allrows"></a>3.3 Read all result rows
 
-Call `QueryResult.rows()` to retrieve a builder to read values from all rows and return as `java.util.List`:
+Call `QueryResult.rows()` to retrieve a `QResultRows` builder to read values from all rows and return as `java.util.List`:
 
     qr.rows()...
     qr.rows().col()...                  // return values of first column
