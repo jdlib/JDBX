@@ -27,6 +27,7 @@ import java.sql.Statement;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedSupplier;
+import org.jdbx.function.DoForIndex;
 import org.jdbx.function.DoForName;
 import org.jdbx.function.GetForIndex;
 import org.jdbx.function.GetForName;
@@ -200,7 +201,7 @@ public class CallStmt extends Stmt
 	
 	/**
 	 * Returns a IndexedParam object to set or get the value of a parameter by index.
-	 * @param index the 1-based parameter index 
+	 * @param index a parameter index, starting at 1.
 	 * @return the IndexedParam
 	 */
 	public IndexedParam param(int index)
@@ -339,6 +340,13 @@ public class CallStmt extends Stmt
 		}
 
 		
+		public <T> void apply(DoForIndex<CallableStatement> runner) throws JdbxException
+		{
+			Check.notNull(runner, "runner");
+			Unchecked.run(() -> runner.accept(getJdbcStmt(), index_));
+		}
+
+
 		private final int index_;
 	}
 

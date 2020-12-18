@@ -366,7 +366,7 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * A parameter object for a parameter index.
+	 * A SetParam class for a numbered parameter.
 	 */
 	public class IndexedParam implements SetParam<PreparedStatement>
 	{

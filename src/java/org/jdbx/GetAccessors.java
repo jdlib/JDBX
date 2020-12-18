@@ -216,8 +216,8 @@ class GetAccessors<T>
 
 	private static <T> GetForIndex<ResultSet,T> normResultForIndex(GetForIndex<ResultSet,T> fn)
 	{
-		return (rs,i) -> {
-			T value = fn.get(rs, i);
+		return (rs, index) -> {
+			T value = fn.get(rs, index);
 			return !rs.wasNull() ? value : null;
 		};
 	}
@@ -225,8 +225,8 @@ class GetAccessors<T>
 
 	private static <T> GetForName<ResultSet,T> normResultForName(GetForName<ResultSet,T> fn)
 	{
-		return (rs,n) -> {
-			T value = fn.get(rs, n);
+		return (rs, name) -> {
+			T value = fn.get(rs, name);
 			return !rs.wasNull() ? value : null;
 		};
 	}
@@ -234,18 +234,18 @@ class GetAccessors<T>
 
 	private static <T> GetForIndex<CallableStatement,T> normCallForIndex(GetForIndex<CallableStatement,T> fn)
 	{
-		return (rs,i) -> {
-			T value = fn.get(rs, i);
-			return !rs.wasNull() ? value : null;
+		return (cs, index) -> {
+			T value = fn.get(cs, index);
+			return !cs.wasNull() ? value : null;
 		};
 	}
 
 
 	private static <T> GetForName<CallableStatement,T> normCallForName(GetForName<CallableStatement,T> fn)
 	{
-		return (rs,n) -> {
-			T value = fn.get(rs, n);
-			return !rs.wasNull() ? value : null;
+		return (cs, name) -> {
+			T value = fn.get(cs, name);
+			return !cs.wasNull() ? value : null;
 		};
 	}
 }
