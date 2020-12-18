@@ -18,19 +18,19 @@ package org.jdbx.function;
 
 
 /**
- * GetForIndex can retrieve an indexed value from an object.
+ * GetForNumber can retrieve a numbered value from an object.
  * @param <OBJ> the type of the object
  * @param <V> the type of the value
  */
 @FunctionalInterface
-public interface GetForIndex<OBJ,V>
+public interface GetForNumber<OBJ,V>
 {
 	/**
 	 * Returns the value.
 	 * @param object an object
-	 * @param index an index
+	 * @param number a number
 	 * @return the value
 	 * @throws Exception if an error occurs
 	 */
-	public V get(OBJ object, int index) throws Exception;
+	public V get(OBJ object, int number) throws Exception;
 }

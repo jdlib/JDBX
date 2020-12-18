@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
-import org.jdbx.function.GetForIndex;
+import org.jdbx.function.GetForNumber;
 import org.jdbx.function.GetForName;
 
 
@@ -143,13 +143,13 @@ public class QResultRows
 	/**
 	 * Loops through all rows of the ResultSet, creates a value array for every row and
 	 * returns a List of these arrays.
-	 * @param colIndexes the indexes of the columns which should be read from every row
+	 * @param numbers the column numbers which should be read from every row
 	 * @return the list
 	 */
-	public List<Object[]> cols(int... colIndexes) throws JdbxException
+	public List<Object[]> cols(int... numbers) throws JdbxException
 	{
-		Check.notNull(colIndexes, "colIndexes");
-		return read(r -> ResultUtil.readValues(r.getJdbcResult(), colIndexes));
+		Check.notNull(numbers, "numbers");
+		return read(r -> ResultUtil.readValues(r.getJdbcResult(), numbers));
 	}
 
 
@@ -171,21 +171,21 @@ public class QResultRows
 	 * to return a list of values for the column,
 	 * @return a column object.
 	 */
-	public IndexedCol col()
+	public NumberedCol col()
 	{
 		return col(1);
 	}
 
 
 	/**
-	 * Returns a column object for the n-th result column. Use getters of the column object
+	 * Returns a column object for the result column with the given number. Use getters of the column object
 	 * to return a list of values for the column,
-	 * @param index a column index, starting at 1
+	 * @param number a column number, starting at 1
 	 * @return a column object.
 	 */
-	public IndexedCol col(int index)
+	public NumberedCol col(int number)
 	{
-		return new IndexedCol(index);
+		return new NumberedCol(number);
 	}
 
 
@@ -466,13 +466,13 @@ public class QResultRows
 
 
 	/**
-	 * A Column implementation for columns accessed by index.
+	 * A Column implementation for columns accessed by column number.
 	 */
-	public class IndexedCol extends Column
+	public class NumberedCol extends Column
 	{
-		private IndexedCol(int index)
+		private NumberedCol(int number)
 		{
-			index_ = Check.index(index);
+			number_ = Check.number(number);
 		}
 
 
@@ -484,14 +484,14 @@ public class QResultRows
 		@Override public <T> List<T> get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return read(r -> r.getJdbcResult().getObject(index_, type));
+			return read(r -> r.getJdbcResult().getObject(number_, type));
 		}
 
 
 		@Override protected <T> List<T> get(GetAccessors<T> accessor) throws JdbxException
 		{
 			Check.notNull(accessor, "accessor");
-			return get(accessor.resultForIndex);
+			return get(accessor.resultForNumber);
 		}
 
 
@@ -501,14 +501,14 @@ public class QResultRows
 		 * @param <T> the type of the function return value
 		 * @return the list
 		 */
-		public <T> List<T> get(GetForIndex<ResultSet,T> fn) throws JdbxException
+		public <T> List<T> get(GetForNumber<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return read(r -> fn.get(r.getJdbcResult(), index_));
+			return read(r -> fn.get(r.getJdbcResult(), number_));
 		}
 
 
-		private final int index_;
+		private final int number_;
 	}
 
 
@@ -519,7 +519,7 @@ public class QResultRows
 	{
 		private NamedCol(String name)
 		{
-			name_ = Check.colName(name);
+			name_ = Check.name(name);
 		}
 
 

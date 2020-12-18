@@ -20,7 +20,7 @@ package org.jdbx;
 import java.sql.ResultSet;
 import java.util.Map;
 import org.jdbx.function.CheckedFunction;
-import org.jdbx.function.GetForIndex;
+import org.jdbx.function.GetForNumber;
 import org.jdbx.function.GetForName;
 
 
@@ -135,13 +135,13 @@ public class QResultOneRow
 
 	/**
 	 * Reads the first row and returns its values as array.
-	 * @param indexes the indexes of the columns to read
+	 * @param numbers the numbers of the columns to read
 	 * @return the array or null if the result is empty.
 	 */
-	public Object[] cols(int... indexes) throws JdbxException
+	public Object[] cols(int... numbers) throws JdbxException
 	{
-		Check.notNull(indexes, "indexes");
-		return read(r -> ResultUtil.readValues(r.getJdbcResult(), indexes));
+		Check.notNull(numbers, "numbers");
+		return read(r -> ResultUtil.readValues(r.getJdbcResult(), numbers));
 	}
 
 
@@ -161,7 +161,7 @@ public class QResultOneRow
 	 * Returns a column object for the first column.
 	 * @return the column
 	 */
-	public IndexedCol col()
+	public NumberedCol col()
 	{
 		return col(1);
 	}
@@ -169,12 +169,12 @@ public class QResultOneRow
 
 	/**
 	 * Returns a column object for the n-th column.
-	 * @param index the column index, starting at 1.
+	 * @param number the column number, starting at 1.
 	 * @return the column
 	 */
-	public IndexedCol col(int index)
+	public NumberedCol col(int number)
 	{
-		return new IndexedCol(index);
+		return new NumberedCol(number);
 	}
 
 
@@ -190,13 +190,13 @@ public class QResultOneRow
 
 
 	/**
-	 * A Column implementation for columns accessed by index.
+	 * A Column implementation for columns accessed by column number.
 	 */
-	public class IndexedCol implements GetResult
+	public class NumberedCol implements GetResult
 	{
-		private IndexedCol(int index)
+		private NumberedCol(int number)
 		{
-			index_ = Check.index(index);
+			number_ = Check.number(number);
 		}
 
 
@@ -208,7 +208,7 @@ public class QResultOneRow
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
-			return read(r -> r.getJdbcResult().getObject(index_, type));
+			return read(r -> r.getJdbcResult().getObject(number_, type));
 		}
 
 
@@ -220,7 +220,7 @@ public class QResultOneRow
 		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
-			return read(r -> r.getJdbcResult().getObject(index_, map));
+			return read(r -> r.getJdbcResult().getObject(number_, map));
 		}
 
 
@@ -230,10 +230,10 @@ public class QResultOneRow
 		 * @param <T> the type of the value returned by the function
 		 * @return the object
 		 */
-		public <T> T get(GetForIndex<ResultSet,T> fn) throws JdbxException
+		public <T> T get(GetForNumber<ResultSet,T> fn) throws JdbxException
 		{
 			Check.notNull(fn, "fn");
-			return read(r -> fn.get(r.getJdbcResult(), index_));
+			return read(r -> fn.get(r.getJdbcResult(), number_));
 		}
 
 
@@ -244,11 +244,11 @@ public class QResultOneRow
 		@Override public <T> T get(GetAccessors<T> accessor) throws JdbxException
 		{
 			Check.notNull(accessor, "accessor");
-			return get(accessor.resultForIndex);
+			return get(accessor.resultForNumber);
 		}
 
 
-		private int index_;
+		private final int number_;
 	}
 
 
@@ -259,7 +259,7 @@ public class QResultOneRow
 	{
 		private NamedCol(String name)
 		{
-			name_ = Check.colName(name);
+			name_ = Check.name(name);
 		}
 
 

@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedSupplier;
-import org.jdbx.function.SetForIndex;
+import org.jdbx.function.SetForNumber;
 import org.jdbx.function.Unchecked;
 
 
@@ -252,8 +252,8 @@ public class PrepStmt extends Stmt
 			}
 			else if (returnCols_.getNames() != null)
 				stmt = con_.prepareStatement(sql, returnCols_.getNames());
-			else if (returnCols_.getIndexes() != null)
-				stmt = con_.prepareStatement(sql, returnCols_.getIndexes());
+			else if (returnCols_.getNumbers() != null)
+				stmt = con_.prepareStatement(sql, returnCols_.getNumbers());
 			else
 				stmt = con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			
@@ -313,26 +313,26 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * Sets the value of the parameter with the given index.
-	 * @param index a parameter index, starting at 1.
+	 * Sets the value of the parameter with the given number.
+	 * @param number a parameter number, starting at 1.
 	 * @param value a parameter value
 	 * @return this
 	 */
-	public PrepStmt param(int index, Object value) throws JdbxException
+	public PrepStmt param(int number, Object value) throws JdbxException
 	{
-		param(index).setObject(value);
+		param(number).setObject(value);
 		return this;
 	}
 
 
 	/**
-	 * Returns a parameter object for given index.
-	 * @param index a parameter index, starting at 1.
+	 * Returns a parameter object for given number.
+	 * @param number a parameter number, starting at 1.
 	 * @return the parameter object. Use setters of the parameter object to set a parameter value
 	 */
-	public IndexedParam param(int index)
+	public NumberedParam param(int number)
 	{
-		return new IndexedParam(index);
+		return new NumberedParam(number);
 	}
 
 
@@ -347,10 +347,10 @@ public class PrepStmt extends Stmt
 		checkInitialized();
 		if (paramMap_ == null)
 			throw new IllegalArgumentException("statement is not named: use init().named().cmd(sql) to create a named statement");
-		int[] indexes = paramMap_.get(name);
-		if (indexes == null)
+		int[] numbers = paramMap_.get(name);
+		if (numbers == null)
 			throw new IllegalArgumentException("sql command does not contain parameter '" + name + '\'');
-		return new NamedParam(indexes);
+		return new NamedParam(numbers);
 	}
 
 
@@ -368,20 +368,20 @@ public class PrepStmt extends Stmt
 	/**
 	 * A SetParam class for a numbered parameter.
 	 */
-	public class IndexedParam implements SetParam<PreparedStatement>
+	public class NumberedParam implements SetParam<PreparedStatement>
 	{
-		private IndexedParam(int index)
+		private NumberedParam(int number)
 		{
-			index_ = Check.index(index);
+			number_ = Check.number(number);
 		}
 
 
-		@Override public <T> void set(SetForIndex<PreparedStatement,T> setter, T value) throws JdbxException
+		@Override public <T> void set(SetForNumber<PreparedStatement,T> setter, T value) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			try
 			{
-				setter.set(getJdbcStmt(), index_, value);
+				setter.set(getJdbcStmt(), number_, value);
 			}
 			catch (Exception e)
 			{
@@ -390,7 +390,7 @@ public class PrepStmt extends Stmt
 		}
 
 
-		private final int index_;
+		private final int number_;
 	}
 
 
@@ -399,19 +399,19 @@ public class PrepStmt extends Stmt
 	 */
 	public class NamedParam implements SetParam<PreparedStatement>
 	{
-		private NamedParam(int[] indexes)
+		private NamedParam(int[] numbers)
 		{
-			indexes_ = indexes;
+			numbers_ = numbers;
 		}
 
 
-		@Override public <T> void set(SetForIndex<PreparedStatement,T> setter, T value) throws JdbxException
+		@Override public <T> void set(SetForNumber<PreparedStatement,T> setter, T value) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			try
 			{
-				for (int index : indexes_)
-					setter.set(getJdbcStmt(), index, value);
+				for (int number : numbers_)
+					setter.set(getJdbcStmt(), number, value);
 			}
 			catch (Exception e)
 			{
@@ -420,7 +420,7 @@ public class PrepStmt extends Stmt
 		}
 		
 		
-		private final int[] indexes_;
+		private final int[] numbers_;
 	}
 
 
@@ -547,14 +547,15 @@ public class PrepStmt extends Stmt
 		
 		
 		/**
-		 * Sets the value of the parameter with the given index.  Calls {@link PrepStmt#param(int, Object)}
-		 * @param index a parameter index, starting at 1.
+		 * Sets the value of the parameter with the given number.
+		 * Calls {@link PrepStmt#param(int, Object)}
+		 * @param number a parameter number, starting at 1.
 		 * @param value a parameter value
 		 * @return this
 		 */
-		public PrepBatch param(int index, Object value) throws JdbxException
+		public PrepBatch param(int number, Object value) throws JdbxException
 		{
-			stmt().param(index, value);
+			stmt().param(number, value);
 			return this;
 		}
 

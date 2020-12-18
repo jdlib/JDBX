@@ -94,7 +94,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 */
 	public boolean nextRow() throws JdbxException
 	{
-		resetIndex();
+		resetColNumber();
 		try
 		{
 			return resultSet_.next();
@@ -107,50 +107,50 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Returns the current column index.
-	 * @return the index
+	 * Returns the current column number.
+	 * @return the number, starting at 1
 	 */
-	public int getIndex()
+	public int getColNumber()
 	{
-		return colIndex_;
+		return colNumber_;
 	}
 
 
 	/**
-	 * Sets the current column index.
-	 * @param index the index (&gt;= 1)
+	 * Sets the current column number.
+	 * @param number the number, starting at 1
 	 */
-	public void setIndex(int index)
+	public void setColNumber(int number)
 	{
-		colIndex_ = Check.index(index);
+		colNumber_ = Check.number(number);
 	}
 
 
 	/**
-	 * Reset the current column index to 1.
+	 * Reset the current column number to 1.
 	 */
-	public void resetIndex()
+	public void resetColNumber()
 	{
-		colIndex_ = 1;
+		colNumber_ = 1;
 	}
 
 
 	/**
-	 * Increases the column index by 1.
+	 * Increases the column number by 1.
 	 */
 	public void skipCol()
 	{
-		colIndex_++;
+		colNumber_++;
 	}
 
 
 	/**
-	 * Increases the column index by the given delta.
+	 * Increases the column number by the given delta.
 	 * @param delta the delta
 	 */
 	public void skipCols(int delta)
 	{
-		setIndex(colIndex_ + delta);
+		setColNumber(colNumber_ + delta);
 	}
 
 
@@ -162,7 +162,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 		Check.notNull(type, "type");
 		try
 		{
-			return resultSet_.getObject(colIndex_++, type);
+			return resultSet_.getObject(colNumber_++, type);
 		}
 		catch (Exception e)
 		{
@@ -180,7 +180,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 		Check.notNull(map, "map");
 		try
 		{
-			return resultSet_.getObject(colIndex_++, map);
+			return resultSet_.getObject(colNumber_++, map);
 		}
 		catch (Exception e)
 		{
@@ -193,7 +193,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	{
 		try
 		{
-			return accessors.resultForIndex.get(resultSet_, colIndex_++);
+			return accessors.resultForNumber.get(resultSet_, colNumber_++);
 		}
 		catch (Exception e)
 		{
@@ -235,7 +235,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	}
 
 
-	private int colIndex_ = 1;
+	private int colNumber_ = 1;
 	private ResultSet resultSet_;
 	private boolean closeResult_;
 }

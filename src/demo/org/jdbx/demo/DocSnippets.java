@@ -213,7 +213,7 @@ public class DocSnippets
 		qr.rows();
 		qr.rows().col();                    // return values of first column
 		qr.rows().col().getString();        // return values of first column as List<String>
-		qr.rows().col(3);                   // return values of column by index
+		qr.rows().col(3);                   // return values of column by column number
 		qr.rows().col(3).getDouble();       // return values of third column, as List<Double>
 		qr.rows().col("sort");              // return values of column by name 
 		qr.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
@@ -230,7 +230,7 @@ public class DocSnippets
 	{
         qc.col();                    // first column
         qc.col().getString();        // first column as String
-        qc.col(3);                   // column by index
+        qc.col(3);                   // column by number
         qc.col(3).getDouble();       // third column as double
         qc.col("sort");              // column by name 
         qc.col("sort").getInteger(); // "sort" column, as Integer

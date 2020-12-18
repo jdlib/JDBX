@@ -246,8 +246,8 @@ public class StaticStmt extends Stmt
 				return jdbcStmt.executeUpdate(sql_);
 			else if (returnCols_.getNames() != null)
 				return jdbcStmt.executeUpdate(sql_, returnCols_.getNames());
-			else if (returnCols_.getIndexes() != null)
-				return jdbcStmt.executeUpdate(sql_, returnCols_.getIndexes());
+			else if (returnCols_.getNumbers() != null)
+				return jdbcStmt.executeUpdate(sql_, returnCols_.getNumbers());
 			else
 				return jdbcStmt.executeUpdate(sql_, Statement.RETURN_GENERATED_KEYS);
 		}
@@ -260,8 +260,8 @@ public class StaticStmt extends Stmt
 				return jdbcStmt.executeLargeUpdate(sql_);
 			else if (returnCols_.getNames() != null)
 				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getNames());
-			else if (returnCols_.getIndexes() != null)
-				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getIndexes());
+			else if (returnCols_.getNumbers() != null)
+				return jdbcStmt.executeLargeUpdate(sql_, returnCols_.getNumbers());
 			else
 				return jdbcStmt.executeLargeUpdate(sql_, Statement.RETURN_GENERATED_KEYS);
 		}
@@ -327,8 +327,8 @@ public class StaticStmt extends Stmt
 					hasResultSet = stmt.execute(sql_);
 				else if (returnCols_.getNames() != null)
 					hasResultSet = stmt.execute(sql_, returnCols_.getNames());
-				else if (returnCols_.getIndexes() != null)
-					hasResultSet = stmt.execute(sql_, returnCols_.getIndexes());
+				else if (returnCols_.getNumbers() != null)
+					hasResultSet = stmt.execute(sql_, returnCols_.getNumbers());
 				else
 					hasResultSet = stmt.execute(sql_, Statement.RETURN_GENERATED_KEYS);
 				return new ExecuteResult(stmt, hasResultSet);

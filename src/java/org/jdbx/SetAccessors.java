@@ -33,7 +33,7 @@ import java.sql.RowId;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
-import org.jdbx.function.SetForIndex;
+import org.jdbx.function.SetForNumber;
 import org.jdbx.function.SetForName;
 
 
@@ -180,9 +180,9 @@ class SetAccessors<T>
 	
 	public SetAccessors
 	(
-		SetForIndex<ResultSet,T> resultForIndex,
+		SetForNumber<ResultSet,T> resultForIndex,
 		SetForName<ResultSet,T> resultForName,
-		SetForIndex<PreparedStatement,T> paramForIndex
+		SetForNumber<PreparedStatement,T> paramForIndex
 	)
 	{
 		this.resultForIndex = resultForIndex;
@@ -191,7 +191,7 @@ class SetAccessors<T>
 	}
 
 	
-	public final SetForIndex<ResultSet,T> resultForIndex;
+	public final SetForNumber<ResultSet,T> resultForIndex;
 	public final SetForName<ResultSet,T> resultForName;
-	public final SetForIndex<PreparedStatement,T> paramForIndex;
+	public final SetForNumber<PreparedStatement,T> paramForIndex;
 }

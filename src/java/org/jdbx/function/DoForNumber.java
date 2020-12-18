@@ -18,18 +18,18 @@ package org.jdbx.function;
 
 
 /**
- * DoForIndex can perform an operation given
- * an object and an index.
+ * DoForNumber can perform an operation given
+ * an object and a number.
  * @param OBJ the type of the object
  */
 @FunctionalInterface
-public interface DoForIndex<OBJ>
+public interface DoForNumber<OBJ>
 {
 	/**
-	 * Performs an index based operation on the object.
+	 * Performs a number based operation on the object.
 	 * @param obj an object
-	 * @param index an index
+	 * @param number a number
 	 * @throws Exception if an error occurs
 	 */
-	public void accept(OBJ obj, int index) throws Exception;
+	public void accept(OBJ obj, int number) throws Exception;
 }

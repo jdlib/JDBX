@@ -27,11 +27,11 @@ import java.sql.Statement;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedSupplier;
-import org.jdbx.function.DoForIndex;
+import org.jdbx.function.DoForNumber;
 import org.jdbx.function.DoForName;
-import org.jdbx.function.GetForIndex;
+import org.jdbx.function.GetForNumber;
 import org.jdbx.function.GetForName;
-import org.jdbx.function.SetForIndex;
+import org.jdbx.function.SetForNumber;
 import org.jdbx.function.SetForName;
 import org.jdbx.function.Unchecked;
 
@@ -187,26 +187,26 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * Sets the value of the parameter with the given index.
-	 * @param index a parameter index, starting at 1.
+	 * Sets the value of the parameter with the given number.
+	 * @param number a parameter number, starting at 1.
 	 * @param value a parameter value
 	 * @return this
 	 */
-	public CallStmt param(int index, Object value) throws JdbxException
+	public CallStmt param(int number, Object value) throws JdbxException
 	{
-		param(index).setObject(value);
+		param(number).setObject(value);
 		return this;
 	}
 
 	
 	/**
-	 * Returns a IndexedParam object to set or get the value of a parameter by index.
-	 * @param index a parameter index, starting at 1.
+	 * Returns a IndexedParam object to set or get the value of a parameter by number.
+	 * @param number a parameter number, starting at 1.
 	 * @return the IndexedParam
 	 */
-	public IndexedParam param(int index)
+	public NumberedParam param(int number)
 	{
-		return new IndexedParam(index);
+		return new NumberedParam(number);
 	}
 
 
@@ -232,47 +232,47 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * A builder class to manage a parameter value specified by a parameter index.
+	 * A builder class to manage a parameter value specified by a parameter number.
 	 */
-	public class IndexedParam implements GetValue, RegisterOut<IndexedParam>, SetParam<CallableStatement>
+	public class NumberedParam implements GetValue, RegisterOut<NumberedParam>, SetParam<CallableStatement>
 	{
-		private IndexedParam(int index)
+		private NumberedParam(int number)
 		{
-			index_ = Check.index(index);
+			number_ = Check.number(number);
 		}
 
 
-		@Override public IndexedParam out(int sqlType) throws JdbxException
+		@Override public NumberedParam out(int sqlType) throws JdbxException
 		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(int sqlType, int scale) throws JdbxException
+		@Override public NumberedParam out(int sqlType, int scale) throws JdbxException
 		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType, scale));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(SQLType sqlType) throws JdbxException
+		@Override public NumberedParam out(SQLType sqlType) throws JdbxException
 		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(SQLType sqlType, int scale) throws JdbxException
+		@Override public NumberedParam out(SQLType sqlType, int scale) throws JdbxException
 		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType, scale));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType, scale));
 			return this;
 		}
 
 
-		@Override public IndexedParam out(SQLType sqlType, String typeName) throws JdbxException
+		@Override public NumberedParam out(SQLType sqlType, String typeName) throws JdbxException
 		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(index_, sqlType, typeName));
+			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType, typeName));
 			return this;
 		}
 		
@@ -282,7 +282,7 @@ public class CallStmt extends Stmt
 			Check.notNull(type, "type");
 			try
 			{
-				return getJdbcStmt().getObject(index_, type);
+				return getJdbcStmt().getObject(number_, type);
 			}
 			catch (SQLException e)
 			{
@@ -296,7 +296,7 @@ public class CallStmt extends Stmt
 			Check.notNull(map, "map");
 			try
 			{
-				return getJdbcStmt().getObject(index_, map);
+				return getJdbcStmt().getObject(number_, map);
 			}
 			catch (SQLException e)
 			{
@@ -308,16 +308,16 @@ public class CallStmt extends Stmt
 		@Override public <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
-			return get(accessors.paramForIndex);
+			return get(accessors.paramForNumber);
 		}
 
 
-		public <T> T get(GetForIndex<CallableStatement,T> getter) throws JdbxException
+		public <T> T get(GetForNumber<CallableStatement,T> getter) throws JdbxException
 		{
 			Check.notNull(getter, "getter");
 			try
 			{
-				return getter.get(getJdbcStmt(), index_);
+				return getter.get(getJdbcStmt(), number_);
 			}
 			catch (Exception e)
 			{
@@ -326,12 +326,12 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override public <T> void set(SetForIndex<PreparedStatement,T> setter, T value) throws JdbxException
+		@Override public <T> void set(SetForNumber<PreparedStatement,T> setter, T value) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			try
 			{
-				setter.set(getJdbcStmt(), index_, value);
+				setter.set(getJdbcStmt(), number_, value);
 			}
 			catch (Exception e)
 			{
@@ -340,14 +340,14 @@ public class CallStmt extends Stmt
 		}
 
 		
-		public <T> void apply(DoForIndex<CallableStatement> runner) throws JdbxException
+		public <T> void apply(DoForNumber<CallableStatement> runner) throws JdbxException
 		{
 			Check.notNull(runner, "runner");
-			Unchecked.run(() -> runner.accept(getJdbcStmt(), index_));
+			Unchecked.run(() -> runner.accept(getJdbcStmt(), number_));
 		}
 
 
-		private final int index_;
+		private final int number_;
 	}
 
 
@@ -369,7 +369,7 @@ public class CallStmt extends Stmt
 	{
 		private NamedParam(String name)
 		{
-			name_ = Check.notNull(name, "paramName");
+			name_ = Check.name(name);
 		}
 
 

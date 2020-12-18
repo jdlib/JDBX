@@ -24,8 +24,8 @@ import java.sql.SQLWarning;
 import java.util.Map;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
-import org.jdbx.function.GetForIndex;
-import org.jdbx.function.SetForIndex;
+import org.jdbx.function.GetForNumber;
+import org.jdbx.function.SetForNumber;
 import org.jdbx.function.SetForName;
 import org.jdbx.function.Unchecked;
 
@@ -109,15 +109,15 @@ public class QueryCursor implements AutoCloseable
 	
 	/**
 	 * Returns column values of the current row as array.
-	 * @param indexes the column indexes, starting at 1.
+	 * @param numbers the column numbers, starting at 1.
 	 * @return the value array
 	 */
-	public Object[] cols(int... indexes) throws JdbxException
+	public Object[] cols(int... numbers) throws JdbxException
 	{
-		Check.notNull(indexes, "colIndexes");
+		Check.notNull(numbers, "numbers");
 		try
 		{
-			return ResultUtil.readValues(resultSet_, indexes);
+			return ResultUtil.readValues(resultSet_, numbers);
 		}
 		catch (Exception e)
 		{
@@ -182,26 +182,26 @@ public class QueryCursor implements AutoCloseable
 	
 	
 	/**
-	 * Calls {@link #col(int)} with column index 1.
+	 * Calls {@link #col(int)} with column number 1.
 	 * @return the column
 	 */
-	public IndexedColumn col()
+	public NumberedColumn col()
 	{
 		return col(1);
 	}
 
 	
 	/**
-	 * Returns the result column for the given index.
+	 * Returns the result column for the given number.
 	 * The column should only be used to immediately access the value, but
 	 * not stored for later use.
-	 * @param index the column index, starting at 1.
+	 * @param number the column number, starting at 1.
 	 * @return the column
 	 */
-	public IndexedColumn col(int index)
+	public NumberedColumn col(int number)
 	{
-		indexedColumn_.index_ = Check.index(index);
-		return indexedColumn_;
+		numberedColumn_.number_ = Check.number(number);
+		return numberedColumn_;
 	}
 
 
@@ -214,22 +214,22 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public NamedColumn col(String name)
 	{
-		namedColumn_.name_ = Check.colName(name);
+		namedColumn_.name_ = Check.name(name);
 		return namedColumn_;
 	}
 
 
 	/**
-	 * Allows to access the value of a column which was specified by an index.
+	 * Allows to access the value of a column which was specified by column number.
 	 */
-	public class IndexedColumn implements GetResult, SetValue
+	public class NumberedColumn implements GetResult, SetValue
 	{
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try
 			{
-				return resultSet_.getObject(index_, type);
+				return resultSet_.getObject(number_, type);
 			}
 			catch (SQLException e)
 			{
@@ -243,7 +243,7 @@ public class QueryCursor implements AutoCloseable
 			Check.notNull(map, "map");
 			try
 			{
-				return resultSet_.getObject(index_, map);
+				return resultSet_.getObject(number_, map);
 			}
 			catch (SQLException e)
 			{
@@ -255,16 +255,16 @@ public class QueryCursor implements AutoCloseable
 		@Override public <T> T get(GetAccessors<T> accessors) throws JdbxException
 		{
 			Check.notNull(accessors, "accessors");
-			return get(accessors.resultForIndex);
+			return get(accessors.resultForNumber);
 		}
 
 
-		public <T> T get(GetForIndex<ResultSet,T> getter) throws JdbxException
+		public <T> T get(GetForNumber<ResultSet,T> getter) throws JdbxException
 		{
 			Check.notNull(getter, "getter");
 			try
 			{
-				return getter.get(resultSet_, index_);
+				return getter.get(resultSet_, number_);
 			}
 			catch (Exception e)
 			{
@@ -280,12 +280,12 @@ public class QueryCursor implements AutoCloseable
 		}
 
 
-		public <T> void set(SetForIndex<ResultSet,T> setter, T value) throws JdbxException
+		public <T> void set(SetForNumber<ResultSet,T> setter, T value) throws JdbxException
 		{
 			Check.notNull(setter, "setter");
 			try
 			{
-				setter.set(resultSet_, index_, value);
+				setter.set(resultSet_, number_, value);
 			}
 			catch (Exception e)
 			{
@@ -294,7 +294,7 @@ public class QueryCursor implements AutoCloseable
 		}
 
 
-		private int index_;
+		private int number_;
 	}
 
 
@@ -468,9 +468,9 @@ public class QueryCursor implements AutoCloseable
 
 
 	/**
-	 * Returns the index of the column with the given label.
+	 * Returns the number of the column with the given label.
 	 * @param columnLabel the label
-	 * @return the meta data
+	 * @return the number, >= 1
 	 */
 	public int findColumn(String columnLabel) throws JdbxException
 	{
@@ -884,7 +884,7 @@ public class QueryCursor implements AutoCloseable
 
 	private boolean closeResult_ = true;
 	private ResultSet resultSet_;
-	private IndexedColumn indexedColumn_ = new IndexedColumn();
+	private NumberedColumn numberedColumn_ = new NumberedColumn();
 	private NamedColumn namedColumn_ = new NamedColumn();
 	private Move move_;
 	private Row row_;

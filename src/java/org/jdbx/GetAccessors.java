@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.sql.*;
-import org.jdbx.function.GetForIndex;
+import org.jdbx.function.GetForNumber;
 import org.jdbx.function.GetForName;
 import java.net.URL;
 
@@ -62,15 +62,15 @@ class GetAccessors<T>
 		CallableStatement::getBlob);
 
 	public static final GetAccessors<Boolean> BOOLEAN = new GetAccessors<>(
-		normResultForIndex(ResultSet::getBoolean),
+		normResultForNumber(ResultSet::getBoolean),
 		normResultForName(ResultSet::getBoolean),
-		normCallForIndex(CallableStatement::getBoolean),
+		normCallForNumber(CallableStatement::getBoolean),
 		normCallForName(CallableStatement::getBoolean));
 
 	public static final GetAccessors<Byte> BYTE = new GetAccessors<>(
-		normResultForIndex(ResultSet::getByte),
+		normResultForNumber(ResultSet::getByte),
 		normResultForName(ResultSet::getByte),
-		normCallForIndex(CallableStatement::getByte),
+		normCallForNumber(CallableStatement::getByte),
 		normCallForName(CallableStatement::getByte));
 
 	public static final GetAccessors<byte[]> BYTES = new GetAccessors<>(
@@ -92,27 +92,27 @@ class GetAccessors<T>
 		CallableStatement::getClob);
 
 	public static final GetAccessors<Double> DOUBLE = new GetAccessors<>(
-		normResultForIndex(ResultSet::getDouble),
+		normResultForNumber(ResultSet::getDouble),
 		normResultForName(ResultSet::getDouble),
-		normCallForIndex(CallableStatement::getDouble),
+		normCallForNumber(CallableStatement::getDouble),
 		normCallForName(CallableStatement::getDouble));
 
 	public static final GetAccessors<Float> FLOAT = new GetAccessors<>(
-		normResultForIndex(ResultSet::getFloat),
+		normResultForNumber(ResultSet::getFloat),
 		normResultForName(ResultSet::getFloat),
-		normCallForIndex(CallableStatement::getFloat),
+		normCallForNumber(CallableStatement::getFloat),
 		normCallForName(CallableStatement::getFloat));
 
 	public static final GetAccessors<Integer> INTEGER = new GetAccessors<>(
-		normResultForIndex(ResultSet::getInt),
+		normResultForNumber(ResultSet::getInt),
 		normResultForName(ResultSet::getInt),
-		normCallForIndex(CallableStatement::getInt),
+		normCallForNumber(CallableStatement::getInt),
 		normCallForName(CallableStatement::getInt));
 
 	public static final GetAccessors<Long> LONG = new GetAccessors<>(
-		normResultForIndex(ResultSet::getLong),
+		normResultForNumber(ResultSet::getLong),
 		normResultForName(ResultSet::getLong),
-		normCallForIndex(CallableStatement::getLong),
+		normCallForNumber(CallableStatement::getLong),
 		normCallForName(CallableStatement::getLong));
 
 	public static final GetAccessors<Reader> NCHARACTERSTREAM = new GetAccessors<>(
@@ -152,9 +152,9 @@ class GetAccessors<T>
 		CallableStatement::getRowId);
 
 	public static final GetAccessors<Short> SHORT = new GetAccessors<>(
-		normResultForIndex(ResultSet::getShort),
+		normResultForNumber(ResultSet::getShort),
 		normResultForName(ResultSet::getShort),
-		normCallForIndex(CallableStatement::getShort),
+		normCallForNumber(CallableStatement::getShort),
 		normCallForName(CallableStatement::getShort));
 
 	public static final GetAccessors<Date> SQLDATE = new GetAccessors<>(
@@ -195,29 +195,29 @@ class GetAccessors<T>
 
 	public GetAccessors
 	(
-		GetForIndex<ResultSet,T> resultForIndex,
+		GetForNumber<ResultSet,T> resultForNumber,
 		GetForName<ResultSet,T> resultForName,
-		GetForIndex<CallableStatement,T> paramForIndex,
+		GetForNumber<CallableStatement,T> paramForNumber,
 		GetForName<CallableStatement,T>	paramForName
 	)
 	{
-		this.resultForIndex = resultForIndex;
+		this.resultForNumber = resultForNumber;
 		this.resultForName 	= resultForName;
-		this.paramForIndex	= paramForIndex;
+		this.paramForNumber	= paramForNumber;
 		this.paramForName	= paramForName;
 	}
 
 
-	public final GetForIndex<ResultSet,T> resultForIndex;
+	public final GetForNumber<ResultSet,T> resultForNumber;
 	public final GetForName<ResultSet,T> resultForName;
-	public final GetForIndex<CallableStatement,T> paramForIndex;
+	public final GetForNumber<CallableStatement,T> paramForNumber;
 	public final GetForName<CallableStatement,T> paramForName;
 
 
-	private static <T> GetForIndex<ResultSet,T> normResultForIndex(GetForIndex<ResultSet,T> fn)
+	private static <T> GetForNumber<ResultSet,T> normResultForNumber(GetForNumber<ResultSet,T> fn)
 	{
-		return (rs, index) -> {
-			T value = fn.get(rs, index);
+		return (rs, number) -> {
+			T value = fn.get(rs, number);
 			return !rs.wasNull() ? value : null;
 		};
 	}
@@ -232,10 +232,10 @@ class GetAccessors<T>
 	}
 
 
-	private static <T> GetForIndex<CallableStatement,T> normCallForIndex(GetForIndex<CallableStatement,T> fn)
+	private static <T> GetForNumber<CallableStatement,T> normCallForNumber(GetForNumber<CallableStatement,T> fn)
 	{
-		return (cs, index) -> {
-			T value = fn.get(cs, index);
+		return (cs, number) -> {
+			T value = fn.get(cs, number);
 			return !cs.wasNull() ? value : null;
 		};
 	}

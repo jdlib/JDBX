@@ -18,7 +18,7 @@ package org.jdbx.function;
 
 
 /**
- * DoForIndex can perform an operation given
+ * DoForName can perform an operation given
  * an object and a name.
  * @param OBJ the type of the object
  */

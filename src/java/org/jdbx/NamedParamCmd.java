@@ -92,8 +92,8 @@ public class NamedParamCmd
 
 	        String name = cmd_.substring(start, index_);
 
-	        List<Integer> indexes = map_.computeIfAbsent(name, n -> new ArrayList<Integer>());
-	        indexes.add(Integer.valueOf(++count_));
+	        List<Integer> numbers = map_.computeIfAbsent(name, n -> new ArrayList<Integer>());
+	        numbers.add(Integer.valueOf(++count_));
  		}
 
 
@@ -167,15 +167,14 @@ public class NamedParamCmd
 
 
 	/**
-	 * Returns the index numbers of a parameter in the
-	 * converted command.
+	 * Returns the numbers of a parameter in the converted command.
 	 * @param name the parameter name
-	 * @return the indexes
+	 * @return the numbers
 	 */
 	public int[] getIndexes(String name)
 	{
-		int[] indexes = paramMap_.get(name);
-		return indexes != null ? indexes.clone() : null;
+		int[] numbers = paramMap_.get(name);
+		return numbers != null ? numbers.clone() : null;
 	}
 
 

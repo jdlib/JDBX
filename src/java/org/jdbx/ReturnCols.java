@@ -55,24 +55,24 @@ public class ReturnCols
 
 
 		/**
-		 * Specifies the 1-based index of the column which is returned.
-		 * @param colIndex the index
+		 * Specifies the 1-based number of the column which is returned.
+		 * @param number the column number
 		 * @return this
 		 */
-		public default I returnCol(int colIndex)
+		public default I returnCol(int number)
 		{
-			return returnCols(colIndex);
+			return returnCols(number);
 		}
 
 
 		/**
-		 * Specifies the 1-based indexes of the columns which are returned.
-		 * @param colIndexes the indexes
+		 * Specifies the 1-based numbers of the columns which are returned.
+		 * @param numbers the column numbers
 		 * @return this
 		 */
-		public default I returnCols(int... colIndexes)
+		public default I returnCols(int... numbers)
 		{
-			return returnCols(new ReturnCols(colIndexes));
+			return returnCols(new ReturnCols(numbers));
 		}
 
 
@@ -110,11 +110,11 @@ public class ReturnCols
 
 	/**
 	 * Creates a new ReturnCols object.
-	 * @param indexes the indexes of the columns which should be returned
+	 * @param numbers the numbers of the columns which should be returned
 	 */
-	public ReturnCols(int[] indexes)
+	public ReturnCols(int[] numbers)
 	{
-		this(Check.notNull(indexes, "indexes"), null);
+		this(Check.notNull(numbers, "numbers"), null);
 	}
 
 
@@ -128,20 +128,20 @@ public class ReturnCols
 	}
 
 
-	private ReturnCols(int[] indexes, String[] names)
+	private ReturnCols(int[] numbers, String[] names)
 	{
-		indexes_ = indexes;
+		numbers_ = numbers;
 		names_ 	 = names;
 	}
 
 	
 	/**
-	 * Returns the indexes of the columns which should be returned.
-	 * @return the indexes or null if this ReturnCols object is not index based
+	 * Returns the numbers of the columns which should be returned.
+	 * @return the numbers or null if this ReturnCols object is not number based
 	 */
-	public int[] getIndexes()
+	public int[] getNumbers()
 	{
-		return indexes_;
+		return numbers_;
 	}
 
 
@@ -155,6 +155,6 @@ public class ReturnCols
 	}
 
 
-	private final int[] indexes_;
+	private final int[] numbers_;
 	private final String[] names_;
 }

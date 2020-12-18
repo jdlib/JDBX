@@ -18,7 +18,7 @@ package org.jdbx;
 
 
 import java.sql.PreparedStatement;
-import org.jdbx.function.SetForIndex;
+import org.jdbx.function.SetForNumber;
 
 
 interface SetParam<STMT extends PreparedStatement> extends SetValue
@@ -104,14 +104,14 @@ interface SetParam<STMT extends PreparedStatement> extends SetValue
 //	 * @param setter used to actually the value.
 //	 * @param <T> the type of the value
 //	 */
-//	public <T> void set(T value, SetForIndex<STMT,T> setter) throws JdbxException;
+//	public <T> void set(T value, SetForNumber<STMT,T> setter) throws JdbxException;
 //
 //
 //	/**
 //	 * Calls the runner to perform its action.
 //	 * @param runner a function to perform some action
 //	 */
-//	public void apply(DoForIndex<STMT> runner) throws JdbxException;
+//	public void apply(DoForNumber<STMT> runner) throws JdbxException;
 
 
 	@Override public default <T> void set(SetAccessors<T> accessors, T value) throws JdbxException
@@ -121,5 +121,5 @@ interface SetParam<STMT extends PreparedStatement> extends SetValue
 	}
 	
 	
-	public abstract <T> void set(SetForIndex<PreparedStatement,T> setter, T value) throws JdbxException;
+	public abstract <T> void set(SetForNumber<PreparedStatement,T> setter, T value) throws JdbxException;
 }

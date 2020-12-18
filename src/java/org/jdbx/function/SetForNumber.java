@@ -18,19 +18,19 @@ package org.jdbx.function;
 
 
 /**
- * SetForIndex can set an indexed value on an object.
+ * SetForNumber can set a numbered value on an object.
  * @param <OBJ> the type of the object
  * @param <V> the type of the value
  */
 @FunctionalInterface
-public interface SetForIndex<OBJ,V>
+public interface SetForNumber<OBJ,V>
 {
 	/**
 	 * Sets a value.
 	 * @param object an object
-	 * @param index an index
+	 * @param number a number
 	 * @param value the value
 	 * @throws Exception if an error occurs
 	 */
-	public void set(OBJ object, int index, V value) throws Exception;
+	public void set(OBJ object, int number, V value) throws Exception;
 }

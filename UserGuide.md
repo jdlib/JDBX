@@ -99,7 +99,7 @@ The terminal call of the `.sql(String)` method to specify a SQL command is manda
     // instruct the statement to return the value of the 'id' column (see the chapter on running updates)
     pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
     
-    // use named parameters instead of indexed parameters
+    // use named parameters instead of numbered parameters
     pstmt.init().namedParams().sql("UPDATE Users SET name = :name WHERE id = :id");
 
 A `StaticStmt` is already initialized when it is created - the SQL command which is executed by the `StaticStmt`
@@ -265,7 +265,7 @@ Call `QueryResult.rows()` to retrieve a `QResultRows` builder to read values fro
     qr.rows()...
     qr.rows().col()...                  // return values of first column
     qr.rows().col().getString();        // return values of first column as List<String>
-    qr.rows().col(3)...                 // return values of column by index
+    qr.rows().col(3)...                 // return values of column by number
     qr.rows().col(3).getDouble();       // return values of third column, as List<Double>
     qr.rows().col("sort")...;           // return values of column by name 
     qr.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
@@ -300,7 +300,7 @@ from the row:
     QueryCursor qc = ...         // a QueryCursor, positioned on a result row
     qc.col()...                  // first column
     qc.col().getString();        // first column as String
-    qc.col(3)...                 // column by index
+    qc.col(3)...                 // column by number
     qc.col(3).getDouble();       // third column as double
     qc.col("sort")...;           // column by name 
     qc.col("sort").getInteger(); // "sort" column, as Integer
@@ -473,7 +473,7 @@ This allows to write:
         .requireCount(1)  // throws an Exception if update count != 1
         .requireValue();  // throws an Exception if returned col value is null
 
-For step 1 there are alternative ways to specify the returned columns, for instance by using column indexes or names:
+For step 1 there are alternative ways to specify the returned columns, for instance by using column numbers or names:
 
     stmt.createUpdate(sql).returnCols(1, 5, 7)...   
     stmt.createUpdate(sql).returnCols("id", "timestamp")...

@@ -50,26 +50,26 @@ class Check
 
 
 	/**
-	 * Checks that a column or parameter index is >= 1.
-	 * @param index the index
-	 * @return the index
-	 * @exception IllegalArgumentException if the index is < 1.
+	 * Checks that a column or parameter number is >= 1.
+	 * @param number the number
+	 * @return the number
+	 * @exception IllegalArgumentException if the number is < 1.
 	 */
-	public static int index(int index)
+	public static int number(int number)
 	{
-		if (index < 1)
-			throw new IllegalArgumentException("index must be >= 1, is " + index);
-		return index;
+		if (number < 1)
+			throw new IllegalArgumentException("number must be >= 1, is " + number);
+		return number;
 	}
 
 
 	/**
-	 * Checks that a column name is not null.
+	 * Checks that a column or parameter name is not null.
 	 * @param name the name
 	 * @return the name
 	 */
-	public static String colName(String colName)
+	public static String name(String name)
 	{
-		return notNull(colName, "colName");
+		return notNull(name, "name");
 	}
 }
