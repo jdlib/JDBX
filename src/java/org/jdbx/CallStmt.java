@@ -361,7 +361,7 @@ public class CallStmt extends Stmt
 	{
 		private NamedParam(String name)
 		{
-			name_ = Check.name(name);
+			name_ = Check.notNull(name, "paramName");
 		}
 
 

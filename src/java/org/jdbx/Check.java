@@ -64,12 +64,12 @@ class Check
 
 
 	/**
-	 * Checks that a name is not null.
+	 * Checks that a column name is not null.
 	 * @param name the name
 	 * @return the name
 	 */
-	public static String name(String name)
+	public static String colName(String colName)
 	{
-		return notNull(name, "name");
+		return notNull(colName, "colName");
 	}
 }

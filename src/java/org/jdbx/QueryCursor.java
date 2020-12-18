@@ -214,7 +214,7 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public NamedColumn col(String name)
 	{
-		namedColumn_.name_ = Check.name(name);
+		namedColumn_.name_ = Check.colName(name);
 		return namedColumn_;
 	}
 

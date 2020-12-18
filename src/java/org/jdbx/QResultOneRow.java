@@ -259,7 +259,7 @@ public class QResultOneRow
 	{
 		private NamedCol(String name)
 		{
-			name_ = Check.name(name);
+			name_ = Check.colName(name);
 		}
 
 
