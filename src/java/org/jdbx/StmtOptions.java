@@ -192,7 +192,7 @@ public class StmtOptions
 	 */
 	public StmtOptions setFetchDirection(FetchDirection direction) throws JdbxException
 	{
-		Check.valid(direction, "direction");
+		Check.valid(FetchDirection.class, direction);
 		set(StmtOption.FETCHDIRECTION, Integer.valueOf(direction.getCode()));
 		return this;
 	}
@@ -278,7 +278,7 @@ public class StmtOptions
 	{
 		if (holdability_ != value)
 		{
-			holdability_ = Check.valid(value, "holdability");
+			holdability_ = Check.valid(Holdability.class, value);
 			stmt_.closeJdbcStmt();
 		}
 		return this;
@@ -312,7 +312,7 @@ public class StmtOptions
 	{
 		if (concurrency_ != value)
 		{
-			concurrency_ = Check.valid(value, "concurrency");
+			concurrency_ = Check.valid(Concurrency.class, value);
 			stmt_.closeJdbcStmt();
 		}
 		return this;
@@ -346,7 +346,7 @@ public class StmtOptions
 	{
 		if (resultType_ != value)
 		{
-			resultType_ = Check.valid(value, "resultType");
+			resultType_ = Check.valid(ResultType.class, value);
 			stmt_.closeJdbcStmt();
 		}
 		return this;

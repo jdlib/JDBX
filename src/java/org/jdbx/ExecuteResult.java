@@ -136,7 +136,7 @@ public class ExecuteResult
 	public boolean next(Current current) throws JdbxException
 	{
 		checkNotLast();
-		Check.valid(current, "current");
+		Check.valid(Current.class, current);
 		if (status_ == Status.BEFORE_FIRST)
 			initNext(hasQueryResult_);
 		else

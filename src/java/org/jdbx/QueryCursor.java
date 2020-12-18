@@ -412,7 +412,7 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public void setFetchDirection(FetchDirection dir) throws JdbxException
 	{
-		Check.valid(dir, "direction");
+		Check.valid(FetchDirection.class, dir);
 		Unchecked.run(() -> resultSet_.setFetchDirection(dir.getCode()));
 	}
 

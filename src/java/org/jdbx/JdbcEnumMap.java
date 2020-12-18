@@ -17,11 +17,8 @@
 package org.jdbx;
 
 
-import org.jdbx.JdbcEnum.Map;
-
-
 /**
- * Maps between JDBC constants to enum values.
+ * Maps JDBC constants to enum values.
  */
 class JdbcEnumMap<E extends Enum<E> & JdbcEnum>
 {
@@ -34,19 +31,19 @@ class JdbcEnumMap<E extends Enum<E> & JdbcEnum>
 	/**
 	 * A JdbcEnumMap for FetchDirection.
 	 */
-	public static final Map<FetchDirection> FETCH_DIRECTION = new Map<>(FetchDirection.class, FetchDirection.INVALID);
+	public static final JdbcEnumMap<FetchDirection> FETCH_DIRECTION = new JdbcEnumMap<>(FetchDirection.class, FetchDirection.INVALID);
 
 
 	/**
 	 * A JdbcEnumMap for Holdability.
 	 */
-	public static final Map<Holdability> HOLDABILITY = new Map<>(Holdability.class, Holdability.INVALID);
+	public static final JdbcEnumMap<Holdability> HOLDABILITY = new JdbcEnumMap<>(Holdability.class, Holdability.INVALID);
 
 
 	/**
 	 * A JdbcEnumMap for ResultType.
 	 */
-	public static final Map<ResultType> RESULT_TYPE = new Map<>(ResultType.class, ResultType.INVALID);
+	public static final JdbcEnumMap<ResultType> RESULT_TYPE = new JdbcEnumMap<>(ResultType.class, ResultType.INVALID);
 	
 
 	public JdbcEnumMap(Class<E> type, E unknown)
