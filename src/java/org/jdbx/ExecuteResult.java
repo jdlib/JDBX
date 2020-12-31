@@ -25,7 +25,8 @@ import org.jdbx.function.Unchecked;
 
 /**
  * ExecuteResult represents the result of executing a SQL command
- * which can produce multiple results.
+ * which can produce multiple results or whose result type (update or query)
+ * is not known in advance.
  * Usage:
  * <pre><code>
  * ExecuteResult result = ...;
@@ -119,7 +120,7 @@ public class ExecuteResult
 
 
 	/**
-	 * Moves to the next result. All open result sets are closed.
+	 * Moves to the next result. All open results are closed.
 	 * @return true if there is a next result
 	 */
 	public boolean next() throws JdbxException
@@ -223,6 +224,10 @@ public class ExecuteResult
 	}
 
 	
+	/**
+	 * Returns the current update result.
+	 * @return the update result
+	 */
 	public UpdateResult<Void> getUpdateResult() throws JdbxException
 	{
 		checkIsUpdateResult();
@@ -230,6 +235,11 @@ public class ExecuteResult
 	}
 	
 
+	/**
+	 * Returns the current update result, including an auto generated key.
+	 * @param colType the type of the auto generated key
+	 * @return the update result
+	 */
 	public <V> UpdateResult<V> getUpdateResult(Class<V> colType) throws JdbxException
 	{
 		Check.notNull(colType, "colType");
@@ -237,6 +247,11 @@ public class ExecuteResult
 	}
 
 
+	/**
+	 * Returns the current update result, including auto generated keys.
+	 * @param reader a reader for the auto generated keys
+	 * @return the update result
+	 */
 	public <V> UpdateResult<V> getUpdateResult(GetReturnCols<V> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
@@ -265,7 +280,7 @@ public class ExecuteResult
 	/**
 	 * Returns if the current result provides a query result.
 	 * @return true if the current result provides a query result
-	 * @throws JdbxException if next() has not been called yet or if position after the last result
+	 * @throws JdbxException if next() has not yet been called or if positioned after the last result
 	 */
 	public boolean isQueryResult() throws JdbxException
 	{
