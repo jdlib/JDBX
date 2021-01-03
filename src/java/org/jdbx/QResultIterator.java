@@ -140,7 +140,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 */
 	public void skipCol()
 	{
-		colNumber_++;
+		skipCols(1);
 	}
 
 
