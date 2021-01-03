@@ -275,7 +275,7 @@ Call `QueryResult.rows()` to retrieve a `QResultRows` builder to read values fro
      
 You may also limit the number of processed rows if this is not done within the SQL query itself:
 
-    qr.rows(5)...
+    qr.rows().max(5) ...
     
 
 ### <a name="queries-skipping"></a>3.4 Skip rows

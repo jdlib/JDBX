@@ -99,21 +99,10 @@ public abstract class QueryResult extends StmtRunnable
 	 */
 	public QResultRows rows()
 	{
-		return rows(Integer.MAX_VALUE);
+		return new QResultRows(this);
 	}
-
-
-	/**
-	 * Returns a builder to access upto max rows of the result set.
-	 * @param max the maximum number of rows
-	 * @return the builder
-	 */
-	public QResultRows rows(int max)
-	{
-		return new QResultRows(this, max);
-	}
-
-
+	
+	
 	/**
 	 * Executes the query and passes the result cursor to the consumer.
 	 * @param consumer a result consumer

@@ -42,10 +42,27 @@ import org.jdbx.function.GetForName;
  */
 public class QResultRows
 {
-	QResultRows(QueryResult result, int max)
+	QResultRows(QueryResult result)
 	{
 		result_ = result;
-		max_    = max;
+	}
+
+
+	/**
+	 * Limits the rows extracted from the result to max rows.
+	 * @param max the maximum number of rows. A negative value is interpreted
+	 * 		as unlimited rows. 
+	 */
+	public QResultRows max(int max)
+	{
+		max_ = max;
+		return this;
+	}
+	
+	
+	private boolean allowRow(int rowIndex)
+	{
+		return (max_ < 0) || (rowIndex < max_);
 	}
 
 
@@ -59,7 +76,7 @@ public class QResultRows
 		Check.notNull(consumer, "consumer");
 		CheckedConsumer<QueryCursor> c = cursor -> {
 			int index = -1;
-			while ((++index < max_) && cursor.next())
+			while (allowRow(++index) && cursor.next())
 				consumer.accept(cursor);
 		}; 
 		result_.read(c);
@@ -97,7 +114,7 @@ public class QResultRows
 			if (result_.applySkip(cursor))
 			{
 				int index = -1;
-				while ((++index < max_) && cursor.next())
+				while (allowRow(++index) && cursor.next())
 					list.add(reader.apply(cursor));
 			}
 			return list;
@@ -560,5 +577,5 @@ public class QResultRows
 
 
 	private final QueryResult result_;
-	private int max_ = Integer.MAX_VALUE;
+	private int max_ = -1; // unlimited
 }

@@ -80,7 +80,7 @@ public class QueryDemo
 		pstmt.param(1, "a");
 		List<Double> list 	= pstmt.query().rows().col().getDouble();
 
-		List<Date> dates 	= pstmt.query().skip(2).rows(5).col().getSqlDate();
+		List<Date> dates 	= pstmt.query().skip(2).rows().max(5).col().getSqlDate();
 	}
 
 

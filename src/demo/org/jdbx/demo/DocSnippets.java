@@ -221,7 +221,7 @@ public class DocSnippets
 		qr.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
 		qr.rows().map();                    // return a List<Map<String,Object>>
 		
-		qr.rows(5);
+		qr.rows().max(5);
 		qr.skip(3).rows();
 	}
 	

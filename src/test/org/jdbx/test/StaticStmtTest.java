@@ -79,7 +79,7 @@ public class StaticStmtTest extends JdbxTest
 		assertEquals("B", names.get(2));
 		assertEquals("A", names.get(3));
 
-		names = stmt_.query(sql).skip(1).rows(2).col(2 /*=name*/).getString();
+		names = stmt_.query(sql).skip(1).rows().max(2).col(2 /*=name*/).getString();
 		assertEquals(2, names.size());
 		assertEquals("C", names.get(0));
 		assertEquals("B", names.get(1));
