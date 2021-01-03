@@ -22,8 +22,9 @@ import java.sql.ResultSet;
 
 /**
  * ResultType is an Enum for the JDBC constants which define the ResultSet type.
- * Given a JDBX statement object, you can configure the result type as follows:
- * <p><code>stmt.options().resultType(ResultType.nnn)</code>
+ * @see StmtOptions#getResultType()
+ * @see StmtOptions#setResultType(ResultType)
+ * @see QueryCursor#getType()
  */
 public enum ResultType implements JdbcEnum
 {

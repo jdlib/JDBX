@@ -37,7 +37,7 @@ import org.jdbx.function.Unchecked;
 public class QueryCursor implements AutoCloseable
 {
 	/**
-	 * Returns a QueryCursor for the ResultSet
+	 * Returns a QueryCursor for the JDBC ResultSet
 	 * which does not close the ResultSet when it is closed.
 	 * Use this factory method to avoid compiler warnings
 	 * for unclosed resources when you don't want to close the ResultSet.
@@ -75,7 +75,7 @@ public class QueryCursor implements AutoCloseable
 	 * Skips n rows.
 	 * @param count the number of rows to skip. If &lt;= 0 this call has no effect.
 	 * @return true, if the amount of rows have been skipped or count was &lt;= 0, false
-	 * 		if the result had less rows than then given row count
+	 * 		if the result had less remaining rows than then given row count
 	 */
 	public boolean skip(int count)
 	{
@@ -224,6 +224,12 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public class NumberedColumn implements GetResult, SetValue
 	{
+		/**
+		 * Returns the column value as object with the given type.
+		 * @param the type of the column value
+		 * @see ResultSet#getObject(int, Class)
+		 * @return the value
+		 */
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
@@ -238,6 +244,13 @@ public class QueryCursor implements AutoCloseable
 		}
 
 
+		/**
+		 * Returns the column value as object.
+		 * @param map a <code>java.util.Map</code> object that contains the mapping
+		 * 		from SQL type names to classes in the Java programming language
+		 * @return the value
+		 * @see ResultSet#getObject(int, Map)
+		 */
 		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
@@ -303,6 +316,12 @@ public class QueryCursor implements AutoCloseable
 	 */
 	public class NamedColumn implements GetResult, SetValue
 	{
+		/**
+		 * Returns the column value as object with the given type.
+		 * @param the type of the column value
+		 * @see ResultSet#getObject(String, Class)
+		 * @return the value
+		 */
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
@@ -317,6 +336,13 @@ public class QueryCursor implements AutoCloseable
 		}
 
 
+		/**
+		 * Returns the column value as object.
+		 * @param map a <code>java.util.Map</code> object that contains the mapping
+		 * 		from SQL type names to classes in the Java programming language
+		 * @return the value
+		 * @see ResultSet#getObject(String, Map)
+		 */
 		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
@@ -506,7 +532,7 @@ public class QueryCursor implements AutoCloseable
 		return toBoolean(ResultSet::wasNull);
 	}
 
-
+	
 	//----------------------------------
 	// position
 	//----------------------------------
