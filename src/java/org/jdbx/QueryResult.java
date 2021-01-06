@@ -52,12 +52,6 @@ public abstract class QueryResult extends StmtRunnable
 	}
 
 
-	int getSkip()
-	{
-		return skip_;
-	}
-
-
 	boolean applySkip(QueryCursor cursor) throws SQLException
 	{
 		return (skip_ <= 0) || cursor.skip(skip_);
