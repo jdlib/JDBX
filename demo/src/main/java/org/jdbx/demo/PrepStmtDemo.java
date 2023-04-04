@@ -130,6 +130,7 @@ public class PrepStmtDemo
 	 * Shows a typical code snippet how JDBX uses PrepStats.
 	 * Compare this to {@link #jdbcCodeDemo(Connection, List)}
 	 */
+	@SuppressWarnings("resource")
 	public List<Integer> jdbxCodeDemo(Connection con, List<String> names) throws JdbxException
 	{
 		List<Integer> ids = new ArrayList<>();
