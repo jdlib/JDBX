@@ -1,14 +1,12 @@
 # Build JDBX
 
-You need a Java JDK 8+, Apache Ant 1.6.0+ and <a href="http://ant.apache.org/ivy/">Apache Ivy.</a><br/>
-Unpack the distribution archive in an directory, open a console in
-that directory and run
+You need a Java JDK 8+ and <a href="https://maven.apache.org">Apache Maven</a> to build JDBX.<br/>
+In the root directory of your local copy run
 
-    ant resolve
+    mvn package
     
-This downloads thirdparty libraries with Ivy. Then run
+This will build the JDBX jar file 
 
-    ant dist
+    .\core\target\jdbx-<version>.jar
 
-to build the distribution in the <code>tmp</code> subdirectory.
 
