@@ -26,6 +26,9 @@ import java.sql.*;
  */
 public class JdbxException extends RuntimeException
 {
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Categorizes JdbxException.
 	 * @see JdbxException#getReason()
