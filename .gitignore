@@ -1,5 +1,6 @@
-/bin/
-/lib/
-/tmp/
+**/.settings
+**/target
+**/.project
+**/.classpath
+jdbx.doc
 todo.txt
-/jdbx.doc
