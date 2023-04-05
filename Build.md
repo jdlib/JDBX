@@ -7,6 +7,6 @@ In the root directory of your local copy run
     
 This will build the JDBX jar file 
 
-    .\core\target\jdbx-<version>.jar
+    ./target/jdbx-<version>.jar
 
 
