@@ -50,7 +50,6 @@ public class PrepStmtTest extends JdbxTest
 	}
 
 
-	@SuppressWarnings("boxing")
 	@Test public void test() throws JdbxException
 	{
 		assertFalse(pstmt_.isInitialized());
