@@ -25,7 +25,7 @@ import org.jdbx.PrepStmt;
 import org.jdbx.StaticStmt;
 
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "boxing" })
 public class QueryDemo
 {
 	public static void start()
