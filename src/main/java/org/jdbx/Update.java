@@ -120,13 +120,13 @@ public abstract class Update extends StmtRunnable
 
 
 	/**
-	 * May only be called by {@link #runGetCols()}
+	 * May only be called by {@link #runGetCols(GetReturnCols)}
 	 */
 	protected abstract long run(boolean large) throws Exception;
 
 
 	/**
-	 * May only be called by {@link #runGetCols()}
+	 * May only be called by {@link #runGetCols(GetReturnCols)}
 	 */
 	protected abstract ResultSet getGeneratedKeys() throws Exception;
 

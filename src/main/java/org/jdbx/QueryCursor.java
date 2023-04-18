@@ -226,7 +226,7 @@ public class QueryCursor implements AutoCloseable
 	{
 		/**
 		 * Returns the column value as object with the given type.
-		 * @param the type of the column value
+		 * @param type the type of the column value
 		 * @see ResultSet#getObject(int, Class)
 		 * @return the value
 		 */
@@ -318,7 +318,7 @@ public class QueryCursor implements AutoCloseable
 	{
 		/**
 		 * Returns the column value as object with the given type.
-		 * @param the type of the column value
+		 * @param type the type of the column value
 		 * @see ResultSet#getObject(String, Class)
 		 * @return the value
 		 */
@@ -496,7 +496,7 @@ public class QueryCursor implements AutoCloseable
 	/**
 	 * Returns the number of the column with the given label.
 	 * @param columnLabel the label
-	 * @return the number, >= 1
+	 * @return the number, &gt;= 1
 	 */
 	public int findColumn(String columnLabel) throws JdbxException
 	{

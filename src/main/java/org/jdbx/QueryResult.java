@@ -173,7 +173,7 @@ public abstract class QueryResult extends StmtRunnable
 
 
 	/**
-	 * Must only be called by {@link #run()}
+	 * Must only be called by {@link #runQuery()}
 	 */
 	protected abstract ResultSet runQueryImpl() throws Exception;
 
