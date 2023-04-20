@@ -29,7 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-@SuppressWarnings("boxing")
 public class PrepStmtTest extends JdbxTest
 {
 	@BeforeClass public static void beforeClass() throws JdbxException
