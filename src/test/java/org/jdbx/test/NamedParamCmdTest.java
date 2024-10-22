@@ -18,7 +18,7 @@ package org.jdbx.test;
 
 
 import org.jdbx.NamedParamCmd;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class NamedParamCmdTest extends JdbxTest

@@ -27,28 +27,28 @@ import org.jdbx.Concurrency;
 import org.jdbx.QResultIterator;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class StaticStmtTest extends JdbxTest
 {
-	@BeforeClass public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeClass() throws JdbxException
 	{
 		Jdbx.update(con(), "CREATE TABLE STest (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
 	}
 
 
-	@Before public void before() throws JdbxException
+	@BeforeEach public void before() throws JdbxException
 	{
 		stmt_ = new StaticStmt(con());
 		stmt_.update("DELETE FROM STest");
 	}
 
 
-	@After public void after() throws JdbxException
+	@AfterEach public void after() throws JdbxException
 	{
 		stmt_.close();
 	}

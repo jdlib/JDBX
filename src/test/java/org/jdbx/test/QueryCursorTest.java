@@ -23,20 +23,20 @@ import org.jdbx.QueryCursor;
 import org.jdbx.Concurrency;
 import org.jdbx.ResultType;
 import org.jdbx.StaticStmt;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class QueryCursorTest extends JdbxTest
 {
-	@BeforeClass public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeClass() throws JdbxException
 	{
 		Jdbx.update(con(), "CREATE TABLE QRTest (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
 	}
 
 
-	@Before public void before() throws JdbxException
+	@BeforeEach public void before() throws JdbxException
 	{
 		stmt_ = new StaticStmt(con());
 		stmt_.update("DELETE FROM QRTest");

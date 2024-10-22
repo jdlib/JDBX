@@ -22,16 +22,16 @@ import org.jdbx.CallStmt;
 import org.jdbx.JdbxException;
 import org.jdbx.ResultType;
 import org.jdbx.StaticStmt;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class CallStmtTest extends JdbxTest
 {
 	private static Integer id_;
-	@BeforeClass public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeClass() throws JdbxException
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
@@ -68,13 +68,13 @@ public class CallStmtTest extends JdbxTest
 	}
 
 
-	@Before public void before() throws JdbxException
+	@BeforeEach public void before() throws JdbxException
 	{
 		cstmt_ = new CallStmt(con());
 	}
 
 
-	@After public void after() throws JdbxException
+	@AfterEach public void after() throws JdbxException
 	{
 		cstmt_.close();
 	}
@@ -91,7 +91,6 @@ public class CallStmtTest extends JdbxTest
 		Object[] data = cstmt_.query().row().cols();
 		assertNotNull(data);
 		assertEquals(3, data.length);
-		assertEquals(id_, data[0]);
 		assertEquals(id_, data[0]);
 	}
 

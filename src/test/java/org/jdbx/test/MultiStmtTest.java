@@ -20,7 +20,7 @@ package org.jdbx.test;
 import org.jdbx.JdbxException;
 import org.jdbx.MultiStmt;
 import org.jdbx.StaticStmt;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class MultiStmtTest extends JdbxTest

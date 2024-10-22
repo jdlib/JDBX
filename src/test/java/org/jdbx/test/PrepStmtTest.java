@@ -23,28 +23,28 @@ import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 import org.jdbx.QueryCursor;
 import org.jdbx.QResultIterator;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class PrepStmtTest extends JdbxTest
 {
-	@BeforeClass public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeClass() throws JdbxException
 	{
 		Jdbx.update(con(), "CREATE TABLE PTests(id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30), type INTEGER NOT NULL)");
 	}
 
 
-	@Before public void before() throws JdbxException
+	@BeforeEach public void before() throws JdbxException
 	{
 		Jdbx.update(con(), "DELETE FROM PTests");
 		pstmt_ = new PrepStmt(con());
 	}
 
 
-	@After public void after() throws JdbxException
+	@AfterEach public void after() throws JdbxException
 	{
 		pstmt_.close();
 	}

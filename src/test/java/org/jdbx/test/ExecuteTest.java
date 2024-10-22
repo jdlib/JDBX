@@ -20,13 +20,13 @@ package org.jdbx.test;
 import org.jdbx.ExecuteResult;
 import org.jdbx.JdbxException;
 import org.jdbx.StaticStmt;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 
 public class ExecuteTest extends JdbxTest
 {
-	@BeforeClass public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeClass() throws JdbxException
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
@@ -50,5 +50,4 @@ public class ExecuteTest extends JdbxTest
 			assertFalse(result.next());
 		}
 	}
-
 }

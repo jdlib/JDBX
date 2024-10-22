@@ -19,10 +19,10 @@ package org.jdbx.test;
 
 import java.sql.Connection;
 import org.jdbx.JdbxException;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 
-public class JdbxTest extends Assert
+public class JdbxTest extends Assertions
 {
 	public static Connection con() throws JdbxException
 	{
