@@ -29,7 +29,7 @@ JDBX User Guide
 
 ## <a name="stmts"></a>1. Intro
 
-JDBX offers a JDBC  alternative to to execute SQL commands and read query or update results.
+JDBX offers a JDBC alternative to execute SQL commands and read query or update results.
 For that it replaces JDBC `Statement` and `ResultSet` classes with an own API.
 Still the starting point of all its operations is a `java.sql.Connection` or `javax.sql.DataSource` object. 
  
@@ -41,7 +41,7 @@ Still the starting point of all its operations is a `java.sql.Connection` or `ja
 
 Statements are used to execute SQL commands. 
 JDBX provides three alternative statement classes to replace the corresponding JDBC classes. 
-Implementation-wise the JDBX statements wrap their JDBC counterpart:
+Implementation-wise the JDBX statements wrap their JDBC counterparts:
 
 JDBC|JDBX|Used to 
 ----|----|-------
@@ -110,9 +110,13 @@ You may reinitialize a JDBX statement at any time which internally will recreate
 
 ### <a name="stmts-options"></a>2.4 Configure statements
 
-To set or retrieve statement options use the builder returned by the `options()` method of the statement:
+To set or retrieve statement options use the builder returned by the `options()` method of the statement. JDBX also
+introduces proper enums for result type, concurreny, fetch direction and holdability.
 
-    stmt.options().setQueryTimeoutSeconds(20).setFetchRows(5000).setResultType(ResultType.SCROLL_INSENSITIVE);
+    stmt.options()
+        .setQueryTimeoutSeconds(20)
+        .setFetchRows(5000)
+        .setResultType(ResultType.SCROLL_INSENSITIVE);
     int timeoutSecs = stmt.options().getQueryTimeoutSeconds();
     
 ### <a name="stmts-params"></a>2.5 Setting parameters
@@ -247,14 +251,14 @@ Call `QueryResult.row()` to retrieve a `QResultOneRow` builder to read values fr
     qr.row().map();                // returns a Map<String,Object> mapping column name to value
 
 If the result is empty, all the examples above will return a null value (or a default value for primitive terminals like `getInt()`).
-If you want rule out this case use `QueryResult.row().required()`:
+If you want to rule out this case use `QueryResult.row().required()`:
 
-     // will throw an exception if the result contains no rows
+     // will throw a JdbxException if the result contains no rows
      qr.row().required().col().getString()
      
 You may also want to detect the case when the result contains more than one row, using `QueryResult.row().unique()`:
      
-     // will throw an exception if the result contains more than one row
+     // will throw a JdbxException if the result contains more than one row
      qr.row().unique().col().getString()
 
 
@@ -431,7 +435,7 @@ gives the update count, i.e. the number of affected records:
 
 Testing the update count can be shortened by calling `UpdateResult.requireCount`: 
 
-	stmt.update(sql).requireCount(1); // throws an exception if the update count is not 1
+	stmt.update(sql).requireCount(1); // throws a JdbxException if the update count is not 1
 	
 
 ### <a name="updates-updateclass">4.2 Update class
@@ -559,7 +563,7 @@ When the Batch is run it returns a `org.jdbx.BatchResult` which similar to `Upda
 
 JDBC reports database errors as **checked** exceptions using `java.sql.SQLException` and derived classes.
 
-JDBX has a fundamental stance to favor unchecked exceptions and therefore introduces an own **unchecked** exception class
+JDBX instead favors unchecked exceptions and introduces an own **unchecked** exception class
 `org.jdbx.JdbxException` which can be thrown by its operations. Especially any `SQLException` thrown by
 the underlying JDBC operations is wrapped into a `JdbxException` and reported as its exception cause.  
 

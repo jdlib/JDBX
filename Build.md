@@ -1,6 +1,6 @@
 # Build JDBX
 
-You need a Java JDK 8+ and <a href="https://maven.apache.org">Apache Maven</a> to build JDBX.<br/>
+You need a Java JDK 11+ and <a href="https://maven.apache.org">Apache Maven</a> to build JDBX.<br/>
 In the root directory of your local copy run
 
     mvn package

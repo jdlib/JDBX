@@ -6,7 +6,7 @@ to allow you to write compact and concise Java database code.
 It shares this intent with libraries like Apache DBUtils, Spring JDBC template, JDBI, etc which all wrap plain JDBC to make database access easier.
 But unlike these libraries JDBX does not only simplify coding but still provides an API which retains 100% of the original JDBC functionality.
     
-JDBX requires Java 8+, has no external dependencies and is released under the Apache 2.0 license.
+JDBX requires Java 11+, has no external dependencies and is released under the Apache 2.0 license.
 
 * [Examples](#examples)
 * [Download and Installation](#download)
@@ -88,7 +88,7 @@ Perform a parameterized INSERT, return the auto generated primary key, convert a
 
 * [User Guide](https://github.com/jdlib/JDBX/blob/master/UserGuide.md): explains how to use JDBX.
 * [Design](https://github.com/jdlib/JDBX/blob/master/Design.md): Discusses the design of JDBX and the refactorings applied to JDBC. 
-* [Build:](https://github.com/jdlib/JDBX/blob/master/Build.md): How to build JDBX. 
+* [Build](https://github.com/jdlib/JDBX/blob/master/Build.md): How to build JDBX. 
 
 
 ## <a name="license"></a>License
