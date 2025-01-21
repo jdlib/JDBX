@@ -20,7 +20,7 @@ package org.jdbx.function;
 /**
  * DoForName can perform an operation given
  * an object and a name.
- * @param OBJ the type of the object
+ * @param <OBJ> the type of the object
  */
 @FunctionalInterface
 public interface DoForName<OBJ>

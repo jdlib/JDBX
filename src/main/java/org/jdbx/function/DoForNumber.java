@@ -20,7 +20,7 @@ package org.jdbx.function;
 /**
  * DoForNumber can perform an operation given
  * an object and a number.
- * @param OBJ the type of the object
+ * @param <OBJ> the type of the object
  */
 @FunctionalInterface
 public interface DoForNumber<OBJ>
