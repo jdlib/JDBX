@@ -358,7 +358,6 @@ public class PrepStmt extends Stmt
 	 * Clears the parameters.
 	 * @return this
 	 */
-	@SuppressWarnings("resource")
 	public PrepStmt clearParams() throws JdbxException
 	{
 		Unchecked.run(getJdbcStmt()::clearParameters);
