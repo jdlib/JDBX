@@ -97,7 +97,7 @@ public class CallStmtTest extends JdbxTest
 
 	/**
 	 * Calls a stored procedure which returns an update count and a generated key.
-	 * The result set is accessed via {@link CallStmt#createUpdate()}.
+	 * The result set is accessed via {@link CallStmt#createExecute()}.
 	 */
 	@Test public void testExecuteReturnGenKey() throws Exception
 	{
