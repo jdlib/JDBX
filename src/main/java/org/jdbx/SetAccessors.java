@@ -33,6 +33,7 @@ import java.sql.RowId;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.sql.Types;
 import org.jdbx.function.SetForNumber;
 import org.jdbx.function.SetForName;
 
@@ -67,12 +68,12 @@ class SetAccessors<T>
 		ResultSet::updateBlob,
 		PreparedStatement::setBlob);
 
-	public static final SetAccessors<Boolean> BOOLEAN = new SetAccessors<>(
+	public static final SetAccessors<Boolean> BOOLEAN = SetAccessors.ofPrimitive(Types.BOOLEAN,
 		ResultSet::updateBoolean,
 		ResultSet::updateBoolean,
 		PreparedStatement::setBoolean);
 
-	public static final SetAccessors<Byte> BYTE = new SetAccessors<>(
+	public static final SetAccessors<Byte> BYTE = SetAccessors.ofPrimitive(Types.TINYINT,
 		ResultSet::updateByte,
 		ResultSet::updateByte,
 		PreparedStatement::setByte);
@@ -92,22 +93,22 @@ class SetAccessors<T>
 		ResultSet::updateClob,
 		PreparedStatement::setClob);
 
-	public static final SetAccessors<Double> DOUBLE = new SetAccessors<>(
+	public static final SetAccessors<Double> DOUBLE = SetAccessors.ofPrimitive(Types.DOUBLE,
 		ResultSet::updateDouble,
 		ResultSet::updateDouble,
 		PreparedStatement::setDouble);
 
-	public static final SetAccessors<Float> FLOAT = new SetAccessors<>(
+	public static final SetAccessors<Float> FLOAT = SetAccessors.ofPrimitive(Types.FLOAT,
 		ResultSet::updateFloat,
 		ResultSet::updateFloat,
 		PreparedStatement::setFloat);
 
-	public static final SetAccessors<Integer> INTEGER = new SetAccessors<>(
+	public static final SetAccessors<Integer> INTEGER = SetAccessors.ofPrimitive(Types.INTEGER,
 		ResultSet::updateInt,
 		ResultSet::updateInt,
 		PreparedStatement::setInt);
 
-	public static final SetAccessors<Long> LONG = new SetAccessors<>(
+	public static final SetAccessors<Long> LONG = SetAccessors.ofPrimitive(Types.BIGINT,
 		ResultSet::updateLong,
 		ResultSet::updateLong,
 		PreparedStatement::setLong);
@@ -191,7 +192,27 @@ class SetAccessors<T>
 	}
 
 	
-	public final SetForNumber<ResultSet,T> resultForIndex;
+
+	public static <T> SetAccessors<T> ofPrimitive(int sqlType,
+		SetForNumber<ResultSet,T> resultForIndex,
+		SetForName<ResultSet,T> resultForName,
+		SetForNumber<PreparedStatement,T> paramForIndex)
+	{
+		return new SetAccessors<>(
+			(ResultSet r, int i, T v) -> {
+				if (v == null) { r.updateNull(i); } else { resultForIndex.set(r, i, v); }
+			},
+			(ResultSet r, String n, T v) -> {
+				if (v == null) { r.updateNull(n); } else { resultForName.set(r, n, v); }
+			},
+			(PreparedStatement p,int i,T v) -> {
+				if (v == null) { p.setNull(i, sqlType); } else { paramForIndex.set(p, i, v); 
+			}
+		});
+	}
+	
+    
+    public final SetForNumber<ResultSet,T> resultForIndex;
 	public final SetForName<ResultSet,T> resultForName;
 	public final SetForNumber<PreparedStatement,T> paramForIndex;
 }
