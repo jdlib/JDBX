@@ -431,7 +431,6 @@ public class QueryCursor implements AutoCloseable
 	}
 
 
-
 	/**
 	 * Sets the fetch direction of the cursor.
 	 * @param dir the fetch direction as enum value
