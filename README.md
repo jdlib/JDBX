@@ -8,11 +8,24 @@ But unlike these libraries JDBX does not only simplify coding but still provides
     
 JDBX requires Java 11+, has no external dependencies and is released under the Apache 2.0 license.
 
+* [Add to your Build](#build)
 * [Examples](#examples)
 * [Download and Installation](#download)
 * [Documentation](#docs)
 * [License](#license)
 
+## <a name="build"></a>Add to your Build
+
+JDBX's Maven group ID is `io.github.jdlib`, and its artifact ID is `jdbx`.
+To add a dependency on `JDBX` using Maven, use the following:
+
+	<dependency>
+		<groupId>io.github.jdlib</groupId>
+		<artifactId>jdbx</artifactId>
+		<version>1.0.1</version>
+	</dependency>
+	
+or download the [latest release](https://github.com/jdlib/JDBX/releases/latest).
 
 ## <a name="examples"></a>Examples
 
