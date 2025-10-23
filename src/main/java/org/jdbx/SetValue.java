@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
+import java.sql.Date;
 import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.RowId;
