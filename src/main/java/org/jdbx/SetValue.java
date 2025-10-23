@@ -26,6 +26,8 @@ import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 
 /**
@@ -190,19 +192,19 @@ interface SetValue
 	}
 
 
-	public default void setSqlDate(java.sql.Date value) throws JdbxException
+	public default void setSqlDate(Date value) throws JdbxException
 	{
 		set(SetAccessors.SQLDATE, value);
 	}
 
 
-	public default void setSqlTime(java.sql.Time value) throws JdbxException
+	public default void setSqlTime(Time value) throws JdbxException
 	{
 		set(SetAccessors.SQLTIME, value);
 	}
 
 
-	public default void setSqlTimestamp(java.sql.Timestamp value) throws JdbxException
+	public default void setSqlTimestamp(Timestamp value) throws JdbxException
 	{
 		set(SetAccessors.SQLTIMESTAMP, value);
 	}
