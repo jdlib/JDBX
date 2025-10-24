@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -32,7 +32,7 @@ import org.jdbx.function.Unchecked;
 public class StaticStmt extends Stmt
 {
 	/**
-	 * Creates a new StaticStmt. 
+	 * Creates a new StaticStmt.
 	 * Calls StaticStmt(con, false).
 	 * @param con a connection
 	 */
@@ -80,7 +80,7 @@ public class StaticStmt extends Stmt
 		checkOpen();
 	}
 
-	
+
 	/**
 	 * Returns the internal java.sql.Statement.
 	 */
@@ -100,8 +100,8 @@ public class StaticStmt extends Stmt
 		}
 		return jdbcStmt_;
 	}
-	
-	
+
+
 	private Statement createJdbcStmt() throws Exception
 	{
 		if (options_ == null)
@@ -177,7 +177,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		private String sql_;
+		private final String sql_;
 	}
 
 
@@ -200,7 +200,7 @@ public class StaticStmt extends Stmt
 
 
 	/**
-	 * Executes an update operation.
+	 * Executes an update operation. It is a shortcut for createUpdate(sql).run().
 	 * @param sql a SQL command
 	 * @return a UpdateResult containing the number of affected records.
 	 */
@@ -346,7 +346,7 @@ public class StaticStmt extends Stmt
 		}
 
 
-		private String sql_;
+		private final String sql_;
 		private ReturnCols returnCols_;
 	}
 
@@ -365,7 +365,8 @@ public class StaticStmt extends Stmt
 
 
 	/**
-	 * Executes a SQL command and returns the result
+	 * Executes a SQL command and returns the result.
+	 * It is a shortcut for createExecute(sql).run().
 	 * @param sql a SQL command
 	 * @return the ExecuteResult
 	 */
@@ -374,7 +375,7 @@ public class StaticStmt extends Stmt
 		return createExecute(sql).run();
 	}
 
-	
+
 	//------------------------------
 	// batch
 	//------------------------------
