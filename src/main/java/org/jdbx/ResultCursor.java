@@ -34,7 +34,7 @@ import org.jdbx.function.Unchecked;
  * QueryCursor represents the result of a SQL query. 
  * It is a wrapper class for java.sql.ResultSet.
  */
-public class QueryCursor implements AutoCloseable
+public class ResultCursor implements AutoCloseable
 {
 	/**
 	 * Returns a QueryCursor for the JDBC ResultSet
@@ -45,9 +45,9 @@ public class QueryCursor implements AutoCloseable
 	 * @return the new QueryCursor
 	 */
 	@SuppressWarnings("resource")
-	public static QueryCursor of(ResultSet resultSet)
+	public static ResultCursor of(ResultSet resultSet)
 	{
-		return new QueryCursor(resultSet).setCloseResult(false);
+		return new ResultCursor(resultSet).setCloseResult(false);
 	}
 
 
@@ -55,7 +55,7 @@ public class QueryCursor implements AutoCloseable
 	 * Creates a new QueryCursor which wraps a ResultSet.
 	 * @param resultSet the result set
 	 */
-	public QueryCursor(ResultSet resultSet)
+	public ResultCursor(ResultSet resultSet)
 	{
 		resultSet_ = Check.notNull(resultSet, "resultSet");
 	}
@@ -685,7 +685,7 @@ public class QueryCursor implements AutoCloseable
 		 */
 		public boolean next() throws JdbxException
 		{
-			return QueryCursor.this.next();
+			return ResultCursor.this.next();
 		}
 
 
@@ -726,7 +726,7 @@ public class QueryCursor implements AutoCloseable
 	 * @exception JdbxException thrown if there is no next row
 	 * @return this
 	 */
-	public QueryCursor nextRequired() throws JdbxException
+	public ResultCursor nextRequired() throws JdbxException
 	{
 		if (!next())
 			throw JdbxException.invalidResult("no next row");
@@ -890,7 +890,7 @@ public class QueryCursor implements AutoCloseable
 	 * @param flag the close flag
 	 * @return this
 	 */
-	public QueryCursor setCloseResult(boolean flag)
+	public ResultCursor setCloseResult(boolean flag)
 	{
 		closeResult_ = flag;
 		return this;
