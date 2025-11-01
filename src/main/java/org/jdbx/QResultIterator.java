@@ -79,10 +79,10 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Returns the internal ResultSet.
-	 * @return the result set
+	 * Returns the internal JDBC ResultSet.
+	 * @return the ResultSet
 	 */
-	public ResultSet getResultSet()
+	public ResultSet getJdbcResult()
 	{
 		return resultSet_;
 	}
