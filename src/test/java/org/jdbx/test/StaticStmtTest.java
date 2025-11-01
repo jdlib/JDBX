@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -24,7 +24,7 @@ import org.jdbx.ResultCursor;
 import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.Concurrency;
-import org.jdbx.QResultIterator;
+import org.jdbx.ResultIterator;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
 import org.junit.jupiter.api.AfterEach;
@@ -161,16 +161,16 @@ public class StaticStmtTest extends JdbxTest
 	{
 		public Dao(ResultCursor cursor) throws JdbxException
 		{
-			QResultIterator it = QResultIterator.of(cursor);
+			ResultIterator it = ResultIterator.of(cursor);
 			id		= it.getInteger();
 			name	= it.getString();
 		}
 
 
-		public Integer id;
-		public String name;
+		public final Integer id;
+		public final String name;
 	}
 
-	
+
 	private StaticStmt stmt_;
 }

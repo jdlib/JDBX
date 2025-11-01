@@ -22,7 +22,7 @@ import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 import org.jdbx.ResultCursor;
-import org.jdbx.QResultIterator;
+import org.jdbx.ResultIterator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +92,7 @@ public class PrepStmtTest extends JdbxTest
 	{
 		public static Dao read(ResultCursor cursor) throws JdbxException
 		{
-			QResultIterator it 	= QResultIterator.of(cursor);
+			ResultIterator it 	= ResultIterator.of(cursor);
 			Dao dao 			= new Dao();
 			dao.id   			= it.getInteger();
 			dao.name			= it.getString();

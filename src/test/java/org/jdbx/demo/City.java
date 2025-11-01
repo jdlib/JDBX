@@ -20,7 +20,7 @@ package org.jdbx.demo;
 import java.sql.ResultSet;
 import org.jdbx.JdbxException;
 import org.jdbx.ResultCursor;
-import org.jdbx.QResultIterator;
+import org.jdbx.ResultIterator;
 
 
 /**
@@ -34,7 +34,7 @@ public class City
 	 */
 	public static City read(ResultSet r) throws JdbxException
 	{
-		QResultIterator it 	= QResultIterator.of(r);
+		ResultIterator it 	= ResultIterator.of(r);
 		City city 			= new City();
 		city.id 			= it.getInteger();
 		city.name			= it.getString();
