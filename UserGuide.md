@@ -12,7 +12,7 @@ JDBX User Guide
    * [3.2 Read a single result row](#queries-singlerow)
    * [3.3 Read all result rows](#queries-allrows)
    * [3.4 Skip rows](#queries-skipping)
-   * [3.5 QueryCursor class](#queries-querycursorclass)
+   * [3.5 ResultCursor class](#queries-resultcursorclass)
    * [3.6 Converting from/to ResultSet](#queries-resultset)
 4. [Running DML or DDL updates](#updates)
    * [4.1 Run the update](#updates-run)
@@ -290,35 +290,35 @@ by calling `QueryResult.row()`, `.rows()` or `.rows(int)`:
     qr.skip(3).rows()...   // all rows after the first three rows
 
 
-### <a name="queries-querycursorclass"></a>3.5 QueryCursor class
+### <a name="queries-resultcursorclass"></a>3.5 ResultCursor class
 
 As shown above the `QueryResult` class makes it easy to extract a column value or an array of column values from a result row
 using the various `col()` and `cols()` builder methods.
 
-For more complicated cases JDBX provides the `org.jdbx.QueryCursor` class which replaces/wraps `java.sql.ResultSet` and allows
+For more complicated cases JDBX provides the `org.jdbx.ResultCursor` class which replaces/wraps `java.sql.ResultSet` and allows
 you to navigate thought the result rows and read values from each row.
 
-When positioned on a result row, `QueryCursor` offers similar methods like the builder returned by `QueryResult.row()` to extract values 
+When positioned on a result row, `ResultCursor` offers similar methods like the builder returned by `QueryResult.row()` to extract values 
 from the row:
 
-    QueryCursor qc = ...         // a QueryCursor, positioned on a result row
-    qc.col()...                  // first column
-    qc.col().getString();        // first column as String
-    qc.col(3)...                 // column by number
-    qc.col(3).getDouble();       // third column as double
-    qc.col("sort")...;           // column by name 
-    qc.col("sort").getInteger(); // "sort" column, as Integer
-    qc.cols(1,3,7);              // columns 1,3,7, as Object[] 
-    qc.map();                    // returns a Map<String,Object>
+    ResultCursor rc = ...        // a ResultCursor, positioned on a result row
+    rc.col()...                  // first column
+    rc.col().getString();        // first column as String
+    rc.col(3)...                 // column by number
+    rc.col(3).getDouble();       // third column as double
+    rc.col("sort")...;           // column by name 
+    rc.col("sort").getInteger(); // "sort" column, as Integer
+    rc.cols(1,3,7);              // columns 1,3,7, as Object[] 
+    rc.map();                    // returns a Map<String,Object>
 
-Given this API it is easy to create a function which obtains a `QueryCursor` and returns a complex
+Given this API it is easy to create a function which obtains a `ResultCursor` and returns a complex
 value constructed from the values of the current row:
 
     public class City {
-         public static City read(QueryCursor qc) {
+         public static City read(ResultCursor rc) {
              City city = new City();
-             city.setCode(qc.col(1).getString());
-             city.setName(qc.col(2).getString());
+             city.setCode(rc.col(1).getString());
+             city.setName(rc.col(2).getString());
              ...
              return city;  
          }
@@ -333,58 +333,58 @@ to return a single object / a list of objects:
     List<City> city = qr.rows().read(City::read);   // read a list of data objects from all rows 
 
 
-#### Self-managed QueryCursor navigation 
+#### Self-managed ResultCursor navigation 
 
-If you want to navigate through a `QueryCursor` yourself you can obtain the cursor by calling
-`QueryResult.cursor()`. You should actively close the `QueryCursor` once it is no longer used
+If you want to navigate through a `ResultCursor` yourself you can obtain the cursor by calling
+`QueryResult.cursor()`. You should actively close the `ResultCursor` once it is no longer used
 therefore it is best wrapped in a try-with-resources block:
 
      QueryResult qr = ...
-     try (QueryCursor qc = qr.cursor()) {
+     try (ResultCursor rc = qr.cursor()) {
          // loop through result and read its rowss
      }
 
-Given a `QueryCursor` it is easy to run through its rows in a forward only manner:
+Given a `ResultCursor` it is easy to run through its rows in a forward only manner:
 
     while (qc.next()) {
         // read the result row
     }
      
 If your cursor is scrollable you can ask for the position and freely move the current row,
-by using the service objects returned by `QueryCursor.position()` and `.move()`:
+by using the service objects returned by `ResultCursor.position()` and `.move()`:
 
 	// configure a scroll sensitive cursor	
 	StaticStmt stmt = ....
 	stmt.options().setResultType(ResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
-	try (QueryCursor qc = stmt.query(sql).cursor()) {
+	try (ResultCursor rc = stmt.query(sql).cursor()) {
 	    // read position
 	    boolean beforeFirst = qc.position().isBeforeFirst(); 
 	    // also: .isAfterLast(), .isLast()  
 
 	    // move current row
-	    qc.move().first() 
-	    qc.move().absolute(5) 
-	    qc.move().relative(2)
+	    rc.move().first() 
+	    rc.move().absolute(5) 
+	    rc.move().relative(2)
 	    // also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
 	}
   
-#### Update a QueryCursor row
+#### Update a ResultCursor row
     
 If your cursor is updatable, you can or update or delete the current row, or insert a new row:
 
     // configure the result to be updatable
     StaticStmt stmt = ....
     stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
-    QueryCursor qc = stmt.query(sql).cursor();
+    ResultCursor rc = stmt.query(sql).cursor();
 	
     // position row
     ... 
 	
-    qc.col("status").setString("ok"); 
-    qc.row().update();
-    qc.row().refresh();
+    rc.col("status").setString("ok"); 
+    rc.row().update();
+    rc.row().refresh();
     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
      
      
@@ -396,8 +396,8 @@ You can still obtain the underlying `java.sql.ResultSet` of a query cursor if yo
     while (resultSet.next())
         ... 
 
-If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a query cursor or query result using
-the factory methods `QueryCursor.of(ResultSet)` and `QueryResult.of(ResultSet)`:
+If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a result cursor or query result using
+the factory methods `QueryResult.of(ResultSet)` or `ResultCursor.of(ResultSet)`:
 
     java.sql.ResultSet resultSet = ...
     List<String> names = QueryResult.of(resultSet).rows().col("name").getString();
