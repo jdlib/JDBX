@@ -19,7 +19,7 @@ package org.jdbx.test;
 
 import org.jdbx.Jdbx;
 import org.jdbx.JdbxException;
-import org.jdbx.QueryCursor;
+import org.jdbx.ResultCursor;
 import org.jdbx.Concurrency;
 import org.jdbx.ResultType;
 import org.jdbx.StaticStmt;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-public class QueryCursorTest extends JdbxTest
+public class ResultCursorTest extends JdbxTest
 {
 	@BeforeAll public static void beforeClass() throws JdbxException
 	{
@@ -47,7 +47,7 @@ public class QueryCursorTest extends JdbxTest
 	@Test public void testScroll()
 	{
 		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE);
-		try (QueryCursor cursor = stmt_.query("SELECT name FROM QRTest ORDER BY name").cursor())
+		try (ResultCursor cursor = stmt_.query("SELECT name FROM QRTest ORDER BY name").cursor())
 		{
 			assertSame(ResultType.SCROLL_INSENSITIVE, cursor.getType());
 			assertTrue(cursor.position().isBeforeFirst());
@@ -65,7 +65,7 @@ public class QueryCursorTest extends JdbxTest
 	@Test public void testUpdate() throws Exception
 	{
 		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
-		try (QueryCursor cursor = stmt_.query("SELECT name FROM QRTest").cursor())
+		try (ResultCursor cursor = stmt_.query("SELECT name FROM QRTest").cursor())
 		{
 			assertSame(Concurrency.CONCUR_UPDATABLE, cursor.getConcurrency());
 			
