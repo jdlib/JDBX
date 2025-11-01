@@ -21,7 +21,7 @@ import org.jdbx.JdbxException;
 import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
-import org.jdbx.QueryCursor;
+import org.jdbx.ResultCursor;
 import org.jdbx.QResultIterator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -90,7 +90,7 @@ public class PrepStmtTest extends JdbxTest
 	
 	public static class Dao
 	{
-		public static Dao read(QueryCursor cursor) throws JdbxException
+		public static Dao read(ResultCursor cursor) throws JdbxException
 		{
 			QResultIterator it 	= QResultIterator.of(cursor);
 			Dao dao 			= new Dao();

@@ -19,7 +19,7 @@ package org.jdbx.demo;
 
 import java.sql.ResultSet;
 import org.jdbx.JdbxException;
-import org.jdbx.QueryCursor;
+import org.jdbx.ResultCursor;
 import org.jdbx.QResultIterator;
 
 
@@ -47,7 +47,7 @@ public class City
 	/**
 	 * Reads fields from current result row (City.*) and returns a new City object.
 	 */
-	public static City read(QueryCursor cursor) throws JdbxException
+	public static City read(ResultCursor cursor) throws JdbxException
 	{
 		return read(cursor.getJdbcResult());
 	}

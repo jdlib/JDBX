@@ -15,7 +15,7 @@ import org.jdbx.*;
 @SuppressWarnings({"unused","resource"})
 public class DocSnippets
 {
-	public List<City> readmeEx1Jdbc() throws SQLException 
+	public List<City> readmeEx1Jdbc() throws SQLException
 	{
 		List<City> list = new ArrayList<>();
 	    try (Statement stmt = con.createStatement()) {
@@ -25,15 +25,15 @@ public class DocSnippets
 	    }
 	    return list;
 	}
-	
-	
-	public List<City> readmeEx2Jdbc() throws SQLException 
+
+
+	public List<City> readmeEx2Jdbc() throws SQLException
 	{
 		return Jdbx.query(con, "SELECT * FROM Cities ORDER BY name").rows().read(City::read);
 	}
 
-	
-	public Integer readmeEx2Jdbc(Connection con, String firstName, String lastName) 
+
+	public Integer readmeEx2Jdbc(Connection con, String firstName, String lastName)
 	{
 	    try (PreparedStatement pstmt = con.prepareStatement("INSERT INTO Users VALUES (DEFAULT, ?, ?)",
 	        new String[] { "id" })) {
@@ -53,9 +53,9 @@ public class DocSnippets
 	        throw new IllegalStateException("sql error", e);
 	    }
 	}
-	
-	
-	public Integer readmeEx2Jdbx(Connection con, String firstName, String lastName) 
+
+
+	public Integer readmeEx2Jdbx(Connection con, String firstName, String lastName)
 	{
 		try (PrepStmt pstmt = new PrepStmt(con)) {
 			return pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
@@ -64,21 +64,21 @@ public class DocSnippets
 		}
 	}
 
-	
+
 	public void stmtsCreateClose()
 	{
 		// createing
-		new StaticStmt(con); 
+		new StaticStmt(con);
 		new PrepStmt(con);
 		new CallStmt(con);
-		new StaticStmt(ds); 
+		new StaticStmt(ds);
 		new PrepStmt(ds);
 		new CallStmt(ds);
-		
+
 		// close
 		try (StaticStmt stmt = new StaticStmt(con)) {
-		} 
-		
+		}
+
 		// configure
 	    stmt.options()
 	        .setQueryTimeoutSeconds(20)
@@ -93,32 +93,32 @@ public class DocSnippets
 	{
 		pstmt.init("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
 		cstmt.init("{call getUserName(?, ?)}");
-		
+
 		pstmt.init().returnCols("id").sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)");
 		pstmt.init().namedParams().sql("UPDATE Users SET name = :name");
 	}
-	
+
 
 	public void stmtsOptions()
 	{
 		stmt.options().setQueryTimeoutSeconds(20).setFetchRows(5000);
 		int timeoutSecs = stmt.options().getQueryTimeoutSeconds();
 	}
-	
-	
+
+
 	public void stmtsParams()
 	{
-		pstmt.param(1).setString("John"); 
+		pstmt.param(1).setString("John");
 		pstmt.param(2).setString("Doe");
 		pstmt.param(2).setInt(42);
 	    pstmt.param(1, "John").param(2, "Doe");
-		
+
 		pstmt.params("John", "Doe");
 
 	    pstmt.init().namedParams().sql("INSERT INTO Users VALUES (DEFAULT, :lastname, :firstname, :lastname + ', ' + :firstname)");
-	    pstmt.param("lastname").setString("John");     
+	    pstmt.param("lastname").setString("John");
 	    pstmt.param("firstname").setString("Doe");
-	    
+
 		cstmt.init("{call GetUserName(?,?,?)}");
 		cstmt.param(1).setLong(831L);
 		cstmt.param(2).out(java.sql.Types.VARCHAR);
@@ -127,11 +127,11 @@ public class DocSnippets
 		String lastName  = cstmt.param(2).getString();
 		String firstName = cstmt.param(3).getString();
 
-	    pstmt.clearParams();              
-	    cstmt.clearParams();              
+	    pstmt.clearParams();
+	    cstmt.clearParams();
 	}
-	
-	
+
+
 	public List<City> queryRunningEx1() throws Exception
 	{
 		String sql = "SELECT * FROM Cities ORDER BY name";
@@ -139,11 +139,11 @@ public class DocSnippets
 		if (jdbc)
 		{
 			// JDBC:
-			Statement stmt = con.createStatement();                        
-			ResultSet result = stmt.executeQuery(sql);         
+			Statement stmt = con.createStatement();
+			ResultSet result = stmt.executeQuery(sql);
 			List<City> cities = new ArrayList<>();
 			while (result.next()) {
-			    City city = City.read(result); 
+			    City city = City.read(result);
 			    cities.add(city);
 			}
 			return cities;
@@ -155,19 +155,19 @@ public class DocSnippets
 			}
 		}
 	}
-	
-	
+
+
 	public String queryRunningEx2() throws Exception
 	{
 		String sql = "SELECT name FROM Cities WHERE code = ?";
 
 		if (jdbc)
 		{
-			// JDBC:    
+			// JDBC:
 			try (PreparedStatement pstmt = con.prepareStatement(sql)) {
-				pstmt.setString(1, "MUC");                        
+				pstmt.setString(1, "MUC");
 				ResultSet result = pstmt.executeQuery();
-				String name = null;         
+				String name = null;
 				if (result.next())
 				    name = result.getString(1);
 				return name;
@@ -181,33 +181,33 @@ public class DocSnippets
 			}
 		}
 	}
-	
-	
+
+
 	public void queryResultClass() throws Exception
 	{
 		qr = stmt.query(sql);
 		qr = pstmt.init(sql).params("a", "b").query();
 	}
-	
-	
+
+
 	public void querySingleRow() throws Exception
 	{
 		qr.row().col();                // returns a builder to retrieve a value of the first column
 		qr.row().col().getString();    // returns the value of the first column as String
 		qr.row().col(3);               // returns a builder to retrieve a value of the third column
 		qr.row().col(3).getInteger();  // returns the value of the third column as Integer
-		qr.row().col("sort");          // returns a builder to retrieve a value of the "sort" column  
+		qr.row().col("sort");          // returns a builder to retrieve a value of the "sort" column
 		qr.row().col("sort").getInt(); // returns the value of "sort" column as int
 		qr.row().cols();               // returns the value of all columns, as Object[]
-		qr.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[] 
+		qr.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[]
 		qr.row().map();                // returns a Map<String,Object> mapping column name to value
 		qr.row().read(City::read);    // returns the value returned by the reader function
-		
+
 		qr.row().required().col().getString();
 		qr.row().unique().col().getString();
 	}
-	
-	
+
+
 	public void queryAllRows() throws Exception
 	{
 		qr.rows();
@@ -215,42 +215,42 @@ public class DocSnippets
 		qr.rows().col().getString();        // return values of first column as List<String>
 		qr.rows().col(3);                   // return values of column by column number
 		qr.rows().col(3).getDouble();       // return values of third column, as List<Double>
-		qr.rows().col("sort");              // return values of column by name 
+		qr.rows().col("sort");              // return values of column by name
 		qr.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
 		qr.rows().cols();                   // return values of all columns, as List<Object[]>
-		qr.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]> 
+		qr.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]>
 		qr.rows().map();                    // return a List<Map<String,Object>>
-		
+
 		qr.rows().max(5);
 		qr.skip(3).rows();
 	}
-	
-	
-	public void queryCursor() throws Exception
+
+
+	public void resultCursor() throws Exception
 	{
-        qc.col();                    // first column
-        qc.col().getString();        // first column as String
-        qc.col(3);                   // column by number
-        qc.col(3).getDouble();       // third column as double
-        qc.col("sort");              // column by name 
-        qc.col("sort").getInteger(); // "sort" column, as Integer
-        qc.cols(1,3,7);              // columns 1,3,7, as Object[] 
-        qc.map();                    // returns a Map<String,Object>
+        rc.col();                    // first column
+        rc.col().getString();        // first column as String
+        rc.col(3);                   // column by number
+        rc.col(3).getDouble();       // third column as double
+        rc.col("sort");              // column by name
+        rc.col("sort").getInteger(); // "sort" column, as Integer
+        rc.cols(1,3,7);              // columns 1,3,7, as Object[]
+        rc.map();                    // returns a Map<String,Object>
 
 		qr.row().read(City::read);
 		qr.rows().read(City::read);
 }
 
-	
-    public static class City1 
+
+    public static class City1
     {
-        public static City1 read(QueryCursor qc) {
+        public static City1 read(ResultCursor qc) {
             City1 city = new City1();
             city.setCode(qc.col(1).getString());
             city.setName(qc.col(2).getString());
-            return city; 
+            return city;
         }
-        
+
         public void setCode(String value)
         {
         }
@@ -258,83 +258,83 @@ public class DocSnippets
         public void setName(String value)
         {
         }
-    }    
-	
-	
-	public void queryCursorNav() throws Exception
+    }
+
+
+	public void resultCursorNav() throws Exception
 	{
-		while (qc.next()) {
+		while (rc.next()) {
 		    // read the result row
 		}
-		
+
 		stmt.options().setResultType(ResultType.SCROLL_SENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
-		qc = stmt.query("sql").cursor();
-		qc.position().isBeforeFirst(); 
-		// also: .isAfterLast(), .isLast()  
+		rc = stmt.query("sql").cursor();
+		rc.position().isBeforeFirst();
+		// also: .isAfterLast(), .isLast()
 
-		qc.move().first() ;
-		qc.move().absolute(5); 
-		qc.move().relative(2);
+		rc.move().first() ;
+		rc.move().absolute(5);
+		rc.move().relative(2);
 		// also: .relative(), .afterLast(), .beforeFirst(), .first(), .etc.
-		 
-		qc.row().update();
-		qc.row().refresh();
-		// also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.		
+
+		rc.row().update();
+		rc.row().refresh();
+		// also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
 	}
 
-	
-	public void queryCursorObtain() throws Exception
+
+	public void resultCursorObtain() throws Exception
 	{
 		stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 
-	   	qc.col("status").setString("ok"); 
-	    qc.row().update();
-	    qc.row().refresh();
+	   	rc.col("status").setString("ok");
+	    rc.row().update();
+	    rc.row().refresh();
 	}
-	
-	
+
+
 	public void update() throws Exception
 	{
 		stmt.update(sql);
 		pstmt.update();
 	}
-	
-	
+
+
 	public void updateRun() throws Exception
 	{
 		long count;
-		
+
    		count = stmt.update(null).count();
    	   	count = pstmt.update().count();
-   	   	
+
    	   	stmt.update(null).requireCount(1);
 	}
-	
+
 
 	public void updateClass() throws Exception
 	{
 		u = stmt.createUpdate(sql);
 		u = pstmt.init(sql).createUpdate();
 	}
-	
-	
+
+
 	public void updateReturnCols() throws Exception
 	{
         UpdateResult<Integer> result = stmt.createUpdate("INSERT INTO Users VALUES (DEFAULT, 'John', 'Doe'")
             .returnAutoKeyCols()        // step 1: tell the Update to return auto-generated key columns
-            .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key value as Integer 
+            .runGetCol(Integer.class);  // step 2: run the update, extract the new inserted primary key value as Integer
         long inserted = result.count();
-        Integer newId = result.value(); 
+        Integer newId = result.value();
 
         newId = stmt.createUpdate("INSERT INTO ...")
             .returnAutoKeyCols()
             .runGetCol(Integer.class)
             .requireCount(1)  // could throw an Exception
             .requireValue();  // could throw an Exception
-        
-        stmt.createUpdate(sql).returnCols(1, 5, 7);   
+
+        stmt.createUpdate(sql).returnCols(1, 5, 7);
         stmt.createUpdate(sql).returnCols("id", "timestamp");
 
         newId = pstmt.init().returnAutoKeyCols().sql("INSERT INTO Users VALUES (DEFAULT, ?, ?)")
@@ -347,11 +347,11 @@ public class DocSnippets
 
 	public void updateAutoGen() throws Exception
 	{
-	    long updated = stmt.createUpdate("UPDATE MegaTable SET timestamp = NOW()") 
-	        .enableLargeCount()  // configures the Update 
+	    long updated = stmt.createUpdate("UPDATE MegaTable SET timestamp = NOW()")
+	        .enableLargeCount()  // configures the Update
 	        .run()               // runs the Update and returns the UpdateResult
 	        .count();            // returns update count
-	}   
+	}
 
 
 	public void execute() throws Exception
@@ -364,8 +364,8 @@ public class DocSnippets
 				result.getUpdateResult();
 		}
 	}
-	
-	
+
+
 	public void batches() throws Exception
 	{
         stmt.batch()
@@ -375,7 +375,7 @@ public class DocSnippets
     		.requireSize(2)
     		.requireCount(0, 1)
     		.requireCount(1, 3);
-           
+
         pstmt.init("INSERT INTO BatchDemo (name) VALUES (?)");
         pstmt.params("A").batch().add();
         pstmt.params("B").batch().add()
@@ -384,26 +384,26 @@ public class DocSnippets
     		.requireCount(0, 1)
     		.requireCount(1, 1);
 	}
-	
-	
+
+
 	public void runningSingleCommands() throws Exception
 	{
 		int cityCount = Jdbx.query(con, "SELECT COUNT(*) FROM Cities").row().col().getInt();
-		
+
 		Jdbx.update(con, "INSERT INTO Status (flag) VALUES (?)", "F").requireCount(1);
 	}
-	
-	
+
+
 	public void multiStmts() throws Exception
 	{
-		try (MultiStmt mstmt = new MultiStmt(con)) 
+		try (MultiStmt mstmt = new MultiStmt(con))
 		{
 			StaticStmt s1 = mstmt.newStaticStmt();
 			PrepStmt s2   = mstmt.newPrepStmt();
-		} 
+		}
 	}
 
-	
+
 	private String sql;
 	private StaticStmt stmt;
 	private PrepStmt pstmt;
@@ -411,7 +411,7 @@ public class DocSnippets
 	private Connection con;
 	private DataSource ds;
 	private QueryResult qr;
-	private QueryCursor qc;
+	private ResultCursor rc;
 	private Update u;
 	private boolean jdbc;
 }

@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -31,18 +31,18 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * QueryCursor represents the result of a SQL query. 
+ * ResultCursor represents the result of a SQL query.
  * It is a wrapper class for java.sql.ResultSet.
  */
 public class ResultCursor implements AutoCloseable
 {
 	/**
-	 * Returns a QueryCursor for the JDBC ResultSet
+	 * Returns a ResultCursor for the JDBC ResultSet
 	 * which does not close the ResultSet when it is closed.
 	 * Use this factory method to avoid compiler warnings
 	 * for unclosed resources when you don't want to close the ResultSet.
 	 * @param resultSet the wrapped result set
-	 * @return the new QueryCursor
+	 * @return the new ResultCursor
 	 */
 	@SuppressWarnings("resource")
 	public static ResultCursor of(ResultSet resultSet)
@@ -52,7 +52,7 @@ public class ResultCursor implements AutoCloseable
 
 
 	/**
-	 * Creates a new QueryCursor which wraps a ResultSet.
+	 * Creates a new ResultCursor which wraps a ResultSet.
 	 * @param resultSet the result set
 	 */
 	public ResultCursor(ResultSet resultSet)
@@ -88,7 +88,7 @@ public class ResultCursor implements AutoCloseable
 		}
 		return true;
 	}
-	
+
 
 	/**
 	 * Returns the column values of the current row as array.
@@ -106,7 +106,7 @@ public class ResultCursor implements AutoCloseable
 		}
 	}
 
-	
+
 	/**
 	 * Returns column values of the current row as array.
 	 * @param numbers the column numbers, starting at 1.
@@ -179,8 +179,8 @@ public class ResultCursor implements AutoCloseable
 			throw JdbxException.of(e);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Calls {@link #col(int)} with column number 1.
 	 * @return the column
@@ -190,7 +190,7 @@ public class ResultCursor implements AutoCloseable
 		return col(1);
 	}
 
-	
+
 	/**
 	 * Returns the result column for the given number.
 	 * The column should only be used to immediately access the value, but
@@ -531,7 +531,7 @@ public class ResultCursor implements AutoCloseable
 		return toBoolean(ResultSet::wasNull);
 	}
 
-	
+
 	//----------------------------------
 	// position
 	//----------------------------------
@@ -730,10 +730,10 @@ public class ResultCursor implements AutoCloseable
 	{
 		if (!next())
 			throw JdbxException.invalidResult("no next row");
-		return this; 
+		return this;
 	}
 
-	
+
 	//----------------------------------
 	// helper
 	//----------------------------------
@@ -875,7 +875,7 @@ public class ResultCursor implements AutoCloseable
 
 
 	/**
-	 * Returns if the internal ResultSet should be closed when this QueryCursor is closed.
+	 * Returns if the internal ResultSet should be closed when this ResultCursor is closed.
 	 * @return the close result flag
 	 */
 	public boolean isCloseResult()
@@ -885,8 +885,8 @@ public class ResultCursor implements AutoCloseable
 
 
 	/**
-	 * Instructs the QueryCursor if the internal ResultSet should be closed
-	 * when this QueryCursor is closed.
+	 * Instructs the ResultCursor if the internal ResultSet should be closed
+	 * when this ResultCursor is closed.
 	 * @param flag the close flag
 	 * @return this
 	 */

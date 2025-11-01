@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -23,7 +23,7 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * QResultIterator is a lightweight wrapper around a QueryCursor.
+ * QResultIterator is a lightweight wrapper around a ResultCursor.
  * It allows easy reading of subsequent cursor rows.
  */
 public class QResultIterator implements GetResult, AutoCloseable
@@ -37,7 +37,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 * @return the new QResultIterator
 	 */
 	@SuppressWarnings("resource")
-	public static QResultIterator of(QueryCursor cursor)
+	public static QResultIterator of(ResultCursor cursor)
 	{
 		return new QResultIterator(cursor).setCloseResult(false);
 	}
@@ -59,10 +59,10 @@ public class QResultIterator implements GetResult, AutoCloseable
 
 
 	/**
-	 * Creates a QResultIterator for a QueryCursor.
+	 * Creates a QResultIterator for a ResultCursor.
 	 * @param cursor the result
 	 */
-	public QResultIterator(QueryCursor cursor)
+	public QResultIterator(ResultCursor cursor)
 	{
 		resultSet_ = Check.notNull(cursor, "cursor").getJdbcResult();
 	}

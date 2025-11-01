@@ -52,7 +52,7 @@ public abstract class QueryResult extends StmtRunnable
 	}
 
 
-	boolean applySkip(QueryCursor cursor) throws SQLException
+	boolean applySkip(ResultCursor cursor) throws SQLException
 	{
 		return (skip_ <= 0) || cursor.skip(skip_);
 	}
@@ -63,12 +63,12 @@ public abstract class QueryResult extends StmtRunnable
 	 * You should actively close the cursor once it is no longer used. 
 	 * @return the cursor
 	 */
-	public QueryCursor cursor() throws JdbxException
+	public ResultCursor cursor() throws JdbxException
 	{
 		try
 		{
 			ResultSet resultSet = runQuery();
-			return new QueryCursor(resultSet);
+			return new ResultCursor(resultSet);
 		}
 		catch (Exception e)
 		{
@@ -101,7 +101,7 @@ public abstract class QueryResult extends StmtRunnable
 	 * Executes the query and passes the result cursor to the consumer.
 	 * @param consumer a result consumer
 	 */
-	public void read(CheckedConsumer<QueryCursor> consumer) throws JdbxException
+	public void read(CheckedConsumer<ResultCursor> consumer) throws JdbxException
 	{
 		read(result -> {
 			consumer.accept(result);
@@ -116,7 +116,7 @@ public abstract class QueryResult extends StmtRunnable
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader.
 	 */
-	public <T> T read(CheckedFunction<QueryCursor,T> reader) throws JdbxException
+	public <T> T read(CheckedFunction<ResultCursor,T> reader) throws JdbxException
 	{
 		return read(skip_ > 0, reader);
 	}
@@ -130,14 +130,14 @@ public abstract class QueryResult extends StmtRunnable
 	 * after an unsuccessful prior call to this method - unfortunately in this case
 	 * a JDBC driver is allowed to throw an exception instead of returning false.
 	 */
-	<R> R read(boolean applySkip, CheckedFunction<QueryCursor,R> reader) throws JdbxException
+	<R> R read(boolean applySkip, CheckedFunction<ResultCursor,R> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 
 		Exception e1 = null, e2 = null;
 		R returnValue = null;
 
-		try (QueryCursor cursor = new QueryCursor(runQuery()))
+		try (ResultCursor cursor = new ResultCursor(runQuery()))
 		{
 			if (applySkip)
 				applySkip(cursor);
