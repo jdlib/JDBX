@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -25,7 +25,7 @@ import org.jdbx.function.CheckedFunction;
 /**
  * QueryResult is a builder class to run a SQL query and extract values from the JDBC result set.
  * Note that actual query on JDBC level may not be run until
- * a terminal operation of the builder method chain is executed. 
+ * a terminal operation of the builder method chain is executed.
  */
 public abstract class QueryResult extends StmtRunnable
 {
@@ -59,8 +59,8 @@ public abstract class QueryResult extends StmtRunnable
 
 
 	/**
-	 * Executes the query and returns the result in form of a QueryCursor.
-	 * You should actively close the cursor once it is no longer used. 
+	 * Executes the query and returns the result in form of a ResultCursor.
+	 * You should actively close the cursor once it is no longer used.
 	 * @return the cursor
 	 */
 	public ResultCursor cursor() throws JdbxException
@@ -95,8 +95,8 @@ public abstract class QueryResult extends StmtRunnable
 	{
 		return new QResultRows(this);
 	}
-	
-	
+
+
 	/**
 	 * Executes the query and passes the result cursor to the consumer.
 	 * @param consumer a result consumer
@@ -126,7 +126,7 @@ public abstract class QueryResult extends StmtRunnable
 	/**
 	 * Implementation method to read the result using a reader function.
 	 * We allow callers of this method to decide if they want to apply skipping themselves:
-	 * If skipping is done here, the reader may invoke QueryCursor.next()
+	 * If skipping is done here, the reader may invoke ResultCursor.next()
 	 * after an unsuccessful prior call to this method - unfortunately in this case
 	 * a JDBC driver is allowed to throw an exception instead of returning false.
 	 */
