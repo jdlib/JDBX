@@ -26,7 +26,7 @@ import org.jdbx.function.Unchecked;
  * QResultIterator is a lightweight wrapper around a ResultCursor.
  * It allows easy reading of subsequent cursor rows.
  */
-public class QResultIterator implements GetResult, AutoCloseable
+public class ResultIterator implements GetResult, AutoCloseable
 {
 	/**
 	 * Returns a QResultIterator for the result
@@ -37,9 +37,9 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 * @return the new QResultIterator
 	 */
 	@SuppressWarnings("resource")
-	public static QResultIterator of(ResultCursor cursor)
+	public static ResultIterator of(ResultCursor cursor)
 	{
-		return new QResultIterator(cursor).setCloseResult(false);
+		return new ResultIterator(cursor).setCloseResult(false);
 	}
 
 
@@ -52,9 +52,9 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 * @return the new QResultIterator
 	 */
 	@SuppressWarnings("resource")
-	public static QResultIterator of(ResultSet resultSet)
+	public static ResultIterator of(ResultSet resultSet)
 	{
-		return new QResultIterator(resultSet).setCloseResult(false);
+		return new ResultIterator(resultSet).setCloseResult(false);
 	}
 
 
@@ -62,7 +62,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 * Creates a QResultIterator for a ResultCursor.
 	 * @param cursor the result
 	 */
-	public QResultIterator(ResultCursor cursor)
+	public ResultIterator(ResultCursor cursor)
 	{
 		resultSet_ = Check.notNull(cursor, "cursor").getJdbcResult();
 	}
@@ -72,7 +72,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 * Creates a QResultIterator for a ResultSet.
 	 * @param resultSet the ResultSet
 	 */
-	public QResultIterator(ResultSet resultSet)
+	public ResultIterator(ResultSet resultSet)
 	{
 		resultSet_ = Check.notNull(resultSet, "resultSet");
 	}
@@ -217,7 +217,7 @@ public class QResultIterator implements GetResult, AutoCloseable
 	 * @param flag the close flag
 	 * @return this
 	 */
-	public QResultIterator setCloseResult(boolean flag)
+	public ResultIterator setCloseResult(boolean flag)
 	{
 		closeResult_ = flag;
 		return this;
