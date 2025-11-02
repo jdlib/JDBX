@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -37,30 +37,46 @@ import java.util.Map;
  */
 interface GetValue
 {
+	/**
+	 * @return the value as an Array.
+	 */
 	public default Array getArray() throws JdbxException
 	{
 		return get(GetAccessors.ARRAY);
 	}
 
 
+	/**
+	 * @return the value as an BigDecimal.
+	 */
 	public default BigDecimal getBigDecimal() throws JdbxException
 	{
 		return get(GetAccessors.BIGDECIMAL);
 	}
 
 
+	/**
+	 * @return the value as an Blob.
+	 */
 	public default Blob getBlob() throws JdbxException
 	{
 		return get(GetAccessors.BLOB);
 	}
 
 
+	/**
+	 * @return the value as boolean. If the value is null, false is returned.
+	 */
 	public default boolean getBoolean() throws JdbxException
 	{
 		return getBoolean(false);
 	}
 
 
+	/**
+	 * @return the value as boolean. If the value is null, the default value is returned.
+	 * @param defaultValue the default value
+	 */
 	public default boolean getBoolean(boolean defaultValue) throws JdbxException
 	{
 		Boolean value = getBooleanObject();
@@ -68,6 +84,9 @@ interface GetValue
 	}
 
 
+	/**
+	 * @return the value as Boolean.
+	 */
 	public default Boolean getBooleanObject() throws JdbxException
 	{
 		return get(GetAccessors.BOOLEAN);
