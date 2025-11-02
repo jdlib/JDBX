@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -22,7 +22,6 @@ import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
 import org.jdbx.ResultCursor;
-import org.jdbx.ResultIterator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +66,7 @@ public class PrepStmtTest extends JdbxTest
 		pstmt_.param("name").setString("b");
 		pstmt_.param("type").setInt(15);
 		assertEquals(1, pstmt_.update().count());
-		
+
 		// insert two records using a batch
 		pstmt_.param(1, "c").param(2, 2).batch().add();
 		pstmt_.param(1, "d");
@@ -87,16 +86,15 @@ public class PrepStmtTest extends JdbxTest
 		assertEquals(1, 	dao.type);
 	}
 
-	
+
 	public static class Dao
 	{
 		public static Dao read(ResultCursor cursor) throws JdbxException
 		{
-			ResultIterator it 	= ResultIterator.of(cursor);
-			Dao dao 			= new Dao();
-			dao.id   			= it.getInteger();
-			dao.name			= it.getString();
-			dao.type			= it.getInt();
+			Dao dao 	= new Dao();
+			dao.id   	= cursor.nextCol().getInteger();
+			dao.name	= cursor.nextCol().getString();
+			dao.type	= cursor.nextCol().getInt();
 			return dao;
 		}
 

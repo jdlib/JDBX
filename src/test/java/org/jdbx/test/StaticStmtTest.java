@@ -24,7 +24,6 @@ import org.jdbx.ResultCursor;
 import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.Concurrency;
-import org.jdbx.ResultIterator;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
 import org.junit.jupiter.api.AfterEach;
@@ -161,9 +160,8 @@ public class StaticStmtTest extends JdbxTest
 	{
 		public Dao(ResultCursor cursor) throws JdbxException
 		{
-			ResultIterator it = ResultIterator.of(cursor);
-			id		= it.getInteger();
-			name	= it.getString();
+			id   = cursor.nextCol().getInteger();
+			name = cursor.nextCol().getString();
 		}
 
 

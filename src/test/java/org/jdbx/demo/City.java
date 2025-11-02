@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -20,7 +20,6 @@ package org.jdbx.demo;
 import java.sql.ResultSet;
 import org.jdbx.JdbxException;
 import org.jdbx.ResultCursor;
-import org.jdbx.ResultIterator;
 
 
 /**
@@ -34,16 +33,16 @@ public class City
 	 */
 	public static City read(ResultSet r) throws JdbxException
 	{
-		ResultIterator it 	= ResultIterator.of(r);
-		City city 			= new City();
-		city.id 			= it.getInteger();
-		city.name			= it.getString();
-		city.country		= it.getString();
-		city.size			= it.getInt();
+		ResultCursor rc = ResultCursor.of(r);
+		City city 		= new City();
+		city.id 		= rc.nextCol().getInteger();
+		city.name		= rc.nextCol().getString();
+		city.country	= rc.nextCol().getString();
+		city.size		= rc.nextCol().getInt();
 		return city;
 	}
 
-	
+
 	/**
 	 * Reads fields from current result row (City.*) and returns a new City object.
 	 */
