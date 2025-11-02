@@ -263,7 +263,7 @@ public class DocSnippets
 
 	public void resultCursorNav() throws Exception
 	{
-		while (rc.next()) {
+		while (rc.nextRow()) {
 		    // read the result row
 		}
 

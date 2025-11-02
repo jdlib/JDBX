@@ -76,7 +76,7 @@ public class QResultRows
 		Check.notNull(consumer, "consumer");
 		CheckedConsumer<ResultCursor> c = cursor -> {
 			int index = -1;
-			while (allowRow(++index) && cursor.next())
+			while (allowRow(++index) && cursor.nextRow())
 				consumer.accept(cursor);
 		}; 
 		result_.read(c);
@@ -114,7 +114,7 @@ public class QResultRows
 			if (result_.applySkip(cursor))
 			{
 				int index = -1;
-				while (allowRow(++index) && cursor.next())
+				while (allowRow(++index) && cursor.nextRow())
 					list.add(reader.apply(cursor));
 			}
 			return list;

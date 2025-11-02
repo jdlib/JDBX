@@ -69,7 +69,7 @@ public class ResultCursorTest extends JdbxTest
 		{
 			assertSame(Concurrency.CONCUR_UPDATABLE, cursor.getConcurrency());
 			
-			assertTrue(cursor.next());
+			assertTrue(cursor.nextRow());
 			cursor.col().setString("Z");
 			assertTrue(cursor.row().isUpdated());
 			cursor.row().update();

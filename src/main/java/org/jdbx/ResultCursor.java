@@ -468,7 +468,7 @@ public class ResultCursor implements AutoCloseable
 		int n = 0;
 		while (n < count)
 		{
-			if (!next())
+			if (!nextRow())
 				return false;
 			n++;
 		}
@@ -773,7 +773,7 @@ public class ResultCursor implements AutoCloseable
 		public boolean next() throws JdbxException
 		{
 			resetNextColNumber();
-			return ResultCursor.this.next();
+			return ResultCursor.this.nextRow();
 		}
 
 
@@ -805,7 +805,7 @@ public class ResultCursor implements AutoCloseable
 	 * @return true if cursor was moved
 	 * @see ResultSet#next()
 	 */
-	public boolean next() throws JdbxException
+	public boolean nextRow() throws JdbxException
 	{
 		resetNextColNumber();
 		return toBoolean(ResultSet::next);
@@ -817,9 +817,9 @@ public class ResultCursor implements AutoCloseable
 	 * @exception JdbxException thrown if there is no next row
 	 * @return this
 	 */
-	public ResultCursor nextRequired() throws JdbxException
+	public ResultCursor nextRowRequired() throws JdbxException
 	{
-		if (!next())
+		if (!nextRow())
 			throw JdbxException.invalidResult("no next row");
 		return this;
 	}

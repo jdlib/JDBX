@@ -126,7 +126,7 @@ public abstract class QueryResult extends StmtRunnable
 	/**
 	 * Implementation method to read the result using a reader function.
 	 * We allow callers of this method to decide if they want to apply skipping themselves:
-	 * If skipping is done here, the reader may invoke ResultCursor.next()
+	 * If skipping is done here, the reader may invoke ResultCursor.nextRow()
 	 * after an unsuccessful prior call to this method - unfortunately in this case
 	 * a JDBC driver is allowed to throw an exception instead of returning false.
 	 */

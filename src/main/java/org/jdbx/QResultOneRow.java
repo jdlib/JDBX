@@ -82,10 +82,10 @@ public class QResultOneRow
 	{
 		Check.notNull(reader, "reader");
 		return result_.read(false, result -> {
-			if (result_.applySkip(result) && result.next())
+			if (result_.applySkip(result) && result.nextRow())
 			{
 				T value = reader.apply(result);
-				if (unique_ && result.next())
+				if (unique_ && result.nextRow())
 					throw JdbxException.invalidResult("query returned more than one row");
 				return value;
 			}

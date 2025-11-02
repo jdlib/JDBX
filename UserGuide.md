@@ -346,7 +346,7 @@ therefore it is best wrapped in a try-with-resources block:
 
 Given a `ResultCursor` it is easy to run through its rows in a forward only manner:
 
-    while (qc.next()) {
+    while (qc.nextRow()) {
         // read the result row
     }
      

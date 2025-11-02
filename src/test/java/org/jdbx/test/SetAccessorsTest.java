@@ -42,7 +42,7 @@ public class SetAccessorsTest extends JdbxTest
 		try (StaticStmt stmt = new StaticStmt(con())) {
 			stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 			stmt.query("SELECT id, n, d FROM AccTest").read(c -> {
-				assertTrue(c.next());
+				assertTrue(c.nextRow());
 				c.col(2).setInteger(null);
 				c.col(3).setDouble(null);
 				c.col("n").setInt(2);
