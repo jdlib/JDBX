@@ -71,23 +71,9 @@ public class ResultCursor implements AutoCloseable
 	}
 
 
-	/**
-	 * Skips n rows.
-	 * @param count the number of rows to skip. If &lt;= 0 this call has no effect.
-	 * @return true, if the amount of rows have been skipped or count was &lt;= 0, false
-	 * 		if the result had less remaining rows than then given row count
-	 */
-	public boolean skip(int count)
-	{
-		int n = 0;
-		while (n < count)
-		{
-			if (!next())
-				return false;
-			n++;
-		}
-		return true;
-	}
+	//----------------------------------
+	// column operations
+	//----------------------------------
 
 
 	/**
@@ -393,6 +379,30 @@ public class ResultCursor implements AutoCloseable
 
 
 		private String name_;
+	}
+
+
+	//----------------------------------
+	// row operations
+	//----------------------------------
+
+
+	/**
+	 * Skips n rows.
+	 * @param count the number of rows to skip. If &lt;= 0 this call has no effect.
+	 * @return true, if the amount of rows have been skipped or count was &lt;= 0, false
+	 * 		if the result had less remaining rows than then given row count
+	 */
+	public boolean skip(int count)
+	{
+		int n = 0;
+		while (n < count)
+		{
+			if (!next())
+				return false;
+			n++;
+		}
+		return true;
 	}
 
 
@@ -915,6 +925,7 @@ public class ResultCursor implements AutoCloseable
 	private final ResultSet resultSet_;
 	private final NumberedColumn numberedColumn_ = new NumberedColumn();
 	private final NamedColumn namedColumn_ = new NamedColumn();
+	private int nextColNumber_ = 1;
 	private boolean closeResult_ = true;
 	private Move move_;
 	private Row row_;
