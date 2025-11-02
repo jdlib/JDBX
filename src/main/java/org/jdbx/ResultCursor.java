@@ -907,10 +907,10 @@ public class ResultCursor implements AutoCloseable
 	}
 
 
+	private final ResultSet resultSet_;
+	private final NumberedColumn numberedColumn_ = new NumberedColumn();
+	private final NamedColumn namedColumn_ = new NamedColumn();
 	private boolean closeResult_ = true;
-	private ResultSet resultSet_;
-	private NumberedColumn numberedColumn_ = new NumberedColumn();
-	private NamedColumn namedColumn_ = new NamedColumn();
 	private Move move_;
 	private Row row_;
 }
