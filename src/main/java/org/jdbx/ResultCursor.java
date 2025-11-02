@@ -464,6 +464,7 @@ public class ResultCursor implements AutoCloseable
 	 */
 	public boolean skip(int count)
 	{
+		resetNextColNumber();
 		int n = 0;
 		while (n < count)
 		{
@@ -688,6 +689,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public boolean absolute(int row) throws JdbxException
 		{
+			resetNextColNumber();
 			return Unchecked.get(() -> Boolean.valueOf(resultSet_.absolute(row))).booleanValue();
 		}
 
@@ -700,6 +702,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public boolean relative(int rows) throws JdbxException
 		{
+			resetNextColNumber();
 			return Unchecked.get(() -> Boolean.valueOf(resultSet_.relative(rows))).booleanValue();
 		}
 
@@ -710,6 +713,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public void afterLast() throws JdbxException
 		{
+			resetNextColNumber();
 			call(ResultSet::afterLast);
 		}
 
@@ -720,6 +724,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public void beforeFirst() throws JdbxException
 		{
+			resetNextColNumber();
 			call(ResultSet::beforeFirst);
 		}
 
@@ -731,6 +736,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public boolean first() throws JdbxException
 		{
+			resetNextColNumber();
 			return toBoolean(ResultSet::first);
 		}
 
@@ -742,6 +748,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public boolean last() throws JdbxException
 		{
+			resetNextColNumber();
 			return toBoolean(ResultSet::last);
 		}
 
@@ -753,6 +760,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public boolean previous() throws JdbxException
 		{
+			resetNextColNumber();
 			return toBoolean(ResultSet::previous);
 		}
 
@@ -764,6 +772,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public boolean next() throws JdbxException
 		{
+			resetNextColNumber();
 			return ResultCursor.this.next();
 		}
 
@@ -774,6 +783,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public void toCurrentRow() throws JdbxException
 		{
+			resetNextColNumber();
 			call(ResultSet::moveToCurrentRow);
 		}
 
@@ -784,6 +794,7 @@ public class ResultCursor implements AutoCloseable
 		 */
 		public void toInsertRow() throws JdbxException
 		{
+			resetNextColNumber();
 			call(ResultSet::moveToInsertRow);
 		}
 	}
@@ -796,6 +807,7 @@ public class ResultCursor implements AutoCloseable
 	 */
 	public boolean next() throws JdbxException
 	{
+		resetNextColNumber();
 		return toBoolean(ResultSet::next);
 	}
 
