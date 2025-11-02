@@ -740,8 +740,7 @@ public class ResultCursor implements AutoCloseable
 
 
 	/**
-	 * Returns a row object to perform row operations
-	 * @return a Row object
+	 * @return a row object to perform row operations
 	 */
 	public Row row()
 	{
@@ -752,10 +751,16 @@ public class ResultCursor implements AutoCloseable
 
 
 	/**
-	 * Allow to perform row operations.
+	 * Allows to perform row operations.
+	 * @see #row()
 	 */
 	public class Row
 	{
+		private Row()
+		{
+		}
+
+
 		/**
 		 * Inserts the contents of the insert row into the result.
 		 * @see ResultSet#insertRow()
