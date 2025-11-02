@@ -82,14 +82,7 @@ public class ResultCursor implements AutoCloseable
 	 */
 	public Object[] cols() throws JdbxException
 	{
-		try
-		{
-			return ResultUtil.readValues(resultSet_);
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
+		return toValue(ResultUtil::readValues);
 	}
 
 
