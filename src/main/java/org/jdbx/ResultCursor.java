@@ -206,6 +206,75 @@ public class ResultCursor implements AutoCloseable
 
 
 	/**
+	 * Returns the result column for the next column number.
+	 * The ResultCursor keeps internally keeps track of the next column number.
+	 * Whenever the cursor is positioned on a new row, the next column number is reset to 1.
+	 * The returned column object should only be used to immediately access the value, but
+	 * not stored for later use.
+	 * @return the column
+	 */
+	public NumberedColumn nextCol()
+	{
+		return col(nextColNumber_++);
+	}
+
+
+	/**
+	 * Returns the next column number.
+	 * @see #nextCol()
+	 * @return the number, starting at 1
+	 */
+	public int getNextColNumber()
+	{
+		return nextColNumber_;
+	}
+
+
+	/**
+	 * Sets the current column number.
+	 * @param number the number, starting at 1
+	 * @return this
+	 */
+	public ResultCursor setNextColNumber(int number)
+	{
+		nextColNumber_ = Check.number(number);
+		return this;
+	}
+
+
+	/**
+	 * Reset the next column number to 1.
+	 * @return this
+	 */
+	public ResultCursor resetNextColNumber()
+	{
+		return setNextColNumber(1);
+	}
+
+
+	/**
+	 * Increases the next column number by 1.
+	 * @return this
+	 * @see #nextCol()
+	 */
+	public ResultCursor skipNextCol()
+	{
+		return skipNextCols(1);
+	}
+
+
+	/**
+	 * Increases the column number by the given count.
+	 * @param count the count
+	 * @return this
+	 */
+	public ResultCursor skipNextCols(int count)
+	{
+		return setNextColNumber(nextColNumber_ + count);
+	}
+
+
+	/**
 	 * Allows to access the value of a column which was specified by column number.
 	 */
 	public class NumberedColumn implements GetResult, SetValue
