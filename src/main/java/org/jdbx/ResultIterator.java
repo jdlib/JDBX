@@ -25,6 +25,8 @@ import org.jdbx.function.Unchecked;
 /**
  * ResultIterator is a lightweight wrapper around a ResultCursor or JBC ResultSet.
  * It allows easy sequential reading of subsequent cursor rows.
+ * It internally keeps track of the current column number and increases it
+ * when every a value is read.
  */
 public class ResultIterator implements GetResult, AutoCloseable
 {
@@ -35,6 +37,7 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * for unclosed resources when you don't want to close the cursor.
 	 * @param cursor the cursor which is iterated
 	 * @return the new ResultIterator
+	 * @see #setCloseResult(boolean)
 	 */
 	@SuppressWarnings("resource")
 	public static ResultIterator of(ResultCursor cursor)
@@ -50,6 +53,7 @@ public class ResultIterator implements GetResult, AutoCloseable
 	 * for unclosed resources.
 	 * @param resultSet the resultSet which is iterated
 	 * @return the new ResultIterator
+	 * @see #setCloseResult(boolean)
 	 */
 	@SuppressWarnings("resource")
 	public static ResultIterator of(ResultSet resultSet)
@@ -119,38 +123,43 @@ public class ResultIterator implements GetResult, AutoCloseable
 	/**
 	 * Sets the current column number.
 	 * @param number the number, starting at 1
+	 * @return this
 	 */
-	public void setColNumber(int number)
+	public ResultIterator setColNumber(int number)
 	{
 		colNumber_ = Check.number(number);
+		return this;
 	}
 
 
 	/**
 	 * Reset the current column number to 1.
+	 * @return this
 	 */
-	public void resetColNumber()
+	public ResultIterator resetColNumber()
 	{
-		colNumber_ = 1;
+		return setColNumber(1);
 	}
 
 
 	/**
 	 * Increases the column number by 1.
+	 * @return this
 	 */
-	public void skipCol()
+	public ResultIterator skipCol()
 	{
-		skipCols(1);
+		return skipCols(1);
 	}
 
 
 	/**
 	 * Increases the column number by the given delta.
 	 * @param delta the delta
+	 * @return this
 	 */
-	public void skipCols(int delta)
+	public ResultIterator skipCols(int delta)
 	{
-		setColNumber(colNumber_ + delta);
+		return setColNumber(colNumber_ + delta);
 	}
 
 
@@ -235,7 +244,7 @@ public class ResultIterator implements GetResult, AutoCloseable
 	}
 
 
+	private final ResultSet resultSet_;
 	private int colNumber_ = 1;
-	private ResultSet resultSet_;
 	private boolean closeResult_;
 }
