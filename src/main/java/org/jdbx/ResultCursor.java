@@ -200,7 +200,7 @@ public class ResultCursor implements AutoCloseable
 
 	/**
 	 * Returns the result column for the next column number.
-	 * The ResultCursor keeps internally keeps track of the next column number.
+	 * The ResultCursor internally keeps track of the next column number.
 	 * Whenever the cursor is positioned on a new row, the next column number is reset to 1.
 	 * The returned column object should only be used to immediately access the value, but
 	 * not stored for later use.
@@ -450,22 +450,17 @@ public class ResultCursor implements AutoCloseable
 
 
 	/**
-	 * Skips n rows.
+	 * Skips rows.
 	 * @param count the number of rows to skip. If &lt;= 0 this call has no effect.
-	 * @return true, if the amount of rows have been skipped or count was &lt;= 0, false
-	 * 		if the result had less remaining rows than then given row count
+	 * @return the number of actually skipped rows
 	 */
-	public boolean skip(int count)
+	public int skipRows(int count)
 	{
 		resetNextColNumber();
-		int n = 0;
-		while (n < count)
-		{
-			if (!nextRow())
-				return false;
-			n++;
-		}
-		return true;
+		int skipped = 0;
+		while (skipped < count && nextRow())
+			skipped++;
+		return skipped;
 	}
 
 
@@ -572,7 +567,7 @@ public class ResultCursor implements AutoCloseable
 	 */
 	public int findColumn(String columnLabel) throws JdbxException
 	{
-		return Unchecked.get(() -> Integer.valueOf(resultSet_.findColumn(columnLabel))).intValue();
+		return Unchecked.get(() -> resultSet_.findColumn(columnLabel)).intValue();
 	}
 
 

@@ -54,7 +54,7 @@ public abstract class QueryResult extends StmtRunnable
 
 	boolean applySkip(ResultCursor cursor) throws SQLException
 	{
-		return (skip_ <= 0) || cursor.skip(skip_);
+		return (skip_ <= 0) || cursor.skipRows(skip_) == skip_;
 	}
 
 
