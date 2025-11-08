@@ -61,7 +61,7 @@ public class QueryOneRow
 
 	/**
 	 * Calls the reader function for the first result row.
-	 * @param reader receives a result cursor and returns a value constructed from the current result row
+	 * @param reader receives a QueryResult and returns a value constructed from the current result row
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader. If the result is empty, null is returned
 	 */
@@ -73,8 +73,8 @@ public class QueryOneRow
 
 	/**
 	 * Calls the reader for the first result row.
-	 * @param reader receives a result cursor and returns a value constructed from the current cursor row
-	 * @param emptyValue the return value if the result is empty
+	 * @param reader receives a QueryResult and returns a value constructed from the current QueryResult row
+	 * @param emptyValue the value returned if the result is empty
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader, or emptyValue if the result is empty
 	 */

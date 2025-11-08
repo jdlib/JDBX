@@ -52,18 +52,18 @@ public abstract class Query extends StmtRunnable
 	}
 
 
-	boolean applySkip(QueryResult cursor) throws SQLException
+	boolean applySkip(QueryResult result) throws SQLException
 	{
-		return (skip_ <= 0) || cursor.skipRows(skip_) == skip_;
+		return (skip_ <= 0) || result.skipRows(skip_) == skip_;
 	}
 
 
 	/**
-	 * Executes the query and returns the result in form of a QueryResult.
-	 * You should actively close the cursor once it is no longer used.
-	 * @return the cursor
+	 * Executes the query and returns the result in form of a QueryResult object.
+	 * You should actively close the result once it is no longer used.
+	 * @return the result
 	 */
-	public QueryResult cursor() throws JdbxException
+	public QueryResult result() throws JdbxException
 	{
 		try
 		{
@@ -98,7 +98,7 @@ public abstract class Query extends StmtRunnable
 
 
 	/**
-	 * Executes the query and passes the result cursor to the consumer.
+	 * Executes the query and passes the result object to the consumer.
 	 * @param consumer a result consumer
 	 */
 	public void read(CheckedConsumer<QueryResult> consumer) throws JdbxException
@@ -111,8 +111,8 @@ public abstract class Query extends StmtRunnable
 
 
 	/**
-	 * Executes the query and passes the result cursor to the reader.
-	 * @param reader a reader which can return a value from a result cursor
+	 * Executes the query and passes the result object to the reader.
+	 * @param reader a reader which can return a value from a result
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader.
 	 */
@@ -137,11 +137,11 @@ public abstract class Query extends StmtRunnable
 		Exception e1 = null, e2 = null;
 		R returnValue = null;
 
-		try (QueryResult cursor = new QueryResult(runQuery()))
+		try (QueryResult result = new QueryResult(runQuery()))
 		{
 			if (applySkip)
-				applySkip(cursor);
-			returnValue = reader.apply(cursor);
+				applySkip(result);
+			returnValue = reader.apply(result);
 		}
 		catch (Exception e)
 		{

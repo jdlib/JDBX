@@ -270,7 +270,7 @@ public class DocSnippets
 		stmt.options().setResultType(ResultType.SCROLL_SENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 
 		// qr is obtained from stmt
-		qr = stmt.query("sql").cursor();
+		qr = stmt.query("sql").result();
 		qr.position().isBeforeFirst();
 		// also: .isAfterLast(), .isLast()
 

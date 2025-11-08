@@ -29,9 +29,9 @@ import java.util.Map;
  */
 class ResultUtil
 {
-	public static Object[] readValues(QueryResult cursor) throws SQLException
+	public static Object[] readValues(QueryResult result) throws SQLException
 	{
-		return readValues(cursor.getJdbcResult());
+		return readValues(result.getJdbcResult());
 	}
 
 	
@@ -63,9 +63,9 @@ class ResultUtil
 	}
 
 
-	public static Map<String,Object> readMap(QueryResult cursor) throws SQLException
+	public static Map<String,Object> readMap(QueryResult result) throws SQLException
 	{
-		return readMap(cursor.getJdbcResult());
+		return readMap(result.getJdbcResult());
 	}
 	
 	

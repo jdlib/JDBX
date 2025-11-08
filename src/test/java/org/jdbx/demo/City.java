@@ -46,9 +46,9 @@ public class City
 	/**
 	 * Reads fields from current result row (City.*) and returns a new City object.
 	 */
-	public static City read(QueryResult cursor) throws JdbxException
+	public static City read(QueryResult result) throws JdbxException
 	{
-		return read(cursor.getJdbcResult());
+		return read(result.getJdbcResult());
 	}
 
 

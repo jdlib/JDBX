@@ -201,7 +201,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Returns the result column for the next column number.
 	 * The QueryResult internally keeps track of the next column number.
-	 * Whenever the cursor is positioned on a new row, the next column number is reset to 1.
+	 * Whenever the result is positioned on a new row, the next column number is reset to 1.
 	 * The returned column object should only be used to immediately access the value, but
 	 * not stored for later use.
 	 * @return the column
@@ -480,7 +480,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Sets the fetch size of the cursor.
+	 * Sets the fetch size of the result.
 	 * @param size the fetch size
 	 */
 	public void setFetchSize(int size) throws JdbxException
@@ -490,7 +490,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Returns the fetch direction of the cursor.
+	 * Returns the fetch direction of the result.
 	 * @return the fetch direction as enum value
 	 */
 	public FetchDirection getFetchDirection() throws JdbxException
@@ -500,7 +500,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Sets the fetch direction of the cursor.
+	 * Sets the fetch direction of the result.
 	 * @param dir the fetch direction as enum value
 	 */
 	public void setFetchDirection(FetchDirection dir) throws JdbxException
@@ -511,7 +511,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Returns the concurrency of the cursor.
+	 * Returns the concurrency of the result.
 	 * @return the concurrency as enum value
 	 */
 	public Concurrency getConcurrency() throws JdbxException
@@ -541,8 +541,8 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Returns the name of the SQL cursor used by the ResultSet.
-	 * @return the cursor name
+	 * Returns the name of the SQL cursor used by the result.
+	 * @return the name
 	 */
 	public String getCursorName() throws JdbxException
 	{
@@ -670,7 +670,7 @@ public class QueryResult implements AutoCloseable
 	public class Move
 	{
 		/**
-		 * Moves the cursor to the given row number.
+		 * Moves the result to the given row number.
 		 * @param row the row
 		 * @return true if successful
 		 * @see ResultSet#absolute(int)
@@ -683,7 +683,7 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor a relative number of rows.
+		 * Moves the result a relative number of rows.
 		 * @param rows the rows
 		 * @return true if successful
 		 * @see ResultSet#relative(int)
@@ -696,7 +696,7 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor to the end of the result.
+		 * Moves the result to the end of the result.
 		 * @see ResultSet#afterLast()
 		 */
 		public void afterLast() throws JdbxException
@@ -707,7 +707,7 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor before the start of the result.
+		 * Moves the result before the start of the result.
 		 * @see ResultSet#beforeFirst()
 		 */
 		public void beforeFirst() throws JdbxException
@@ -718,9 +718,9 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor to the first result row.
+		 * Moves the result to the first result row.
 		 * @see ResultSet#first()
-		 * @return was the cursor moved?
+		 * @return was the result moved?
 		 */
 		public boolean first() throws JdbxException
 		{
@@ -730,9 +730,9 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor to the last result row.
+		 * Moves the result to the last result row.
 		 * @see ResultSet#last()
-		 * @return was the cursor moved?
+		 * @return was the result moved?
 		 */
 		public boolean last() throws JdbxException
 		{
@@ -742,9 +742,9 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor to the previous row.
+		 * Moves the result to the previous row.
 		 * @see ResultSet#previous()
-		 * @return was the cursor moved?
+		 * @return was the result moved?
 		 */
 		public boolean previous() throws JdbxException
 		{
@@ -754,9 +754,9 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor to the next row.
+		 * Moves the result to the next row.
 		 * @see ResultSet#next()
-		 * @return was the cursor moved?
+		 * @return was the result moved?
 		 */
 		public boolean next() throws JdbxException
 		{
@@ -766,7 +766,7 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor to the remembered cursor position.
+		 * Moves the result to the remembered result position.
 		 * @see ResultSet#moveToCurrentRow()
 		 */
 		public void toCurrentRow() throws JdbxException
@@ -777,7 +777,7 @@ public class QueryResult implements AutoCloseable
 
 
 		/**
-		 * Moves the cursor to the insert row.
+		 * Moves the result to the insert row.
 		 * @see ResultSet#moveToInsertRow()
 		 */
 		public void toInsertRow() throws JdbxException
@@ -789,8 +789,8 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Moves the cursor to the next row.
-	 * @return true if cursor was moved
+	 * Moves the result to the next row.
+	 * @return true if there is a new row and the result was moved
 	 * @see ResultSet#next()
 	 */
 	public boolean nextRow() throws JdbxException
@@ -801,7 +801,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Moves the cursor to the next row.
+	 * Moves the result to the next row.
 	 * @exception JdbxException thrown if there is no next row
 	 * @return this
 	 */

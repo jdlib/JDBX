@@ -74,10 +74,10 @@ public class QueryRows
 	public void forEach(CheckedConsumer<QueryResult> consumer) throws JdbxException
 	{
 		Check.notNull(consumer, "consumer");
-		CheckedConsumer<QueryResult> c = cursor -> {
+		CheckedConsumer<QueryResult> c = result -> {
 			int index = -1;
-			while (allowRow(++index) && cursor.nextRow())
-				consumer.accept(cursor);
+			while (allowRow(++index) && result.nextRow())
+				consumer.accept(result);
 		};
 		result_.read(c);
 	}
@@ -110,12 +110,12 @@ public class QueryRows
 	{
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");
-		return result_.read(false, cursor -> {
-			if (result_.applySkip(cursor))
+		return result_.read(false, result -> {
+			if (result_.applySkip(result))
 			{
 				int index = -1;
-				while (allowRow(++index) && cursor.nextRow())
-					list.add(reader.apply(cursor));
+				while (allowRow(++index) && result.nextRow())
+					list.add(reader.apply(result));
 			}
 			return list;
 		});

@@ -158,10 +158,10 @@ public class StaticStmtTest extends JdbxTest
 
 	public static class Dao
 	{
-		public Dao(QueryResult cursor) throws JdbxException
+		public Dao(QueryResult result) throws JdbxException
 		{
-			id   = cursor.nextCol().getInteger();
-			name = cursor.nextCol().getString();
+			id   = result.nextCol().getInteger();
+			name = result.nextCol().getString();
 		}
 
 

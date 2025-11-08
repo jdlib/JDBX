@@ -89,12 +89,12 @@ public class PrepStmtTest extends JdbxTest
 
 	public static class Dao
 	{
-		public static Dao read(QueryResult cursor) throws JdbxException
+		public static Dao read(QueryResult result) throws JdbxException
 		{
 			Dao dao 	= new Dao();
-			dao.id   	= cursor.nextCol().getInteger();
-			dao.name	= cursor.nextCol().getString();
-			dao.type	= cursor.nextCol().getInt();
+			dao.id   	= result.nextCol().getInteger();
+			dao.name	= result.nextCol().getString();
+			dao.type	= result.nextCol().getInt();
 			return dao;
 		}
 

@@ -336,17 +336,17 @@ to return a single object / a list of objects:
 #### Self-managed QueryResult navigation 
 
 If you want to navigate through a `QueryResult` yourself you can obtain the result by calling
-`Query.cursor()`. You should actively close the `QueryResult` once it is no longer used
+`Query.result()`. You should actively close the `QueryResult` once it is no longer used
 therefore it is best wrapped in a try-with-resources block:
 
      Query q = ...
-     try (QueryResult qr = q.cursor()) {
+     try (QueryResult qr = q.result()) {
          // loop through result and read its rowss
      }
 
 Given a `QueryResult` it is easy to run through its rows in a forward only manner:
 
-    while (q.nextRow()) {
+    while (qr.nextRow()) {
         // read the result row
     }
      
@@ -358,9 +358,9 @@ by using the service objects returned by `QueryResult.position()` and `.move()`:
 	stmt.options().setResultType(ResultType.SCROLL_SENSITIVE);
 	
 	// and run the query
-	try (QueryResult qr = stmt.query(sql).cursor()) {
+	try (QueryResult qr = stmt.query(sql).result()) {
 	    // read position
-	    boolean beforeFirst = qc.position().isBeforeFirst(); 
+	    boolean beforeFirst = qr.position().isBeforeFirst(); 
 	    // also: .isAfterLast(), .isLast()  
 
 	    // move current row
@@ -377,26 +377,26 @@ If your result is updatable, you can or update or delete the current row, or ins
     // configure the result to be updatable
     StaticStmt stmt = ....
     stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
-    QueryResult qr = stmt.query(sql).cursor();
+    QueryResult qr = stmt.query(sql).result();
 	
     // position row
     ... 
 	
-    rc.col("status").setString("ok"); 
-    rc.row().update();
-    rc.row().refresh();
+    qr.col("status").setString("ok"); 
+    qr.row().update();
+    qr.row().refresh();
     // also: .insert(), .isUpdated(), .delete(), .isDeleted(), etc.
      
      
 ### <a name="queries-resultset"></a>3.6. Converting from/to ResultSet  
       
-You can still obtain the underlying `java.sql.ResultSet` of a query cursor if you need to:
+You can still obtain the underlying `java.sql.ResultSet` of a result if you need to:
  
-    ResultSet resultSet = qc.resultSet();
+    ResultSet resultSet = qr.getJdbcResult();
     while (resultSet.next())
         ... 
 
-If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a result cursor or query result using
+If you have obtained a `java.sql.ResultSet` from somewhere else you can also turn it into a query or query result using
 the factory methods `Query.of(ResultSet)` or `QueryResult.of(ResultSet)`:
 
     java.sql.ResultSet resultSet = ...

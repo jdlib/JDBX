@@ -47,17 +47,17 @@ public class QueryResultTest extends JdbxTest
 	@Test public void testScroll()
 	{
 		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE);
-		try (QueryResult cursor = stmt_.query("SELECT name FROM qrtest ORDER BY name").cursor())
+		try (QueryResult result = stmt_.query("SELECT name FROM qrtest ORDER BY name").result())
 		{
-			assertSame(ResultType.SCROLL_INSENSITIVE, cursor.getType());
-			assertTrue(cursor.position().isBeforeFirst());
-			assertTrue(cursor.move().absolute(2));
-			assertEquals("B", cursor.col().getString());
-			assertTrue(cursor.move().relative(2));
-			assertEquals("D", cursor.col().getString());
-			assertTrue(cursor.position().isLast());
-			cursor.move().afterLast();
-			assertTrue(cursor.position().isAfterLast());
+			assertSame(ResultType.SCROLL_INSENSITIVE, result.getType());
+			assertTrue(result.position().isBeforeFirst());
+			assertTrue(result.move().absolute(2));
+			assertEquals("B", result.col().getString());
+			assertTrue(result.move().relative(2));
+			assertEquals("D", result.col().getString());
+			assertTrue(result.position().isLast());
+			result.move().afterLast();
+			assertTrue(result.position().isAfterLast());
 		}
 	}
 
@@ -65,14 +65,14 @@ public class QueryResultTest extends JdbxTest
 	@Test public void testUpdate() throws Exception
 	{
 		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
-		try (QueryResult cursor = stmt_.query("SELECT name FROM qrtest").cursor())
+		try (QueryResult result = stmt_.query("SELECT name FROM qrtest").result())
 		{
-			assertSame(Concurrency.CONCUR_UPDATABLE, cursor.getConcurrency());
+			assertSame(Concurrency.CONCUR_UPDATABLE, result.getConcurrency());
 
-			assertTrue(cursor.nextRow());
-			cursor.col().setString("Z");
-			assertTrue(cursor.row().isUpdated());
-			cursor.row().update();
+			assertTrue(result.nextRow());
+			result.col().setString("Z");
+			assertTrue(result.row().isUpdated());
+			result.row().update();
 		}
 	}
 
