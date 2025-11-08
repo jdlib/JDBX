@@ -24,28 +24,28 @@ import java.sql.ResultSet;
  * ResultType is an Enum for the JDBC constants which define the ResultSet type.
  * @see StmtOptions#getResultType()
  * @see StmtOptions#setResultType(ResultType)
- * @see ResultCursor#getType()
+ * @see QueryResult#getType()
  */
 public enum ResultType implements JdbcEnum
 {
     /**
-     * The enum indicating the type for a <code>ResultCursor</code> object
+     * The enum indicating the type for a <code>ResultSet</code> object
      * whose cursor may move only forward.
      */
 	FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
 
     /**
-     * The enum indicating the type for a <code>ResultCursor</code> object
+     * The enum indicating the type for a <code>ResultSet</code> object
      * that is scrollable but generally not sensitive to changes to the data
-     * that underlies the <code>ResultCursor</code>.
+     * that underlies the <code>ResultSet</code>.
      * @see ResultSet#TYPE_SCROLL_INSENSITIVE
      */
 	SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
 
 	/**
-     * The enum indicating the type for a <code>ResultCursor</code> object
+     * The enum indicating the type for a <code>ResultSet</code> object
      * that is scrollable and generally sensitive to changes to the data
-     * that underlies the <code>ResultCursor</code>.
+     * that underlies the <code>ResultSet</code>.
      * @see ResultSet#TYPE_SCROLL_SENSITIVE
      */
 	SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE),

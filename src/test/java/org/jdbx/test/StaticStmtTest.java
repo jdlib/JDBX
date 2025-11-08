@@ -20,7 +20,7 @@ package org.jdbx.test;
 import java.util.List;
 import java.util.Map;
 import org.jdbx.JdbxException;
-import org.jdbx.ResultCursor;
+import org.jdbx.QueryResult;
 import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.Concurrency;
@@ -158,7 +158,7 @@ public class StaticStmtTest extends JdbxTest
 
 	public static class Dao
 	{
-		public Dao(ResultCursor cursor) throws JdbxException
+		public Dao(QueryResult cursor) throws JdbxException
 		{
 			id   = cursor.nextCol().getInteger();
 			name = cursor.nextCol().getString();

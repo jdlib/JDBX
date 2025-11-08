@@ -29,7 +29,7 @@ import java.util.Map;
  */
 class ResultUtil
 {
-	public static Object[] readValues(ResultCursor cursor) throws SQLException
+	public static Object[] readValues(QueryResult cursor) throws SQLException
 	{
 		return readValues(cursor.getJdbcResult());
 	}
@@ -63,7 +63,7 @@ class ResultUtil
 	}
 
 
-	public static Map<String,Object> readMap(ResultCursor cursor) throws SQLException
+	public static Map<String,Object> readMap(QueryResult cursor) throws SQLException
 	{
 		return readMap(cursor.getJdbcResult());
 	}

@@ -31,18 +31,18 @@ import org.jdbx.function.Unchecked;
 
 
 /**
- * ResultCursor represents the result of a SQL query.
+ * QueryResult represents the result of a SQL query.
  * It is a wrapper class for java.sql.ResultSet.
  */
 public class QueryResult implements AutoCloseable
 {
 	/**
-	 * Returns a ResultCursor for the JDBC ResultSet
+	 * Returns a QueryResult for the JDBC ResultSet
 	 * which does not close the ResultSet when it is closed.
 	 * Use this factory method to avoid compiler warnings
 	 * for unclosed resources when you don't want to close the ResultSet.
 	 * @param resultSet the wrapped result set
-	 * @return the new ResultCursor
+	 * @return the new QueryResult
 	 */
 	@SuppressWarnings("resource")
 	public static QueryResult of(ResultSet resultSet)
@@ -52,7 +52,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Creates a new ResultCursor which wraps a ResultSet.
+	 * Creates a new QueryResult which wraps a ResultSet.
 	 * @param resultSet the result set
 	 */
 	public QueryResult(ResultSet resultSet)
@@ -200,7 +200,7 @@ public class QueryResult implements AutoCloseable
 
 	/**
 	 * Returns the result column for the next column number.
-	 * The ResultCursor internally keeps track of the next column number.
+	 * The QueryResult internally keeps track of the next column number.
 	 * Whenever the cursor is positioned on a new row, the next column number is reset to 1.
 	 * The returned column object should only be used to immediately access the value, but
 	 * not stored for later use.
@@ -959,7 +959,7 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Returns if the internal ResultSet should be closed when this ResultCursor is closed.
+	 * Returns if the internal ResultSet should be closed when this QueryResult is closed.
 	 * @return the close result flag
 	 */
 	public boolean isCloseResult()
@@ -969,8 +969,8 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Instructs the ResultCursor if the internal ResultSet should be closed
-	 * when this ResultCursor is closed.
+	 * Instructs the QueryResult if the internal ResultSet should be closed
+	 * when this QueryResult is closed.
 	 * @param flag the close flag
 	 * @return this
 	 */

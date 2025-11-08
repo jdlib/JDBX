@@ -52,23 +52,23 @@ public abstract class Query extends StmtRunnable
 	}
 
 
-	boolean applySkip(ResultCursor cursor) throws SQLException
+	boolean applySkip(QueryResult cursor) throws SQLException
 	{
 		return (skip_ <= 0) || cursor.skipRows(skip_) == skip_;
 	}
 
 
 	/**
-	 * Executes the query and returns the result in form of a ResultCursor.
+	 * Executes the query and returns the result in form of a QueryResult.
 	 * You should actively close the cursor once it is no longer used.
 	 * @return the cursor
 	 */
-	public ResultCursor cursor() throws JdbxException
+	public QueryResult cursor() throws JdbxException
 	{
 		try
 		{
 			ResultSet resultSet = runQuery();
-			return new ResultCursor(resultSet);
+			return new QueryResult(resultSet);
 		}
 		catch (Exception e)
 		{
@@ -101,7 +101,7 @@ public abstract class Query extends StmtRunnable
 	 * Executes the query and passes the result cursor to the consumer.
 	 * @param consumer a result consumer
 	 */
-	public void read(CheckedConsumer<ResultCursor> consumer) throws JdbxException
+	public void read(CheckedConsumer<QueryResult> consumer) throws JdbxException
 	{
 		read(result -> {
 			consumer.accept(result);
@@ -116,7 +116,7 @@ public abstract class Query extends StmtRunnable
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader.
 	 */
-	public <T> T read(CheckedFunction<ResultCursor,T> reader) throws JdbxException
+	public <T> T read(CheckedFunction<QueryResult,T> reader) throws JdbxException
 	{
 		return read(skip_ > 0, reader);
 	}
@@ -126,18 +126,18 @@ public abstract class Query extends StmtRunnable
 	/**
 	 * Implementation method to read the result using a reader function.
 	 * We allow callers of this method to decide if they want to apply skipping themselves:
-	 * If skipping is done here, the reader may invoke ResultCursor.nextRow()
+	 * If skipping is done here, the reader may invoke QueryResult.nextRow()
 	 * after an unsuccessful prior call to this method - unfortunately in this case
 	 * a JDBC driver is allowed to throw an exception instead of returning false.
 	 */
-	<R> R read(boolean applySkip, CheckedFunction<ResultCursor,R> reader) throws JdbxException
+	<R> R read(boolean applySkip, CheckedFunction<QueryResult,R> reader) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 
 		Exception e1 = null, e2 = null;
 		R returnValue = null;
 
-		try (ResultCursor cursor = new ResultCursor(runQuery()))
+		try (QueryResult cursor = new QueryResult(runQuery()))
 		{
 			if (applySkip)
 				applySkip(cursor);

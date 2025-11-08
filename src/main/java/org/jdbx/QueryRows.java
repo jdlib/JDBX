@@ -71,10 +71,10 @@ public class QueryRows
 	 * the consumer for each row.
 	 * @param consumer a ResultSet consumer
 	 */
-	public void forEach(CheckedConsumer<ResultCursor> consumer) throws JdbxException
+	public void forEach(CheckedConsumer<QueryResult> consumer) throws JdbxException
 	{
 		Check.notNull(consumer, "consumer");
-		CheckedConsumer<ResultCursor> c = cursor -> {
+		CheckedConsumer<QueryResult> c = cursor -> {
 			int index = -1;
 			while (allowRow(++index) && cursor.nextRow())
 				consumer.accept(cursor);
@@ -91,7 +91,7 @@ public class QueryRows
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> read(CheckedFunction<ResultCursor,T> reader) throws JdbxException
+	public <T> List<T> read(CheckedFunction<QueryResult,T> reader) throws JdbxException
 	{
 		return read(reader, new ArrayList<>());
 	}
@@ -106,7 +106,7 @@ public class QueryRows
 	 * @param <T> the type of the result returned by the reader
 	 * @return the list
 	 */
-	public <T> List<T> read(CheckedFunction<ResultCursor,T> reader, List<T> list) throws JdbxException
+	public <T> List<T> read(CheckedFunction<QueryResult,T> reader, List<T> list) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");

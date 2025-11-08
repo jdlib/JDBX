@@ -21,7 +21,7 @@ import org.jdbx.JdbxException;
 import org.jdbx.BatchResult;
 import org.jdbx.Jdbx;
 import org.jdbx.PrepStmt;
-import org.jdbx.ResultCursor;
+import org.jdbx.QueryResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,7 +89,7 @@ public class PrepStmtTest extends JdbxTest
 
 	public static class Dao
 	{
-		public static Dao read(ResultCursor cursor) throws JdbxException
+		public static Dao read(QueryResult cursor) throws JdbxException
 		{
 			Dao dao 	= new Dao();
 			dao.id   	= cursor.nextCol().getInteger();
