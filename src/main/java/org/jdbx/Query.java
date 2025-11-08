@@ -91,9 +91,9 @@ public abstract class Query extends StmtRunnable
 	 * Returns a builder to access all rows of the result set.
 	 * @return the builder
 	 */
-	public QResultRows rows()
+	public QueryRows rows()
 	{
-		return new QResultRows(this);
+		return new QueryRows(this);
 	}
 
 

@@ -264,7 +264,7 @@ You may also want to detect the case when the result contains more than one row,
 
 ### <a name="queries-allrows"></a>3.3 Read all result rows
 
-Call `Query.rows()` to retrieve a `QResultRows` builder to read values from all rows and return as `java.util.List`:
+Call `Query.rows()` to retrieve a `QueryRows` builder to read values from all rows and return as `java.util.List`:
 
     q.rows()...
     q.rows().col()...                  // return values of first column
