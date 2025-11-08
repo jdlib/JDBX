@@ -25,9 +25,9 @@ import org.jdbx.function.CheckedSupplier;
 /**
  * A QueryResult implementation which is based on a PreparedStatement.
  */
-class PrepStmtQResult extends QueryResult
+class PrepStmtQuery extends Query
 {
-	public PrepStmtQResult(CheckedSupplier<PreparedStatement> supplier)
+	public PrepStmtQuery(CheckedSupplier<PreparedStatement> supplier)
 	{
 		supplier_ = supplier;
 	}
