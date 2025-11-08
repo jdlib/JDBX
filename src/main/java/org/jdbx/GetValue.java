@@ -327,7 +327,7 @@ interface GetValue
 
 
 	/**
-	 * @return the value as an Object casted to a certain type.
+	 * @return the value as an Object parsed as/casted to a certain type.
 	 * @param type the class of the type
 	 * @param<T> the type of the value
 	 */
