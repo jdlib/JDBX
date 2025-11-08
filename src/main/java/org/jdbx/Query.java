@@ -23,20 +23,20 @@ import org.jdbx.function.CheckedFunction;
 
 
 /**
- * QueryResult is a builder class to run a SQL query and extract values from the JDBC result set.
+ * Query is a builder class to run a SQL query and extract values from the JDBC result set.
  * Note that actual query on JDBC level may not be run until
  * a terminal operation of the builder method chain is executed.
  */
 public abstract class Query extends StmtRunnable
 {
 	/**
-	 * Returns a QueryResult object for an existing ResultSet.
+	 * Returns a Query object for an existing JDBC ResultSet.
 	 * @param resultSet a ResultSet
-	 * @return the QueryResult
+	 * @return the Query object
 	 */
 	public static Query of(ResultSet resultSet)
 	{
-		return new ResultSetQResult(resultSet);
+		return new ResultSetQuery(resultSet);
 	}
 
 
@@ -183,7 +183,7 @@ public abstract class Query extends StmtRunnable
 
 	@Override protected final String getRunnableType()
 	{
-		return "QueryResult";
+		return "Query";
 	}
 
 

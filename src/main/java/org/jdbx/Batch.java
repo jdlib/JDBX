@@ -81,7 +81,7 @@ public abstract class Batch
 			int[] counts = runImpl();
 			try (ResultSet rs = stmt().getJdbcStmt().getGeneratedKeys()) 
 			{ 
-				V value = reader.read(counts != null ? counts.length : 0, QueryResult.of(rs));
+				V value = reader.read(counts != null ? counts.length : 0, Query.of(rs));
 				return new BatchResult<>(value, counts);
 			}
 		}

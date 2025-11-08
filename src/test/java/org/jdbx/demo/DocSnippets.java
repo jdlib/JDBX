@@ -183,46 +183,46 @@ public class DocSnippets
 	}
 
 
-	public void queryResultClass() throws Exception
+	public void queryClass() throws Exception
 	{
-		qr = stmt.query(sql);
-		qr = pstmt.init(sql).params("a", "b").query();
+		q = stmt.query(sql);
+		q = pstmt.init(sql).params("a", "b").query();
 	}
 
 
 	public void querySingleRow() throws Exception
 	{
-		qr.row().col();                // returns a builder to retrieve a value of the first column
-		qr.row().col().getString();    // returns the value of the first column as String
-		qr.row().col(3);               // returns a builder to retrieve a value of the third column
-		qr.row().col(3).getInteger();  // returns the value of the third column as Integer
-		qr.row().col("sort");          // returns a builder to retrieve a value of the "sort" column
-		qr.row().col("sort").getInt(); // returns the value of "sort" column as int
-		qr.row().cols();               // returns the value of all columns, as Object[]
-		qr.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[]
-		qr.row().map();                // returns a Map<String,Object> mapping column name to value
-		qr.row().read(City::read);    // returns the value returned by the reader function
+		q.row().col();                // returns a builder to retrieve a value of the first column
+		q.row().col().getString();    // returns the value of the first column as String
+		q.row().col(3);               // returns a builder to retrieve a value of the third column
+		q.row().col(3).getInteger();  // returns the value of the third column as Integer
+		q.row().col("sort");          // returns a builder to retrieve a value of the "sort" column
+		q.row().col("sort").getInt(); // returns the value of "sort" column as int
+		q.row().cols();               // returns the value of all columns, as Object[]
+		q.row().cols(1,3,7);          // returns the value of columns 1,3,7, as Object[]
+		q.row().map();                // returns a Map<String,Object> mapping column name to value
+		q.row().read(City::read);     // returns the value returned by the reader function
 
-		qr.row().required().col().getString();
-		qr.row().unique().col().getString();
+		q.row().required().col().getString();
+		q.row().unique().col().getString();
 	}
 
 
 	public void queryAllRows() throws Exception
 	{
-		qr.rows();
-		qr.rows().col();                    // return values of first column
-		qr.rows().col().getString();        // return values of first column as List<String>
-		qr.rows().col(3);                   // return values of column by column number
-		qr.rows().col(3).getDouble();       // return values of third column, as List<Double>
-		qr.rows().col("sort");              // return values of column by name
-		qr.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
-		qr.rows().cols();                   // return values of all columns, as List<Object[]>
-		qr.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]>
-		qr.rows().map();                    // return a List<Map<String,Object>>
+		q.rows();
+		q.rows().col();                    // return values of first column
+		q.rows().col().getString();        // return values of first column as List<String>
+		q.rows().col(3);                   // return values of column by column number
+		q.rows().col(3).getDouble();       // return values of third column, as List<Double>
+		q.rows().col("sort");              // return values of column by name
+		q.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
+		q.rows().cols();                   // return values of all columns, as List<Object[]>
+		q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]>
+		q.rows().map();                    // return a List<Map<String,Object>>
 
-		qr.rows().max(5);
-		qr.skip(3).rows();
+		q.rows().max(5);
+		q.skip(3).rows();
 	}
 
 
@@ -237,8 +237,8 @@ public class DocSnippets
         rc.cols(1,3,7);              // columns 1,3,7, as Object[]
         rc.map();                    // returns a Map<String,Object>
 
-		qr.row().read(City::read);
-		qr.rows().read(City::read);
+		q.row().read(City::read);
+		q.rows().read(City::read);
 }
 
 
@@ -410,7 +410,7 @@ public class DocSnippets
 	private CallStmt cstmt;
 	private Connection con;
 	private DataSource ds;
-	private QueryResult qr;
+	private Query q;
 	private ResultCursor rc;
 	private Update u;
 	private boolean jdbc;

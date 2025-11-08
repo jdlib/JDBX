@@ -103,7 +103,7 @@ public abstract class Update extends StmtRunnable
 			{
 				try (ResultSet rs = getGeneratedKeys()) 
 				{ 
-					value = reader.read(count, QueryResult.of(rs));
+					value = reader.read(count, Query.of(rs));
 				}
 			}
 		}

@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -151,7 +151,7 @@ public class PrepStmt extends Stmt
 		return new Init();
 	}
 
-	
+
 	/**
 	 * A Builder to initialize the PrepStmt.
 	 */
@@ -160,8 +160,8 @@ public class PrepStmt extends Stmt
 		private Init()
 		{
 		}
-		
-		
+
+
 		/**
 		 * Defines which columns should be returned for insert or update commands.
 		 * @param cols the columns or null if no columns should be returned
@@ -220,14 +220,14 @@ public class PrepStmt extends Stmt
 					paramMap_ = null;	// TODO closeJdbcStmt should set it to null also
 					old.close();
 				}
-				
+
 				if (namedParams_)
 				{
 					NamedParamCmd npc = new NamedParamCmd(sql);
 					paramMap_ = npc.getParamMap();
 					sql = npc.getConverted();
 				}
-				
+
 				jdbcStmt_ 	= createJdbcStmt(sql);
 				sql_ 		= sql;
 
@@ -256,10 +256,10 @@ public class PrepStmt extends Stmt
 				stmt = con_.prepareStatement(sql, returnCols_.getNumbers());
 			else
 				stmt = con_.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-			
+
 			if (options_ != null)
 				options_.applyOptionValues(stmt);
-			
+
 			return stmt;
 		}
 
@@ -418,8 +418,8 @@ public class PrepStmt extends Stmt
 				throw JdbxException.of(e);
 			}
 		}
-		
-		
+
+
 		private final int[] numbers_;
 	}
 
@@ -430,13 +430,12 @@ public class PrepStmt extends Stmt
 
 
 	/**
-	 * Returns a QueryResult builder to execute the current SQL command.
-	 * @return the QueryResult
+	 * @return a Query object to execute the current SQL command.
 	 */
-	public QueryResult query() throws JdbxException
+	public Query query() throws JdbxException
 	{
 		checkInitialized();
-		return new PrepStmtQResult(this::getJdbcStmt);
+		return new PrepStmtQuery(this::getJdbcStmt);
 	}
 
 
@@ -465,8 +464,8 @@ public class PrepStmt extends Stmt
 	{
 		return createUpdate().run();
 	}
-	
-	
+
+
 	private class PrepUpdate extends Update
 	{
 		@Override protected long run(boolean large) throws Exception
@@ -544,8 +543,8 @@ public class PrepStmt extends Stmt
 			stmt().params(values);
 			return this;
 		}
-		
-		
+
+
 		/**
 		 * Sets the value of the parameter with the given number.
 		 * Calls {@link PrepStmt#param(int, Object)}
@@ -588,7 +587,7 @@ public class PrepStmt extends Stmt
 		return new PrepBatch();
 	}
 
-	
+
 	/**
 	 * Returns a descriptive string.
 	 */
@@ -599,7 +598,7 @@ public class PrepStmt extends Stmt
 			s += '[' + sql_ + ']';
 		return s;
 	}
-	
+
 
 	private Map<String,int[]> paramMap_;
 	private String sql_;

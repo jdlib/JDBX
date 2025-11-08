@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -23,7 +23,7 @@ import org.jdbx.BatchResult;
 import org.jdbx.Concurrency;
 import org.jdbx.ExecuteResult;
 import org.jdbx.FetchDirection;
-import org.jdbx.QueryResult;
+import org.jdbx.Query;
 import org.jdbx.StaticStmt;
 import org.jdbx.UpdateResult;
 
@@ -54,10 +54,10 @@ public class StaticStmtDemo
 			// do stuff
 		}
 	}
-	
-	
+
+
 	/**
-	 * How to set and get options. 
+	 * How to set and get options.
 	 */
 	public void optionsDemo(StaticStmt stmt)
 	{
@@ -66,11 +66,11 @@ public class StaticStmtDemo
 			.setFetchDirection(FetchDirection.REVERSE)
 			.setQueryTimeoutSeconds(15)
 			.setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
-		
+
 		int queryTimeOut = stmt.options().getQueryTimeoutSeconds();
 	}
-		
-		
+
+
 	/**
 	 * How to run a SQL query.
 	 * For more query demos, see {@link QueryDemo}
@@ -125,8 +125,8 @@ public class StaticStmtDemo
 			}
 			else
 			{
-				QueryResult qr = result.getQueryResult();
-				// ... read values from query result 
+				Query q = result.getQueryResult();
+				// ... read values from query
 			}
 		}
 	}

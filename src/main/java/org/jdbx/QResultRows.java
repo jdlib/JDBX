@@ -42,7 +42,7 @@ import org.jdbx.function.GetForName;
  */
 public class QResultRows
 {
-	QResultRows(QueryResult result)
+	QResultRows(Query result)
 	{
 		result_ = result;
 	}
@@ -576,6 +576,6 @@ public class QResultRows
 	}
 
 
-	private final QueryResult result_;
+	private final Query result_;
 	private int max_ = -1; // unlimited
 }

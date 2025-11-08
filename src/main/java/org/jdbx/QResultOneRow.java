@@ -30,7 +30,7 @@ import org.jdbx.function.GetForName;
  */
 public class QResultOneRow
 {
-	QResultOneRow(QueryResult result)
+	QResultOneRow(Query result)
 	{
 		result_ = result;
 	}
@@ -311,7 +311,7 @@ public class QResultOneRow
 	}
 
 
-	private final QueryResult result_;
+	private final Query result_;
 	private boolean required_;
 	private boolean unique_;
 }

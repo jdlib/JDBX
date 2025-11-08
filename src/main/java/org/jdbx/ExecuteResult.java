@@ -261,7 +261,7 @@ public class ExecuteResult
 		{
 			try (ResultSet rs = stmt_.getGeneratedKeys()) 
 			{ 
-				V value = reader.read(updateCount_, QueryResult.of(rs));
+				V value = reader.read(updateCount_, Query.of(rs));
 				return new UpdateResult<>(updateCount_, value);
 			}
 		}
@@ -301,11 +301,11 @@ public class ExecuteResult
 	 * @return the query result
 	 * @throws JdbxException if the current result is not an {@link #isQueryResult() query result}
 	 */
-	public QueryResult getQueryResult() throws JdbxException
+	public Query getQueryResult() throws JdbxException
 	{
 		checkIsQueryResult();
 		ResultSet resultSet = Unchecked.apply(Statement::getResultSet, stmt_);
-		return QueryResult.of(resultSet);
+		return Query.of(resultSet);
 	}
 
 

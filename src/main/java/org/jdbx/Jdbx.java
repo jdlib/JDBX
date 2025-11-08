@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -32,7 +32,7 @@ public class Jdbx
 	 */
 	public static final String VERSION = "0.9.0";
 
-	
+
 	/**
 	 * Prints the version number to System.out. If the first argument equals "-v", then a property like line
 	 * "milo.version = (version)" is printed.
@@ -44,20 +44,20 @@ public class Jdbx
 			System.out.print("JDBX.version = ");
 		System.out.println(VERSION);
 	}
-	
-	
+
+
 	/**
 	 * Runs a query.
 	 * @param con a connection
 	 * @param sql a SQL command
 	 * @param params zero or more parameters
-	 * @return the QueryResult
+	 * @return the Query
 	 */
-	public static QueryResult query(Connection con, String sql, Object... params)
+	public static Query query(Connection con, String sql, Object... params)
 	{
 		Check.notNull(con, "con");
 		Check.notNull(sql, "sql");
-		return new FastQResult(new StmtProvider(con, sql, params));
+		return new FastQuery(new StmtProvider(con, sql, params));
 	}
 
 
@@ -122,7 +122,7 @@ public class Jdbx
 		}
 
 
-		public QueryResult query() throws JdbxException
+		public Query query() throws JdbxException
 		{
 			checkNotRun();
 			if (params_ == null)
@@ -166,9 +166,9 @@ public class Jdbx
 	}
 
 
-	private static class FastQResult extends QueryResult
+	private static class FastQuery extends Query
 	{
-		public FastQResult(StmtProvider provider)
+		public FastQuery(StmtProvider provider)
 		{
 			provider_ = provider;
 		}

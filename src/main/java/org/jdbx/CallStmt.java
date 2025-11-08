@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -64,7 +64,7 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * Creates a new CallStmt.  
+	 * Creates a new CallStmt.
 	 * @param con the connection used by the statement. The connection is not closed
 	 * 		when the statement is closed.
 	 */
@@ -95,7 +95,7 @@ public class CallStmt extends Stmt
 		return (CallableStatement)jdbcStmt_;
 	}
 
-	
+
 	/**
 	 * Returns the ParameterMetaData.
 	 * @return the meta data
@@ -147,14 +147,14 @@ public class CallStmt extends Stmt
 
 	private CallableStatement createJdbcStmt(String sql) throws Exception
 	{
-		CallableStatement stmt = con_.prepareCall(sql, 
+		CallableStatement stmt = con_.prepareCall(sql,
 			StmtOptions.getResultType(options_).getCode(),
 			StmtOptions.getResultConcurrency(options_).getCode(),
 			StmtOptions.getResultHoldability(options_).getCode());
-		
+
 		if (options_ != null)
 			options_.applyOptionValues(stmt);
-		
+
 		return stmt;
 	}
 
@@ -198,7 +198,7 @@ public class CallStmt extends Stmt
 		return this;
 	}
 
-	
+
 	/**
 	 * Returns a IndexedParam object to set or get the value of a parameter by number.
 	 * @param number a parameter number, starting at 1.
@@ -275,7 +275,7 @@ public class CallStmt extends Stmt
 			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType, typeName));
 			return this;
 		}
-		
+
 
 		@Override public <T> T get(Class<T> type) throws JdbxException
 		{
@@ -339,7 +339,7 @@ public class CallStmt extends Stmt
 			}
 		}
 
-		
+
 		public <T> void apply(DoForNumber<CallableStatement> runner) throws JdbxException
 		{
 			Check.notNull(runner, "runner");
@@ -494,13 +494,12 @@ public class CallStmt extends Stmt
 
 
 	/**
-	 * Executes the current SQL query command and returns a QueryResult. 
-	 * @return the query result
+	 * @return a Query object to run the SQL query command.
 	 */
-	public QueryResult query() throws JdbxException
+	public Query query() throws JdbxException
 	{
 		checkInitialized();
-		return new PrepStmtQResult(this::getJdbcStmt);
+		return new PrepStmtQuery(this::getJdbcStmt);
 	}
 
 
@@ -575,7 +574,7 @@ public class CallStmt extends Stmt
 			s += '[' + sql_ + ']';
 		return s;
 	}
-	
+
 
 	private String sql_;
 }
