@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -32,7 +32,7 @@ import org.jdbx.function.Unchecked;
  * ExecuteResult result = ...;
  * while (result.next()) {
  *     if (result.isQueryResult()) {
- *     	   QueryResult qr = result.getQueryResult(); 
+ *     	   Query q = result.getQueryResult();
  *         // process query result
  *     }
  *     else {
@@ -91,11 +91,11 @@ public class ExecuteResult
 		hasQueryResult_	= hasQueryResult;
 	}
 
-	
+
 	//-------------------------------
 	// navigation
 	//-------------------------------
-	
+
 
 	private void initNext(boolean hasQueryResult) throws JdbxException
 	{
@@ -198,8 +198,8 @@ public class ExecuteResult
 		if (status_ == Status.AFTER_LAST)
 			throw JdbxException.illegalState("no more results");
 	}
-	
-	
+
+
 	//-------------------------------
 	// update results
 	//-------------------------------
@@ -223,7 +223,7 @@ public class ExecuteResult
 			throw JdbxException.illegalState("current result is not an update result");
 	}
 
-	
+
 	/**
 	 * Returns the current update result.
 	 * @return the update result
@@ -233,7 +233,7 @@ public class ExecuteResult
 		checkIsUpdateResult();
 		return new UpdateResult<>(updateCount_);
 	}
-	
+
 
 	/**
 	 * Returns the current update result, including an auto generated key.
@@ -259,8 +259,8 @@ public class ExecuteResult
 
 		try
 		{
-			try (ResultSet rs = stmt_.getGeneratedKeys()) 
-			{ 
+			try (ResultSet rs = stmt_.getGeneratedKeys())
+			{
 				V value = reader.read(updateCount_, Query.of(rs));
 				return new UpdateResult<>(updateCount_, value);
 			}
@@ -270,8 +270,8 @@ public class ExecuteResult
 			throw JdbxException.of(e);
 		}
 	}
-	
-	
+
+
 	//-------------------------------
 	// query results
 	//-------------------------------

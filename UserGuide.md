@@ -237,7 +237,7 @@ Note that the actual JDBC query is usually not run until you invoke the terminal
 
 ### <a name="queries-singlerow">3.2 Read a single result row
 
-Call `Query.row()` to retrieve a `QResultOneRow` builder to read values from the **first result row**:     
+Call `Query.row()` to retrieve a `QueryOneRow` builder to read values from the **first result row**:     
      
     q.row()...     
     q.row().col()...              // returns a builder to retrieve a value of the first column

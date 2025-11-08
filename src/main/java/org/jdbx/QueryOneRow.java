@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -25,8 +25,8 @@ import org.jdbx.function.GetForName;
 
 
 /**
- * QResultOneRow is a builder class to
- * retrieve the single-row result of a query result.
+ * QueryOneRow is a builder class to
+ * retrieve the single-row result of a query.
  */
 public class QueryOneRow
 {
@@ -61,7 +61,7 @@ public class QueryOneRow
 
 	/**
 	 * Calls the reader function for the first result row.
-	 * @param reader receives a result cursor and returns a value constructed from the current result row 
+	 * @param reader receives a result cursor and returns a value constructed from the current result row
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader. If the result is empty, null is returned
 	 */
