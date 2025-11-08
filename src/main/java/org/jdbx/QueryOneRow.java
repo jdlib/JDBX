@@ -19,6 +19,7 @@ package org.jdbx;
 
 import java.sql.ResultSet;
 import java.util.Map;
+import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
 import org.jdbx.function.GetForNumber;
 import org.jdbx.function.GetForName;
@@ -56,6 +57,17 @@ public class QueryOneRow
 	{
 		unique_ = true;
 		return this;
+	}
+
+
+	/**
+	 * Invokes the reader with query result positioned on the first row.
+	 * @param reader receives a QueryResult
+	 */
+	public void consume(CheckedConsumer<QueryResult> reader) throws JdbxException
+	{
+		Check.notNull(reader, "reader");
+		read(qr -> { reader.accept(qr); return null; });
 	}
 
 
