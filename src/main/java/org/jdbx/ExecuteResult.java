@@ -243,7 +243,7 @@ public class ExecuteResult
 	public <V> UpdateResult<V> getUpdateResult(Class<V> colType) throws JdbxException
 	{
 		Check.notNull(colType, "colType");
-		return getUpdateResult((c,q) -> q.row().col().get(colType));
+		return getUpdateResult((c,q) -> q.row().col().getObject(colType));
 	}
 
 

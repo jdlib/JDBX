@@ -278,7 +278,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#getObject(int, Class)
 		 * @return the value
 		 */
-		@Override public <T> T get(Class<T> type) throws JdbxException
+		@Override public <T> T getObject(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try
@@ -370,7 +370,7 @@ public class QueryResult implements AutoCloseable
 		 * @see ResultSet#getObject(String, Class)
 		 * @return the value
 		 */
-		@Override public <T> T get(Class<T> type) throws JdbxException
+		@Override public <T> T getObject(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try

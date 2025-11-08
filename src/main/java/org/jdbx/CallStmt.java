@@ -277,7 +277,7 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override public <T> T get(Class<T> type) throws JdbxException
+		@Override public <T> T getObject(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try
@@ -435,7 +435,7 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override public <T> T get(Class<T> type) throws JdbxException
+		@Override public <T> T getObject(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			try

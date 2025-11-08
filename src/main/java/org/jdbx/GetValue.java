@@ -244,7 +244,7 @@ interface GetValue
 	public default LocalDate getLocalDate() throws JdbxException
 	{
 		// http://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/jdbc_42.html
-		return get(LocalDate.class);
+		return getObject(LocalDate.class);
 	}
 
 
@@ -254,7 +254,7 @@ interface GetValue
 	public default LocalTime getLocalTime() throws JdbxException
 	{
 		// http://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/jdbc_42.html
-		return get(LocalTime.class);
+		return getObject(LocalTime.class);
 	}
 
 
@@ -324,6 +324,14 @@ interface GetValue
 	{
 		return get(GetAccessors.OBJECT);
 	}
+
+
+	/**
+	 * @return the value as an Object casted to a certain type.
+	 * @param type the class of the type
+	 * @param<T> the type of the value
+	 */
+	public abstract <T> T getObject(Class<T> type) throws JdbxException;
 
 
 	/**
@@ -416,14 +424,6 @@ interface GetValue
 	{
 		return get(GetAccessors.STRING);
 	}
-
-
-	/**
-	 * @return the value as an Object casted to a certain type.
-	 * @param type the class of the type
-	 * @param<T> the type of the value
-	 */
-	public abstract <T> T get(Class<T> type) throws JdbxException;
 
 
 	public abstract Object get(Map<String,Class<?>> map) throws JdbxException;

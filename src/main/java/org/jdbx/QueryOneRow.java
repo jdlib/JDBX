@@ -205,7 +205,7 @@ public class QueryOneRow
 		 * @param type the object type
 		 * @return the object
 		 */
-		@Override public <T> T get(Class<T> type) throws JdbxException
+		@Override public <T> T getObject(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			return read(r -> r.getJdbcResult().getObject(number_, type));
@@ -268,7 +268,7 @@ public class QueryOneRow
 		 * @param type the object type
 		 * @return the object
 		 */
-		@Override public <T> T get(Class<T> type) throws JdbxException
+		@Override public <T> T getObject(Class<T> type) throws JdbxException
 		{
 			Check.notNull(type, "type");
 			return read(r -> r.getJdbcResult().getObject(name_, type));
