@@ -27,14 +27,14 @@ import org.jdbx.function.CheckedFunction;
  * Note that actual query on JDBC level may not be run until
  * a terminal operation of the builder method chain is executed.
  */
-public abstract class QueryResult extends StmtRunnable
+public abstract class Query extends StmtRunnable
 {
 	/**
 	 * Returns a QueryResult object for an existing ResultSet.
 	 * @param resultSet a ResultSet
 	 * @return the QueryResult
 	 */
-	public static QueryResult of(ResultSet resultSet)
+	public static Query of(ResultSet resultSet)
 	{
 		return new ResultSetQResult(resultSet);
 	}
@@ -45,7 +45,7 @@ public abstract class QueryResult extends StmtRunnable
 	 * @param n a number of rows
 	 * @return this
 	 */
-	public QueryResult skip(int n)
+	public Query skip(int n)
 	{
 		skip_ = Math.max(0, n);
 		return this;
