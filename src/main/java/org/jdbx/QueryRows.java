@@ -40,9 +40,9 @@ import org.jdbx.function.GetForName;
  * QResultRows is a builder class to
  * extract a list of values from all rows of a query result.
  */
-public class QResultRows
+public class QueryRows
 {
-	QResultRows(Query result)
+	QueryRows(Query result)
 	{
 		result_ = result;
 	}
@@ -53,7 +53,7 @@ public class QResultRows
 	 * @param max the maximum number of rows. A negative value is interpreted
 	 * 		as unlimited rows. 
 	 */
-	public QResultRows max(int max)
+	public QueryRows max(int max)
 	{
 		max_ = max;
 		return this;
