@@ -34,7 +34,7 @@ import org.jdbx.function.Unchecked;
  * ResultCursor represents the result of a SQL query.
  * It is a wrapper class for java.sql.ResultSet.
  */
-public class ResultCursor implements AutoCloseable
+public class QueryResult implements AutoCloseable
 {
 	/**
 	 * Returns a ResultCursor for the JDBC ResultSet
@@ -45,9 +45,9 @@ public class ResultCursor implements AutoCloseable
 	 * @return the new ResultCursor
 	 */
 	@SuppressWarnings("resource")
-	public static ResultCursor of(ResultSet resultSet)
+	public static QueryResult of(ResultSet resultSet)
 	{
-		return new ResultCursor(resultSet).setCloseResult(false);
+		return new QueryResult(resultSet).setCloseResult(false);
 	}
 
 
@@ -55,7 +55,7 @@ public class ResultCursor implements AutoCloseable
 	 * Creates a new ResultCursor which wraps a ResultSet.
 	 * @param resultSet the result set
 	 */
-	public ResultCursor(ResultSet resultSet)
+	public QueryResult(ResultSet resultSet)
 	{
 		resultSet_ = Check.notNull(resultSet, "resultSet");
 	}
@@ -228,7 +228,7 @@ public class ResultCursor implements AutoCloseable
 	 * @param number the number, starting at 1
 	 * @return this
 	 */
-	public ResultCursor setNextColNumber(int number)
+	public QueryResult setNextColNumber(int number)
 	{
 		nextColNumber_ = Check.number(number);
 		return this;
@@ -239,7 +239,7 @@ public class ResultCursor implements AutoCloseable
 	 * Reset the next column number to 1.
 	 * @return this
 	 */
-	public ResultCursor resetNextColNumber()
+	public QueryResult resetNextColNumber()
 	{
 		return setNextColNumber(1);
 	}
@@ -250,7 +250,7 @@ public class ResultCursor implements AutoCloseable
 	 * @return this
 	 * @see #nextCol()
 	 */
-	public ResultCursor skipNextCol()
+	public QueryResult skipNextCol()
 	{
 		return skipNextCols(1);
 	}
@@ -261,7 +261,7 @@ public class ResultCursor implements AutoCloseable
 	 * @param count the count
 	 * @return this
 	 */
-	public ResultCursor skipNextCols(int count)
+	public QueryResult skipNextCols(int count)
 	{
 		return setNextColNumber(nextColNumber_ + count);
 	}
@@ -761,7 +761,7 @@ public class ResultCursor implements AutoCloseable
 		public boolean next() throws JdbxException
 		{
 			resetNextColNumber();
-			return ResultCursor.this.nextRow();
+			return QueryResult.this.nextRow();
 		}
 
 
@@ -805,7 +805,7 @@ public class ResultCursor implements AutoCloseable
 	 * @exception JdbxException thrown if there is no next row
 	 * @return this
 	 */
-	public ResultCursor nextRowRequired() throws JdbxException
+	public QueryResult nextRowRequired() throws JdbxException
 	{
 		if (!nextRow())
 			throw JdbxException.invalidResult("no next row");
@@ -974,7 +974,7 @@ public class ResultCursor implements AutoCloseable
 	 * @param flag the close flag
 	 * @return this
 	 */
-	public ResultCursor setCloseResult(boolean flag)
+	public QueryResult setCloseResult(boolean flag)
 	{
 		closeResult_ = flag;
 		return this;
