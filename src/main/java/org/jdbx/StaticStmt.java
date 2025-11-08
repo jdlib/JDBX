@@ -142,6 +142,8 @@ public class StaticStmt extends Stmt
 
 	/**
 	 * Returns a Query builder to execute the given SQL query command and process the result.
+	 * Note that actual query on JDBC level may not be run until a terminal operation of the
+	 * method chain is executed.
 	 * @param sql a SQL command
 	 * @return the Query object
 	 */

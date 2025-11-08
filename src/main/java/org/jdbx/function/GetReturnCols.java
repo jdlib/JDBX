@@ -7,8 +7,9 @@ import org.jdbx.Query;
 
 /**
  * A functional interface for a service which reads the returned column values
- * obtained from an update operation.
+ * (e.g. auto-generated keys) as a result of executing a SQL command.
  * @see Statement#getGeneratedKeys()
+ * @param<V> the type of the value representing the returned column values
  */
 @FunctionalInterface
 public interface GetReturnCols<V>

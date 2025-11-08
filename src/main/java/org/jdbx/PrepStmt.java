@@ -431,6 +431,8 @@ public class PrepStmt extends Stmt
 
 	/**
 	 * @return a Query object to execute the current SQL command.
+	 * Note that actual query on JDBC level may not be run until a terminal operation of the
+	 * method chain is executed.
 	 */
 	public Query query() throws JdbxException
 	{
