@@ -270,7 +270,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Allows to access the value of a column which was specified by column number.
 	 */
-	public class NumberedColumn implements GetResult, SetValue
+	public class NumberedColumn implements GetResultValue, SetValue
 	{
 		/**
 		 * Returns the column value as object with the given type.
@@ -362,7 +362,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Allows to access the value of a column which was specified by a name.
 	 */
-	public class NamedColumn implements GetResult, SetValue
+	public class NamedColumn implements GetResultValue, SetValue
 	{
 		/**
 		 * Returns the column value as object with the given type.

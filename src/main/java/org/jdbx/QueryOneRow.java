@@ -192,7 +192,7 @@ public class QueryOneRow
 	/**
 	 * A Column implementation for columns accessed by column number.
 	 */
-	public class NumberedCol implements GetResult
+	public class NumberedCol implements GetResultValue
 	{
 		private NumberedCol(int number)
 		{
@@ -255,7 +255,7 @@ public class QueryOneRow
 	/**
 	 * A Column implementation for columns accessed by name.
 	 */
-	public class NamedCol implements GetResult
+	public class NamedCol implements GetResultValue
 	{
 		private NamedCol(String name)
 		{
