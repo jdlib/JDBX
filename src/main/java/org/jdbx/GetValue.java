@@ -30,6 +30,7 @@ import java.sql.SQLXML;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 
@@ -354,6 +355,15 @@ interface GetValue
 	 * @see ResultSet#getObject(int, Map)
 	 */
 	public abstract Object getObject(Map<String,Class<?>> map) throws JdbxException;
+
+
+	/**
+	 * @return the value as OffsetDateTime.
+	 */
+	public default OffsetDateTime getOffsetDateTime() throws JdbxException
+	{
+		return getObject(OffsetDateTime.class);
+	}
 
 
 	/**

@@ -6,6 +6,7 @@ import java.sql.Array;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -36,7 +37,9 @@ public class GetSetValueTest extends JdbxTest
 	{
 		// truncate nanos for h2 comparison
 		LocalDateTime dt = LocalDateTime.now().withNano(0);
+		OffsetDateTime odt = OffsetDateTime.now().withNano(0);
 		new Builder()
+			.col("TIMESTAMP WITH TIME ZONE", odt, GetResultValue::getOffsetDateTime, SetValue::setObject)
 			.col("TIMESTAMP", Timestamp.valueOf(dt), GetResultValue::getSqlTimestamp, SetValue::setSqlTimestamp)
 			.col("TIMESTAMP", dt, GetResultValue::getLocalDateTime, SetValue::setLocalDateTime)
 			.col("DATE", java.sql.Date.valueOf(dt.toLocalDate()), GetResultValue::getSqlDate, SetValue::setSqlDate)
