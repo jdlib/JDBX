@@ -142,7 +142,7 @@ public class QueryRows
 	public List<Map<String,Object>> map(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "column names");
-		return read(r -> ResultUtil.readMap(r.getJdbcResult(), colNames));
+		return read(r -> ResultUtil.toMap(r.getJdbcResult(), colNames));
 	}
 
 
@@ -166,7 +166,7 @@ public class QueryRows
 	public List<Object[]> cols(int... numbers) throws JdbxException
 	{
 		Check.notNull(numbers, "numbers");
-		return read(r -> ResultUtil.readValues(r.getJdbcResult(), numbers));
+		return read(r -> ResultUtil.toArray(r.getJdbcResult(), numbers));
 	}
 
 
@@ -179,7 +179,7 @@ public class QueryRows
 	public List<Object[]> cols(String... colNames) throws JdbxException
 	{
 		Check.notNull(colNames, "colNames");
-		return read(r -> ResultUtil.readValues(r.getJdbcResult(), colNames));
+		return read(r -> ResultUtil.toArray(r.getJdbcResult(), colNames));
 	}
 
 

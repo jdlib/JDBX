@@ -76,12 +76,12 @@ public class StaticStmtTest extends JdbxTest
 		assertEquals("C", names.get(0));
 		assertEquals("B", names.get(1));
 
-		Map<String,Object> map = stmt_.query(sql).row().map();
+		Map<String,Object> map = stmt_.query(sql).row().cols().toMap();
 		assertEquals(2, map.size());
 		assertEquals("D", map.get("NAME"));
 		assertTrue(map.get("ID") instanceof Integer);
 
-		Object[] array = stmt_.query(sql).row().cols();
+		Object[] array = stmt_.query(sql).row().cols().toArray();
 		assertEquals(2, array.length);
 		assertTrue(array[0] instanceof Integer);
 		assertEquals("D", array[1]);

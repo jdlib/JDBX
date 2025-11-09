@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -20,7 +20,7 @@ package org.jdbx;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -31,11 +31,11 @@ class ResultUtil
 {
 	public static Object[] readValues(QueryResult result) throws SQLException
 	{
-		return readValues(result.getJdbcResult());
+		return toArray(result.getJdbcResult());
 	}
 
-	
-	public static Object[] readValues(ResultSet resultSet) throws SQLException
+
+	public static Object[] toArray(ResultSet resultSet) throws SQLException
 	{
 		Object[] values = new Object[resultSet.getMetaData().getColumnCount()];
 		for (int i=0; i<values.length; i++)
@@ -44,16 +44,16 @@ class ResultUtil
 	}
 
 
-	public static Object[] readValues(ResultSet resultSet, int... colNrs) throws SQLException
+	public static Object[] toArray(ResultSet resultSet, int... colNumbers) throws SQLException
 	{
-		Object[] values = new Object[colNrs.length];
-		for (int i=0; i<colNrs.length; i++)
-			values[i] = resultSet.getObject(colNrs[i]);
+		Object[] values = new Object[colNumbers.length];
+		for (int i=0; i<colNumbers.length; i++)
+			values[i] = resultSet.getObject(colNumbers[i]);
 		return values;
 	}
 
 
-	public static Object[] readValues(ResultSet rs, String... colNames) throws SQLException
+	public static Object[] toArray(ResultSet rs, String... colNames) throws SQLException
 	{
 		Check.notNull(colNames, "column names");
 		Object[] values = new Object[colNames.length];
@@ -65,33 +65,60 @@ class ResultUtil
 
 	public static Map<String,Object> readMap(QueryResult result) throws SQLException
 	{
-		return readMap(result.getJdbcResult());
+		return toMap(result.getJdbcResult());
 	}
-	
-	
-	public static Map<String,Object> readMap(ResultSet rs) throws SQLException
+
+
+	public static Map<String,Object> toMap(ResultSet rs) throws SQLException
 	{
-		HashMap<String,Object> map = new HashMap<>();
+		Map<String,Object> map = new LinkedHashMap<>(); // obeys insertion order
 		ResultSetMetaData md = rs.getMetaData();
 		int count = md.getColumnCount();
-		for (int i=1; i<=count; i++)
+		for (int colNumber=1; colNumber<=count; colNumber++)
 		{
-			String name = md.getColumnLabel(i);  // if as clause is specified
-			if ((name == null) || (name.length() == 0))
-				name = md.getColumnName(i);
-			map.put(name, rs.getObject(i));
+			String name = getName(md, colNumber);
+			map.put(name, rs.getObject(colNumber));
 		}
 		return map;
 	}
 
 
-	@SuppressWarnings("unchecked")
-	public static <T> Map<String,T> readMap(ResultSet rs, String... colNames) throws SQLException
+	public static Map<String,Object> toMap(ResultSet rs, String... colNames) throws SQLException
 	{
 		Check.notNull(colNames, "column names");
-		HashMap<String,T> map = new HashMap<>();
+		Map<String,Object> map = new LinkedHashMap<>(); // obeys insertion order
 		for (String colName : colNames)
-			map.put(colName, (T)rs.getObject(colName));
+			map.put(colName, rs.getObject(colName));
 		return map;
+	}
+
+
+	public static Map<String,Object> toMap(ResultSet rs, int... colNumbers) throws SQLException
+	{
+		Map<String,Object> map = new LinkedHashMap<>(); // obeys insertion order
+		ResultSetMetaData md = rs.getMetaData();
+		for (int colNumber : colNumbers)
+		{
+			String name = getName(md, colNumber);
+			map.put(name, rs.getObject(colNumber));
+		}
+		return map;
+	}
+
+
+	public static String getName(ResultSetMetaData md, int colNumber) throws SQLException
+	{
+		String name = md.getColumnLabel(colNumber);  // "as" clause specified
+		if (isEmpty(name))
+			name = md.getColumnName(colNumber);
+		if (isEmpty(name))
+			name = String.valueOf(colNumber);
+		return name;
+	}
+
+
+	private static boolean isEmpty(String s)
+	{
+		return s == null || s.isEmpty();
 	}
 }

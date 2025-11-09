@@ -18,6 +18,8 @@ package org.jdbx;
 
 
 import java.sql.ResultSet;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
@@ -38,7 +40,7 @@ public class QueryOneRow
 
 
 	/**
-	 * Instructs this builder to throw an Exception if the result is empty.
+	 * Instructs this builder to throw a {@link JdbxException} if the result is empty.
 	 * @return this
 	 */
 	public QueryOneRow required()
@@ -49,7 +51,7 @@ public class QueryOneRow
 
 
 	/**
-	 * Instructs this builder to throw an Exception
+	 * Instructs this builder to throw a {@link JdbxException}
 	 * if the result contains more than one row.
 	 * @return this
 	 */
@@ -73,9 +75,9 @@ public class QueryOneRow
 
 	/**
 	 * Calls the reader function for the first result row.
-	 * @param reader receives a QueryResult and returns a value constructed from the current result row
+	 * @param reader receives a QueryResult positioned on the first row and returns a value constructed that row
 	 * @param <T> the type of the value returned by the reader
-	 * @return the value returned by the reader. If the result is empty, null is returned
+	 * @return the value returned by the reader. If the result has no rows, null is returned
 	 */
 	public <T> T read(CheckedFunction<QueryResult,T> reader) throws JdbxException
 	{
@@ -85,8 +87,8 @@ public class QueryOneRow
 
 	/**
 	 * Calls the reader for the first result row.
-	 * @param reader receives a QueryResult and returns a value constructed from the current QueryResult row
-	 * @param emptyValue the value returned if the result is empty
+	 * @param reader receives a QueryResult positioned on the first row and returns a value constructed from that row.
+	 * @param emptyValue the value returned if the result has no rows
 	 * @param <T> the type of the value returned by the reader
 	 * @return the value returned by the reader, or emptyValue if the result is empty
 	 */
@@ -112,60 +114,81 @@ public class QueryOneRow
 
 
 	/**
-	 * Reads the first row and returns a map of it values. The column names
-	 * are the keys in the map.
-	 * @return the map or null if the result is empty.
+	 * @return a builder to read the values of all columns.
 	 */
-	public Map<String,Object> map() throws JdbxException
+	public Cols cols() throws JdbxException
 	{
-		return read(ResultUtil::readMap);
+		return new Cols(null, null);
 	}
 
 
 	/**
-	 * Reads the first row and returns a map of it values. The column names
-	 * are the keys in the map.
-	 * @param colNames the names of the columns which should be returned
-	 * @return the map or null if the result is empty.
-	 */
-	public Map<String,Object> map(String... colNames) throws JdbxException
-	{
-		Check.notNull(colNames, "column names");
-		return read(r -> ResultUtil.readMap(r.getJdbcResult(), colNames));
-	}
-
-
-	/**
-	 * Reads the first row and returns its values as array.
-	 * @return the array or null if the result is empty.
-	 */
-	public Object[] cols() throws JdbxException
-	{
-		return read(ResultUtil::readValues);
-	}
-
-
-	/**
-	 * Reads the first row and returns its values as array.
+	 * @return a builder to read the values of certain columns.
 	 * @param numbers the numbers of the columns to read
-	 * @return the array or null if the result is empty.
 	 */
-	public Object[] cols(int... numbers) throws JdbxException
+	public Cols cols(int... numbers) throws JdbxException
 	{
 		Check.notNull(numbers, "numbers");
-		return read(r -> ResultUtil.readValues(r.getJdbcResult(), numbers));
+		return new Cols(null, numbers);
 	}
 
 
 	/**
-	 * Reads the first row and returns its values as array.
+	 * @return a builder to read the values of certain columns.
 	 * @param names the names of the columns to read
-	 * @return the array or null if the result is empty.
 	 */
-	public Object[] cols(String... names) throws JdbxException
+	public Cols cols(String... names) throws JdbxException
 	{
 		Check.notNull(names, "names");
-		return read(r -> ResultUtil.readValues(r.getJdbcResult(), names));
+		return new Cols(names, null);
+	}
+
+
+	public class Cols
+	{
+		private Cols(String[] names, int[] numbers)
+		{
+			names_ = names;
+			numbers_ = numbers;
+		}
+
+
+		public Map<String,Object> toMap()
+		{
+			return read(qr -> {
+				ResultSet rs = qr.getJdbcResult();
+				if (numbers_ != null)
+					return ResultUtil.toMap(rs, numbers_);
+				else if (names_ != null)
+					return ResultUtil.toMap(rs, names_);
+				else
+					return ResultUtil.toMap(rs);
+			});
+		}
+
+
+		public List<Object> toList()
+		{
+			return Arrays.asList(toArray());
+		}
+
+
+		public Object[] toArray()
+		{
+			return read(qr -> {
+				ResultSet rs = qr.getJdbcResult();
+				if (numbers_ != null)
+					return ResultUtil.toArray(rs, numbers_);
+				else if (names_ != null)
+					return ResultUtil.toArray(rs, names_);
+				else
+					return ResultUtil.toArray(rs);
+			});
+		}
+
+
+		private final String[] names_;
+		private final int[] numbers_;
 	}
 
 

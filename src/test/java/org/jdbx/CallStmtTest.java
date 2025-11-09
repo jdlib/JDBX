@@ -18,6 +18,7 @@ package org.jdbx;
 
 
 import java.sql.ParameterMetaData;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.Test;
 public class CallStmtTest extends JdbxTest
 {
 	private static Integer id_;
+
+
 	@BeforeAll public static void beforeClass() throws JdbxException
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
@@ -84,7 +87,7 @@ public class CallStmtTest extends JdbxTest
 	{
 		cstmt_.init("{call GetUserAsResult(?)}");
 		cstmt_.param(1).setInteger(id_);
-		Object[] data = cstmt_.query().row().cols();
+		Object[] data = cstmt_.query().row().cols().toArray();
 		assertNotNull(data);
 		assertEquals(3, data.length);
 		assertEquals(id_, data[0]);
@@ -116,16 +119,15 @@ public class CallStmtTest extends JdbxTest
 	{
 		cstmt_.init("{call GetUserAsResult(?)}");
 		cstmt_.param(1).setInteger(id_);
-		Object[] data = cstmt_.createExecute().run(r -> {
+		List<Object> data = cstmt_.createExecute().run(r -> {
 			assertTrue(r.nextQueryResult());
-			Object[] result = r.getQueryResult().row().required().cols();
+			List<Object> result = r.getQueryResult().row().required().cols().toList();
 			assertFalse(r.next());
 			return result;
 		});
 		assertNotNull(data);
-		assertEquals(3, data.length);
-		assertEquals(id_, data[0]);
-		assertEquals(id_, data[0]);
+		assertEquals(3, data.size());
+		assertEquals(id_, data.get(0));
 	}
 
 

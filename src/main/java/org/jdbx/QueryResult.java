@@ -82,7 +82,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public Object[] cols() throws JdbxException
 	{
-		return toValue(ResultUtil::readValues);
+		return toValue(ResultUtil::toArray);
 	}
 
 
@@ -96,7 +96,7 @@ public class QueryResult implements AutoCloseable
 		Check.notNull(numbers, "numbers");
 		try
 		{
-			return ResultUtil.readValues(resultSet_, numbers);
+			return ResultUtil.toArray(resultSet_, numbers);
 		}
 		catch (Exception e)
 		{
@@ -115,7 +115,7 @@ public class QueryResult implements AutoCloseable
 		Check.notNull(names, "names");
 		try
 		{
-			return ResultUtil.readValues(resultSet_, names);
+			return ResultUtil.toArray(resultSet_, names);
 		}
 		catch (Exception e)
 		{
@@ -132,7 +132,7 @@ public class QueryResult implements AutoCloseable
 	{
 		try
 		{
-			return ResultUtil.readMap(resultSet_);
+			return ResultUtil.toMap(resultSet_);
 		}
 		catch (Exception e)
 		{
@@ -151,7 +151,7 @@ public class QueryResult implements AutoCloseable
 		Check.notNull(names, "names");
 		try
 		{
-			return ResultUtil.readMap(resultSet_, names);
+			return ResultUtil.toMap(resultSet_, names);
 		}
 		catch (Exception e)
 		{
