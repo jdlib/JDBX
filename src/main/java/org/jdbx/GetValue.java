@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.SQLXML;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Map;
 
@@ -245,6 +246,15 @@ interface GetValue
 	{
 		// http://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/jdbc_42.html
 		return getObject(LocalDate.class);
+	}
+
+
+	/**
+	 * @return the value as LocalDateTime.
+	 */
+	public default LocalDateTime getLocalDateTime() throws JdbxException
+	{
+		return getObject(LocalDateTime.class);
 	}
 
 
