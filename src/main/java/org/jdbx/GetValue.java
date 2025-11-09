@@ -335,6 +335,18 @@ interface GetValue
 
 
 	/**
+	 * Returns the value as an Object.
+	 * This method uses the given <code>Map</code> object
+     * for the custom mapping of the SQL structured or distinct type that is being retrieved.
+     * @param map a <code>java.util.Map</code> object that contains the mapping
+     * 		from SQL type names to classes in the Java programming language
+     * @eturn the object
+	 * @see ResultSet#getObject(int, Map)
+	 */
+	public abstract Object getObject(Map<String,Class<?>> map) throws JdbxException;
+
+
+	/**
 	 * @return the value as Ref.
 	 */
 	public default Ref getRef() throws JdbxException
@@ -424,9 +436,6 @@ interface GetValue
 	{
 		return get(GetAccessors.STRING);
 	}
-
-
-	public abstract Object get(Map<String,Class<?>> map) throws JdbxException;
 
 
 	/**

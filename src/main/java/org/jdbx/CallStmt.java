@@ -291,7 +291,7 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
+		@Override public Object getObject(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try
@@ -449,7 +449,7 @@ public class CallStmt extends Stmt
 		}
 
 
-		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
+		@Override public Object getObject(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try

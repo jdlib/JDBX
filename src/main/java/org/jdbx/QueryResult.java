@@ -299,7 +299,7 @@ public class QueryResult implements AutoCloseable
 		 * @return the value
 		 * @see ResultSet#getObject(int, Map)
 		 */
-		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
+		@Override public Object getObject(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try
@@ -391,7 +391,7 @@ public class QueryResult implements AutoCloseable
 		 * @return the value
 		 * @see ResultSet#getObject(String, Map)
 		 */
-		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
+		@Override public Object getObject(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			try

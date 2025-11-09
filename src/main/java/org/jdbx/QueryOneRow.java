@@ -229,7 +229,7 @@ public class QueryOneRow
 		 * @param map contains mapping from SQL type names to Java classes
 		 * @return the object
 		 */
-		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
+		@Override public Object getObject(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			return read(r -> r.getJdbcResult().getObject(number_, map));
@@ -292,7 +292,7 @@ public class QueryOneRow
 		 * @param map contains mapping from SQL type names to Java classes
 		 * @return the object
 		 */
-		@Override public Object get(Map<String,Class<?>> map) throws JdbxException
+		@Override public Object getObject(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
 			return read(r -> r.getJdbcResult().getObject(name_, map));
