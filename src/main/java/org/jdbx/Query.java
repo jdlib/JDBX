@@ -23,9 +23,13 @@ import org.jdbx.function.CheckedFunction;
 
 
 /**
- * Query is a builder class to run a SQL query and extract values from the JDBC result set.
- * Note that actual query on JDBC level may not be run until
- * a terminal operation of the builder method chain is executed.
+ * Query is a builder class to specify what to extract from a JDBC query result.
+ * <p>
+ * Besides providing the {@link #result() QueryResult}, a wrapper around JDBC ResultSet,
+ * it provides various methods to extract single-row or multi-row results
+ * without having to deal with resources that should be closed in a try-with-resources
+ * statement. (For that reason the actual query on JDBC level may not be run until
+ * a terminal operation of the builder method chain is executed).
  * @see StaticStmt#query(String)
  * @see PrepStmt#query()
  * @see CallStmt#query()
