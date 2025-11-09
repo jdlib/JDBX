@@ -42,9 +42,9 @@ import org.jdbx.function.GetForName;
  */
 public class QueryRows
 {
-	QueryRows(Query result)
+	QueryRows(Query query)
 	{
-		result_ = result;
+		query_ = query;
 	}
 
 
@@ -79,7 +79,7 @@ public class QueryRows
 			while (allowRow(++index) && result.nextRow())
 				consumer.accept(result);
 		};
-		result_.read(c);
+		query_.read(c);
 	}
 
 
@@ -110,8 +110,8 @@ public class QueryRows
 	{
 		Check.notNull(reader, "reader");
 		Check.notNull(list, "list");
-		return result_.read(false, result -> {
-			if (result_.applySkip(result))
+		return query_.read(false, result -> {
+			if (query_.applySkip(result))
 			{
 				int index = -1;
 				while (allowRow(++index) && result.nextRow())
@@ -576,6 +576,6 @@ public class QueryRows
 	}
 
 
-	private final Query result_;
+	private final Query query_;
 	private int max_ = -1; // unlimited
 }

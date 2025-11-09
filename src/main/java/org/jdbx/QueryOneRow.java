@@ -31,9 +31,9 @@ import org.jdbx.function.GetForName;
  */
 public class QueryOneRow
 {
-	QueryOneRow(Query result)
+	QueryOneRow(Query query)
 	{
-		result_ = result;
+		query_ = query;
 	}
 
 
@@ -93,8 +93,8 @@ public class QueryOneRow
 	public <T> T read(CheckedFunction<QueryResult,T> reader, T emptyValue) throws JdbxException
 	{
 		Check.notNull(reader, "reader");
-		return result_.read(false, result -> {
-			if (result_.applySkip(result) && result.nextRow())
+		return query_.read(false, result -> {
+			if (query_.applySkip(result) && result.nextRow())
 			{
 				T value = reader.apply(result);
 				if (unique_ && result.nextRow())
@@ -323,7 +323,7 @@ public class QueryOneRow
 	}
 
 
-	private final Query result_;
+	private final Query query_;
 	private boolean required_;
 	private boolean unique_;
 }
