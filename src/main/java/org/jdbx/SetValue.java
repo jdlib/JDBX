@@ -136,6 +136,27 @@ interface SetValue
 	}
 
 
+	public default void setLocalDate(LocalDate value) throws JdbxException
+	{
+		Date dt = value != null ? Date.valueOf(value) : null;
+		setSqlDate(dt);
+	}
+
+
+	public default void setLocalDateTime(LocalDateTime value) throws JdbxException
+	{
+		Timestamp ts = value != null ? Timestamp.valueOf(value) : null;
+		setSqlTimestamp(ts);
+	}
+
+
+	public default void setLocalTime(LocalTime value) throws JdbxException
+	{
+		Time tm = value != null ? Time.valueOf(value) : null;
+		setSqlTime(tm);
+	}
+
+
 	public default void setLong(long value) throws JdbxException
 	{
 		setLong(Long.valueOf(value));
@@ -202,36 +223,15 @@ interface SetValue
 	}
 
 
-	public default void setSqlDate(LocalDate value) throws JdbxException
-	{
-		Date dt = value != null ? Date.valueOf(value) : null;
-		setSqlDate(dt);
-	}
-
-
 	public default void setSqlTime(Time value) throws JdbxException
 	{
 		set(SetAccessors.SQLTIME, value);
 	}
 
 
-	public default void setSqlTime(LocalTime value) throws JdbxException
-	{
-		Time tm = value != null ? Time.valueOf(value) : null;
-		setSqlTime(tm);
-	}
-
-
 	public default void setSqlTimestamp(Timestamp value) throws JdbxException
 	{
 		set(SetAccessors.SQLTIMESTAMP, value);
-	}
-
-
-	public default void setSqlTimestamp(LocalDateTime value) throws JdbxException
-	{
-		Timestamp ts = value != null ? Timestamp.valueOf(value) : null;
-		setSqlTimestamp(ts);
 	}
 
 
