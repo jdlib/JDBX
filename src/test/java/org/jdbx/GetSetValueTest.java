@@ -12,7 +12,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import org.jdbx.sql.CreateTable;
 import org.jdbx.sql.SqlInsert;
-import org.jdbx.test.JdbxTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

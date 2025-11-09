@@ -14,18 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jdbx.test;
+package org.jdbx;
 
 
-import java.sql.Connection;
 import org.jdbx.JdbxException;
-import org.junit.jupiter.api.Assertions;
+import org.jdbx.MultiStmt;
+import org.jdbx.StaticStmt;
+import org.junit.jupiter.api.Test;
 
 
-public class JdbxTest extends Assertions
+public class MultiStmtTest extends JdbxTest
 {
-	public static Connection con() throws JdbxException
+	@Test public void test() throws JdbxException
 	{
-		return Globals.con();
+		StaticStmt staticStmt;
+		try (MultiStmt mstmt = new MultiStmt(con()))
+		{
+			assertSame(mstmt.getConnection(), con());
+
+			assertEquals(0, mstmt.size());
+			staticStmt = mstmt.newStaticStmt();
+			assertEquals(1, mstmt.size());
+			mstmt.closeStmts();
+			assertEquals(0, mstmt.size());
+
+			staticStmt = mstmt.newStaticStmt();
+		}
+
+		assertTrue(staticStmt.isClosed());
 	}
 }

@@ -1,4 +1,4 @@
-package org.jdbx.test;
+package org.jdbx;
 
 
 import java.sql.SQLException;

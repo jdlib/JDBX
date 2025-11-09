@@ -14,38 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jdbx.test;
+package org.jdbx;
 
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import org.jdbx.JdbxException;
+import org.junit.jupiter.api.Assertions;
 
 
-public class Globals
+public class JdbxTest extends Assertions
 {
-	public static synchronized Connection con() throws JdbxException
+	public static Connection con() throws JdbxException
 	{
-		if (con_ == null)
-			init();
-		return con_;
+		return Globals.con();
 	}
-
-
-	private static void init() throws JdbxException
-	{
-		try
-		{
-			Connection con = DriverManager.getConnection("jdbc:hsqldb:mem:mymemdb", "sa", "");
-			con_ = con;
-		}
-		catch (SQLException e)
-		{
-			throw JdbxException.of(e);
-		}
-	}
-
-
-	private static Connection con_;
 }
