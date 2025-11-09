@@ -17,11 +17,6 @@
 package org.jdbx;
 
 
-import org.jdbx.JdbxException;
-import org.jdbx.BatchResult;
-import org.jdbx.Jdbx;
-import org.jdbx.PrepStmt;
-import org.jdbx.QueryResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

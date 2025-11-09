@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -17,9 +17,6 @@
 package org.jdbx;
 
 
-import org.jdbx.ExecuteResult;
-import org.jdbx.JdbxException;
-import org.jdbx.StaticStmt;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -40,11 +37,11 @@ public class ExecuteTest extends JdbxTest
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
 			ExecuteResult result = stmt.createExecute("INSERT INTO ExecTest VALUES (DEFAULT, 'a'); SELECT * FROM ExecTest").run();
-			
-//			unforunately hsqldb only returns the last result!			
+
+//			unforunately hsqldb only returns the last result!
 //			assertTrue(result.next());
 //			assertTrue(result.isUpdateResult());
-			
+
 			assertTrue(result.next());
 			assertTrue(result.isQueryResult());
 			assertFalse(result.next());

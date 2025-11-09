@@ -53,8 +53,8 @@ public class GetSetValueTest extends JdbxTest
 		new Builder()
 			.col("BOOLEAN", Boolean.TRUE, GetResultValue::getBoolean, SetValue::setBoolean)
 			.col("VARCHAR(20)", "abc", GetResultValue::getString, SetValue::setString)
-			.col("VARCHAR(10) ARRAY", sqlArray, GetResultValue::getArray, SetValue::setArray, (a1,a2) -> assertArrayEquals(toArray(a1),toArray(a2)))
-			.col("VARBINARY(10)", "hello".getBytes(), GetResultValue::getBytes, SetValue::setBytes, (b1,b2) -> assertArrayEquals(b1,b2))
+			.col("VARCHAR(10) ARRAY", sqlArray, GetResultValue::getArray, SetValue::setArray, (a1,a2,msg) -> assertArrayEquals(toArray(a1),toArray(a2), msg))
+			.col("VARBINARY(10)", "hello".getBytes(), GetResultValue::getBytes, SetValue::setBytes, (b1,b2,msg) -> assertArrayEquals(b1,b2,msg))
 			.run();
 	}
 
@@ -86,7 +86,7 @@ public class GetSetValueTest extends JdbxTest
 		}
 
 
-		public <T> Builder col(String type, T value, Function<GetResultValue, T> getter, BiConsumer<SetValue, ? super T> setter, BiConsumer<T,T> assertion)
+		public <T> Builder col(String type, T value, Function<GetResultValue, T> getter, BiConsumer<SetValue, ? super T> setter, Assertion<T> assertion)
 		{
 			String name = "c" + cols_.size();
 			Column<T> col = new Column<>(type, value, getter, setter, assertion);
@@ -121,7 +121,7 @@ public class GetSetValueTest extends JdbxTest
 							@SuppressWarnings("unchecked")
 							Column<T> col = (Column<T>)cols_.get(i);
 							T actual = col.getter.apply(qr.col(i+1));
-							col.assertion.accept(col.value, actual);
+							col.assertion.accept(col.value, actual, col.type);
 						}
 					});
 				}
@@ -134,16 +134,23 @@ public class GetSetValueTest extends JdbxTest
 	}
 
 
+	private interface Assertion<T>
+	{
+		public void accept(T t1, T t2, String message);
+	}
+
+
+
 	private static class Column<T>
 	{
 		public final String type;
 		public final T value;
 		public final Function<GetResultValue, T> getter;
 		public final BiConsumer<SetValue, ? super T> setter;
-		public final BiConsumer<T,T> assertion;
+		public final Assertion<T> assertion;
 
 
-		public Column(String type, T value, Function<GetResultValue, T> getter, BiConsumer<SetValue, ? super T> setter, BiConsumer<T,T> assertion)
+		public Column(String type, T value, Function<GetResultValue, T> getter, BiConsumer<SetValue, ? super T> setter, Assertion<T> assertion)
 		{
 			this.type = type;
 			this.value = value;

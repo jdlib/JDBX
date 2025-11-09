@@ -17,12 +17,6 @@
 package org.jdbx;
 
 
-import org.jdbx.Jdbx;
-import org.jdbx.JdbxException;
-import org.jdbx.QueryResult;
-import org.jdbx.Concurrency;
-import org.jdbx.ResultType;
-import org.jdbx.StaticStmt;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

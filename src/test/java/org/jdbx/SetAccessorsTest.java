@@ -2,11 +2,6 @@ package org.jdbx;
 
 
 import java.sql.SQLException;
-import org.jdbx.Concurrency;
-import org.jdbx.Jdbx;
-import org.jdbx.JdbxException;
-import org.jdbx.PrepStmt;
-import org.jdbx.StaticStmt;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,13 +27,13 @@ public class SetAccessorsTest extends JdbxTest
 	{
 		pstmt_.close();
 	}
-	
-	
+
+
 	@Test public void testPrimitiveAccessors() throws JdbxException, SQLException
 	{
 		pstmt_.init("INSERT INTO AccTest (n, d) VALUES (?, ?), (?,?)")
 			.params(1, 2.2, null, null).update().requireCount(2);
-		
+
 		try (StaticStmt stmt = new StaticStmt(con())) {
 			stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 			stmt.query("SELECT id, n, d FROM AccTest").read(c -> {
@@ -51,6 +46,6 @@ public class SetAccessorsTest extends JdbxTest
 		}
 	}
 
-	
+
 	private PrepStmt pstmt_;
 }
