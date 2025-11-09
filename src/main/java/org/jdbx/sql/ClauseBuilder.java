@@ -29,12 +29,30 @@ class ClauseBuilder
 	}
 
 
+	public ClauseBuilder add(int value)
+	{
+		return add(Integer.toString(value));
+	}
+
+
 	public ClauseBuilder add(String item)
+	{
+		if (item != null && !item.isEmpty())
+		{
+			if (sb_ == null)
+				sb_ = new StringBuilder();
+			else
+				sb_.append(sep_);
+			sb_.append(item);
+		}
+		return this;
+	}
+
+
+	public ClauseBuilder addDirect(String item)
 	{
 		if (sb_ == null)
 			sb_ = new StringBuilder();
-		else
-			sb_.append(sep_);
 		sb_.append(item);
 		return this;
 	}

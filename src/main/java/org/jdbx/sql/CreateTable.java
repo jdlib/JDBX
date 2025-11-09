@@ -3,9 +3,11 @@ package org.jdbx.sql;
 
 public class CreateTable
 {
+	private StringBuilder columns_ = new StringBuilder();
 	private final String table_;
 	private final String indent_;
-	private StringBuilder columns_ = new StringBuilder();
+	private boolean ifNotExists_;
+	private String suffix_;
 
 
 	public CreateTable(String table)
@@ -24,6 +26,13 @@ public class CreateTable
 	{
 		table_ = table;
 		indent_ = indent;
+	}
+
+
+	public CreateTable ifNotExists()
+	{
+		ifNotExists_ = true;
+		return this;
 	}
 
 
@@ -50,13 +59,33 @@ public class CreateTable
 	}
 
 
+	public CreateTable suffix(String suffix)
+	{
+		suffix_ = suffix;
+		return this;
+	}
+
+
+	private void ln(StringBuilder sb)
+	{
+		if (indent_ != null)
+			sb.append(System.lineSeparator());
+	}
+
+
 	@Override public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("CREATE TABLE ").append(table_).append(" (").append(columns_);
-		if (indent_ != null)
-			sb.append(System.lineSeparator());
+		sb.append("CREATE TABLE ");
+		if (ifNotExists_)
+			sb.append("IF NOT EXISTS ");
+		sb.append(table_).append(" (").append(columns_);
+		ln(sb);
 		sb.append(')');
+		if (suffix_ != null) {
+			ln(sb);
+			sb.append(' ').append(suffix_);
+		}
 		return sb.toString();
 	}
 }
