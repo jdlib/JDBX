@@ -164,7 +164,7 @@ public class QueryResult implements AutoCloseable
 	 * Calls {@link #col(int)} with column number 1.
 	 * @return the column
 	 */
-	public NumberedColumn col()
+	public NumberedCol col()
 	{
 		return col(1);
 	}
@@ -177,10 +177,10 @@ public class QueryResult implements AutoCloseable
 	 * @param number the column number, starting at 1.
 	 * @return the column
 	 */
-	public NumberedColumn col(int number)
+	public NumberedCol col(int number)
 	{
-		numberedColumn_.number_ = Check.number(number);
-		return numberedColumn_;
+		numberedCol_.number_ = Check.number(number);
+		return numberedCol_;
 	}
 
 
@@ -191,10 +191,10 @@ public class QueryResult implements AutoCloseable
 	 * @param name the column name
 	 * @return the column
 	 */
-	public NamedColumn col(String name)
+	public NamedCol col(String name)
 	{
-		namedColumn_.name_ = Check.name(name);
-		return namedColumn_;
+		namedCol_.name_ = Check.name(name);
+		return namedCol_;
 	}
 
 
@@ -206,7 +206,7 @@ public class QueryResult implements AutoCloseable
 	 * not stored for later use.
 	 * @return the column
 	 */
-	public NumberedColumn nextCol()
+	public NumberedCol nextCol()
 	{
 		return col(nextColNumber_++);
 	}
@@ -270,7 +270,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Allows to access the value of a column which was specified by column number.
 	 */
-	public class NumberedColumn implements GetResultValue, SetValue
+	public class NumberedCol implements GetResultValue, SetValue
 	{
 		/**
 		 * Returns the column value as object with the given type.
@@ -362,7 +362,7 @@ public class QueryResult implements AutoCloseable
 	/**
 	 * Allows to access the value of a column which was specified by a name.
 	 */
-	public class NamedColumn implements GetResultValue, SetValue
+	public class NamedCol implements GetResultValue, SetValue
 	{
 		/**
 		 * Returns the column value as object with the given type.
@@ -992,8 +992,8 @@ public class QueryResult implements AutoCloseable
 
 
 	private final ResultSet resultSet_;
-	private final NumberedColumn numberedColumn_ = new NumberedColumn();
-	private final NamedColumn namedColumn_ = new NamedColumn();
+	private final NumberedCol numberedCol_ = new NumberedCol();
+	private final NamedCol namedCol_ = new NamedCol();
 	private int nextColNumber_ = 1;
 	private boolean closeResult_ = true;
 	private Move move_;
