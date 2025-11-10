@@ -29,9 +29,14 @@ import java.util.Map;
  */
 class ResultUtil
 {
-	public static Object[] readValues(QueryResult result) throws SQLException
+	public static Object[] toArray(ResultSet rs, String[] colNames, int[] colNumbers) throws SQLException
 	{
-		return toArray(result.getJdbcResult());
+		if (colNames != null)
+			return ResultUtil.toArray(rs, colNames);
+		if (colNumbers != null)
+			return ResultUtil.toArray(rs, colNumbers);
+		else
+			return ResultUtil.toArray(rs);
 	}
 
 
@@ -63,9 +68,14 @@ class ResultUtil
 	}
 
 
-	public static Map<String,Object> readMap(QueryResult result) throws SQLException
+	public static Map<String,Object> toMap(ResultSet rs, String[] colNames, int[] colNumbers) throws SQLException
 	{
-		return toMap(result.getJdbcResult());
+		if (colNames != null)
+			return ResultUtil.toMap(rs, colNames);
+		if (colNumbers != null)
+			return ResultUtil.toMap(rs, colNumbers);
+		else
+			return ResultUtil.toMap(rs);
 	}
 
 
@@ -106,7 +116,7 @@ class ResultUtil
 	}
 
 
-	public static String getName(ResultSetMetaData md, int colNumber) throws SQLException
+	private static String getName(ResultSetMetaData md, int colNumber) throws SQLException
 	{
 		String name = md.getColumnLabel(colNumber);  // "as" clause specified
 		if (isEmpty(name))

@@ -155,15 +155,7 @@ public class QueryOneRow
 
 		public Map<String,Object> toMap()
 		{
-			return read(qr -> {
-				ResultSet rs = qr.getJdbcResult();
-				if (numbers_ != null)
-					return ResultUtil.toMap(rs, numbers_);
-				else if (names_ != null)
-					return ResultUtil.toMap(rs, names_);
-				else
-					return ResultUtil.toMap(rs);
-			});
+			return read(qr -> ResultUtil.toMap(qr.getJdbcResult(), names_, numbers_));
 		}
 
 
@@ -175,15 +167,7 @@ public class QueryOneRow
 
 		public Object[] toArray()
 		{
-			return read(qr -> {
-				ResultSet rs = qr.getJdbcResult();
-				if (numbers_ != null)
-					return ResultUtil.toArray(rs, numbers_);
-				else if (names_ != null)
-					return ResultUtil.toArray(rs, names_);
-				else
-					return ResultUtil.toArray(rs);
-			});
+			return read(qr -> ResultUtil.toArray(qr.getJdbcResult(), names_, numbers_));
 		}
 
 

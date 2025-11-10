@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.RowId;
 import java.sql.SQLXML;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.jdbx.function.CheckedConsumer;
@@ -123,64 +124,67 @@ public class QueryRows
 
 
 	/**
-	 * Loops through all rows of the result, creates a Map for every row and
-	 * returns a List of these maps.
-	 * @return the list. Each Map entry in the list maps column name to column value.
+	 * @return a builder to read the values of all columns.
 	 */
-	public List<Map<String,Object>> map() throws JdbxException
+	public Cols cols() throws JdbxException
 	{
-		return read(rs -> ResultUtil.readMap(rs));
+		return new Cols(null, null);
 	}
 
 
 	/**
-	 * Loops through all rows of the ResultSet, creates a Map for every row and
-	 * returns a List of these maps.
-	 * @param colNames a list of column names
-	 * @return the list
+	 * @return a builder to read the values of certain columns.
+	 * @param numbers the numbers of the columns to read
 	 */
-	public List<Map<String,Object>> map(String... colNames) throws JdbxException
-	{
-		Check.notNull(colNames, "column names");
-		return read(r -> ResultUtil.toMap(r.getJdbcResult(), colNames));
-	}
-
-
-	/**
-	 * Loops through all rows of the ResultSet, creates a value array for every row and
-	 * returns a List of these arrays.
-	 * @return the list
-	 */
-	public List<Object[]> cols() throws JdbxException
-	{
-		return read(ResultUtil::readValues);
-	}
-
-
-	/**
-	 * Loops through all rows of the ResultSet, creates a value array for every row and
-	 * returns a List of these arrays.
-	 * @param numbers the column numbers which should be read from every row
-	 * @return the list
-	 */
-	public List<Object[]> cols(int... numbers) throws JdbxException
+	public Cols cols(int... numbers) throws JdbxException
 	{
 		Check.notNull(numbers, "numbers");
-		return read(r -> ResultUtil.toArray(r.getJdbcResult(), numbers));
+		return new Cols(null, numbers);
 	}
 
 
 	/**
-	 * Loops through all rows of the ResultSet, creates a value array for every row and
-	 * returns a List of these arrays.
-	 * @param colNames the names of the columns which should be read from every row
-	 * @return the list
+	 * @return a builder to read the values of certain columns.
+	 * @param names the names of the columns to read
 	 */
-	public List<Object[]> cols(String... colNames) throws JdbxException
+	public Cols cols(String... names) throws JdbxException
 	{
-		Check.notNull(colNames, "colNames");
-		return read(r -> ResultUtil.toArray(r.getJdbcResult(), colNames));
+		Check.notNull(names, "names");
+		return new Cols(names, null);
 	}
+
+
+	public class Cols
+	{
+		private Cols(String[] names, int[] numbers)
+		{
+			names_ = names;
+			numbers_ = numbers;
+		}
+
+
+		public List<Map<String,Object>> toMap()
+		{
+			return read(qr -> ResultUtil.toMap(qr.getJdbcResult(), names_, numbers_));
+		}
+
+
+		public List<List<Object>> toList()
+		{
+			return read(qr -> Arrays.asList(ResultUtil.toArray(qr.getJdbcResult(), names_, numbers_)));
+		}
+
+
+		public List<Object[]> toArray()
+		{
+			return read(qr -> ResultUtil.toArray(qr.getJdbcResult(), names_, numbers_));
+		}
+
+
+		private final String[] names_;
+		private final int[] numbers_;
+	}
+
 
 
 	/**

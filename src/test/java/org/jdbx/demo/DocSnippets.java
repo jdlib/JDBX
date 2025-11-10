@@ -220,9 +220,13 @@ public class DocSnippets
 		q.rows().col(3).getDouble();       // return values of third column, as List<Double>
 		q.rows().col("sort");              // return values of column by name
 		q.rows().col("sort").getInteger(); // return values of "sort" column, as List<Integer>
-		q.rows().cols();                   // return values of all columns, as List<Object[]>
-		q.rows().cols(1,3,7);              // return values of columns 1,3,7, as List<Object[]>
-		q.rows().map();                    // return a List<Map<String,Object>>
+		q.rows().cols();                   // returns a builder to retrieve the value of all columns
+	    q.rows().cols().toList();          // returns the value of all columns, as List<List<Object>>
+	    q.rows().cols(1,3,7);              // returns a builder to retrieve the value of columns 1, 3, 7
+	    q.rows().cols(1,3,7).toArray();    // returns the value of columns 1,3,7, as List<Object[]>
+	    q.rows().cols("a", "b", "c");      // returns a builder to retrieve the value of columns "a", "b", "c"
+	    q.rows().cols("a", "b", "c").toMap();  // returns a List<Map<String,Object>>, each mapping column name to value
+		q.rows().read(City::read);         // returns a List of values returned by the reader function
 
 		q.rows().max(5);
 		q.skip(3).rows();
