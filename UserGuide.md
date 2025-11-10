@@ -240,19 +240,19 @@ Note that the actual JDBC query is usually not run until you invoke the terminal
 Call `Query.row()` to retrieve a `QueryOneRow` builder to read values from the **first result row**:     
      
     q.row()...     
-    q.row().col()...              // returns a builder to retrieve a value of the first column
-    q.row().col().getString();    // returns the value of the first column as String
+    q.row().col()...               // returns a builder to retrieve a value of the first column
+    q.row().col().getString();     // returns the value of the first column as String
     q.row().col(3)...              // returns a builder to retrieve a value of the third column
     q.row().col(3).getInteger();   // returns the value of the third column as Integer
     q.row().col("sort")...         // returns a builder to retrieve a value of the "sort" column  
     q.row().col("sort").getInt();  // returns the value of "sort" column as int
-		q.row().cols();                // returns a builder to retrieve the value of all columns
-		q.row().cols().toList();       // returns the value of all columns, as List<Object>
-		q.row().cols(1,3,7);           // returns a builder to retrieve the value of columns 1, 3, 7
-		q.row().cols(1,3,7).toArray(); // returns the value of columns 1,3,7, as Object[]
-		q.row().cols("a", "b", "c");   // returns a builder to retrieve the value of columns "a", "b", "c"
-		q.row().cols("a", "b", "c").toMap();  // returns a Map<String,Object> mapping column name to value
-		q.row().read(City::read);      // returns the value returned by the reader function
+    q.row().cols();                // returns a builder to retrieve the value of all columns
+    q.row().cols().toList();       // returns the value of all columns, as List<Object>
+    q.row().cols(1,3,7);           // returns a builder to retrieve the value of columns 1, 3, 7
+    q.row().cols(1,3,7).toArray(); // returns the value of columns 1,3,7, as Object[]
+    q.row().cols("a", "b", "c");   // returns a builder to retrieve the value of columns "a", "b", "c"
+    q.row().cols("a", "b", "c").toMap();  // returns a Map<String,Object> mapping column name to value
+    q.row().read(City::read);      // returns the value returned by the reader function
 
 
 If the result is empty, all the examples above will return a null value (or a default value for primitive terminals like `getInt()`).
