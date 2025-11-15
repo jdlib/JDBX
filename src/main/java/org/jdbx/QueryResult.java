@@ -21,6 +21,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.jdbx.function.CheckedConsumer;
 import org.jdbx.function.CheckedFunction;
@@ -77,86 +79,68 @@ public class QueryResult implements AutoCloseable
 
 
 	/**
-	 * Returns the column values of the current row as array.
-	 * @return the value array
+	 * @return a builder to read all columnn values of the current row,
 	 */
-	public Object[] cols() throws JdbxException
+	public Cols cols() throws JdbxException
 	{
-		return toValue(ResultUtil::toArray);
+		return new Cols(null, null);
 	}
 
 
 	/**
-	 * Returns column values of the current row as array.
-	 * @param numbers the column numbers, starting at 1.
-	 * @return the value array
+	 * @return a builder to read certain columnn values of the current row,
+	 * @param numbers the numbers of the columns to read
 	 */
-	public Object[] cols(int... numbers) throws JdbxException
+	public Cols cols(int... numbers) throws JdbxException
 	{
 		Check.notNull(numbers, "numbers");
-		try
-		{
-			return ResultUtil.toArray(resultSet_, numbers);
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
+		return new Cols(null, numbers);
 	}
 
 
 	/**
-	 * Returns column values of the current row as array.
-	 * @param names the column names
-	 * @return the value array
+	 * @return a builder to read certain columnn values of the current row,
+	 * @param names the names of the columns to read
 	 */
-	public Object[] cols(String... names) throws JdbxException
+	public Cols cols(String... names) throws JdbxException
 	{
 		Check.notNull(names, "names");
-		try
-		{
-			return ResultUtil.toArray(resultSet_, names);
-		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
+		return new Cols(names, null);
 	}
 
 
 	/**
-	 * Returns the column values of the current row as map.
-	 * @return a map whose keys are the column names
+	 * A Builder class to return columns as Map, List or Array.
 	 */
-	public Map<String, Object> map() throws JdbxException
+	public class Cols
 	{
-		try
+		private Cols(String[] names, int[] numbers)
 		{
-			return ResultUtil.toMap(resultSet_);
+			names_ = names;
+			numbers_ = numbers;
 		}
-		catch (Exception e)
-		{
-			throw JdbxException.of(e);
-		}
-	}
 
 
-	/**
-	 * Returns the column values of the current row as map.
-	 * @param names the column names
-	 * @return a map whose keys are the column names
-	 */
-	public Map<String, Object> map(String... names) throws JdbxException
-	{
-		Check.notNull(names, "names");
-		try
+		public Map<String,Object> toMap()
 		{
-			return ResultUtil.toMap(resultSet_, names);
+			return toValue(rs -> ResultUtil.toMap(rs, names_, numbers_));
 		}
-		catch (Exception e)
+
+
+		public List<Object> toList()
 		{
-			throw JdbxException.of(e);
+			return Arrays.asList(toArray());
 		}
+
+
+		public Object[] toArray()
+		{
+			return toValue(rs -> ResultUtil.toArray(rs, names_, numbers_));
+		}
+
+
+		private final String[] names_;
+		private final int[] numbers_;
 	}
 
 

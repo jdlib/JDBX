@@ -241,8 +241,10 @@ public class DocSnippets
         qr.col(3).getDouble();       // third column as double
         qr.col("sort");              // column by name
         qr.col("sort").getInteger(); // "sort" column, as Integer
-        qr.cols(1,3,7);              // columns 1,3,7, as Object[]
-        qr.map();                    // returns a Map<String,Object>
+        qr.cols();                   // a builder to access all columns
+        qr.cols().toMap();           // returns a Map<String,Object>
+        qr.cols(1,3,7).toList();     // columns 1,3,7, as List<Object>
+        qr.cols(1,3,7).toArray();    // columns 1,3,7, as Object[]
 
 		q.row().read(City::read);
 		q.rows().read(City::read);
