@@ -144,6 +144,9 @@ public class QueryOneRow
 	}
 
 
+	/**
+	 * A Builder class to return columns as Map, List or Array.
+	 */
 	public class Cols
 	{
 		private Cols(String[] names, int[] numbers)
