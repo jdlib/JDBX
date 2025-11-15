@@ -32,8 +32,10 @@ public class CreateTableTest
 
 		ct = new CreateTable("t")
 			.multiLine()
-			.col("a INT");
-		assertEquals("CREATE TABLE t (a INT, b VARCHAR(100) NOT NULL)", ct.toString());
+			.col("a INT")
+			.col("b INT");
+		String actual = ct.toString().replace(System.lineSeparator(), "\n");
+		assertEquals("CREATE TABLE t\n(\n  a INT,\n  b INT\n)", actual);
 	}
 
 
