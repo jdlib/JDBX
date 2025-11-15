@@ -29,6 +29,11 @@ public class CreateTableTest
 			.col("a INT")
 			.col("b", "VARCHAR(100)", "NOT NULL");
 		assertEquals("CREATE TABLE t (a INT, b VARCHAR(100) NOT NULL)", ct.toString());
+
+		ct = new CreateTable("t")
+			.multiLine()
+			.col("a INT");
+		assertEquals("CREATE TABLE t (a INT, b VARCHAR(100) NOT NULL)", ct.toString());
 	}
 
 
