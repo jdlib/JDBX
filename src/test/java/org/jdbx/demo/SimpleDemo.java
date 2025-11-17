@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -47,7 +47,7 @@ public class SimpleDemo
 		sql = "SELECT size, name FROM Cities ORDER BY size DESC";
 		List<String> names = Jdbx.query(con, sql)
 			.rows()				// read all rows
-			.col("name")		// get column "name"
+			.col("name")			// get column "name"
 			.getString();		// and return as string
 
 
