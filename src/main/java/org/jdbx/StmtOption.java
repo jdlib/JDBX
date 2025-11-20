@@ -33,7 +33,7 @@ class StmtOption<T>
 	public static final StmtOption<Integer> MAXFIELDSIZE			= new StmtOption<>(null, Statement::setMaxFieldSize, Statement::getMaxFieldSize);
 	public static final StmtOption<Integer> MAXROWS				= new StmtOption<>(null, Statement::setMaxRows, Statement::getMaxRows);
 	public static final StmtOption<Boolean> POOLABLE  			= new StmtOption<>(null, Statement::setPoolable, Statement::isPoolable);
-	public static final StmtOption<Integer> QUERYTIMEOUT			= new StmtOption<>(Integer.valueOf(null), Statement::setQueryTimeout, Statement::getQueryTimeout);
+	public static final StmtOption<Integer> QUERYTIMEOUT			= new StmtOption<>(null, Statement::setQueryTimeout, Statement::getQueryTimeout);
 
 
 	private StmtOption(T defaultValue, CheckedBiConsumer<Statement,T> setter, CheckedFunction<Statement,T> getter)
