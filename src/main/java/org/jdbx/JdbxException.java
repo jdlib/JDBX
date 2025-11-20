@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -71,19 +71,19 @@ public class JdbxException extends RuntimeException
 		BATCH_UPDATE(BatchUpdateException.class),
 		CLIENT_INFO(SQLClientInfoException.class),
 		// non transient
-			DATA(SQLDataException.class),
-			FEATURE_NOT_SUPPORTED(SQLFeatureNotSupportedException.class),
-			INTEGRITY_CONSTRAINT_VIOLATION(SQLIntegrityConstraintViolationException.class),
-			INVALID_AUTHORIZATION_SPEC(SQLInvalidAuthorizationSpecException.class),
-			NON_TRANSIENT_CONNECTION(SQLNonTransientConnectionException.class),
-			SYNTAX_ERROR(SQLSyntaxErrorException.class),
-			NON_TRANSIENT(SQLNonTransientException.class),
+		DATA(SQLDataException.class),
+		FEATURE_NOT_SUPPORTED(SQLFeatureNotSupportedException.class),
+		INTEGRITY_CONSTRAINT_VIOLATION(SQLIntegrityConstraintViolationException.class),
+		INVALID_AUTHORIZATION_SPEC(SQLInvalidAuthorizationSpecException.class),
+		NON_TRANSIENT_CONNECTION(SQLNonTransientConnectionException.class),
+		SYNTAX_ERROR(SQLSyntaxErrorException.class),
+		NON_TRANSIENT(SQLNonTransientException.class),
 		RECOVERABLE(SQLRecoverableException.class),
 		// transient
-			TIMEOUT(SQLTimeoutException.class),
-			TRANSIENT_ROLLBACK(SQLTransactionRollbackException.class),
-			TRANSIENT_CONNECTION(SQLTransientConnectionException.class),
-			TRANSIENT(BatchUpdateException.class),
+		TIMEOUT(SQLTimeoutException.class),
+		TRANSIENT_ROLLBACK(SQLTransactionRollbackException.class),
+		TRANSIENT_CONNECTION(SQLTransientConnectionException.class),
+		TRANSIENT(BatchUpdateException.class),
 		WARNING(SQLWarning.class),
 		GENERAL(SQLException.class);
 
@@ -91,15 +91,15 @@ public class JdbxException extends RuntimeException
 		public static SqlExType of(SQLException exception)
 		{
 			Check.notNull(exception, "exception");
-	    	for (SqlExType type : SqlExType.values())
-	    	{
-	    		if (type.getExClass().isInstance(exception))
-	    			return type;
-	    	}
+		    	for (SqlExType type : SqlExType.values())
+		    	{
+		    		if (type.getExClass().isInstance(exception))
+		    			return type;
+		    	}
 	       	return GENERAL;
 		}
-		
-		
+
+
 		SqlExType(Class<? extends SQLException> exClass)
 		{
 			exClass_ = exClass;
@@ -202,13 +202,13 @@ public class JdbxException extends RuntimeException
 	{
 		return new JdbxException(message, Reason.INVALID_RESULT);
 	}
-	
-	
+
+
 	private static String getMessage(Throwable cause)
 	{
 		if (cause == null)
 			return null;
-		
+
 		String message = cause.getMessage();
 		return message != null ? message : cause.toString();
 	}
@@ -232,14 +232,14 @@ public class JdbxException extends RuntimeException
 		reason_ = Check.notNull(reason, "reason");
     }
 
-    
+
     /**
      * Returns the reason.
      * @return the reason
      */
     public Reason getReason()
     {
-    	return reason_;
+    		return reason_;
     }
 
 
@@ -250,7 +250,7 @@ public class JdbxException extends RuntimeException
      */
     public boolean hasSqlExCause()
     {
-    	return getCause() instanceof SQLException;
+    		return getCause() instanceof SQLException;
     }
 
 
@@ -261,7 +261,7 @@ public class JdbxException extends RuntimeException
      */
     public SQLException getSqlExCause()
     {
-    	return hasSqlExCause() ? (SQLException)getCause() : null;
+    		return hasSqlExCause() ? (SQLException)getCause() : null;
     }
 
 
@@ -271,8 +271,8 @@ public class JdbxException extends RuntimeException
      */
     public SqlExType getSqlExType()
     {
-    	SQLException cause = getSqlExCause();
-    	return cause != null ? SqlExType.of(cause) : null;
+		SQLException cause = getSqlExCause();
+		return cause != null ? SqlExType.of(cause) : null;
     }
 
 
