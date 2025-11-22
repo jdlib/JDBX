@@ -540,7 +540,7 @@ public class CallStmt extends Stmt
 	/**
 	 * The batch class uses by CallStmt.
 	 */
-	public class CallBatch extends Batch
+	public class CallBatch extends BatchGetCols
 	{
 		public Batch add() throws JdbxException
 		{

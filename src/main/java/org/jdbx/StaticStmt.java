@@ -410,7 +410,12 @@ public class StaticStmt extends Stmt
 
 	/**
 	 * Returns a Batch object which can be used to add statements to the batch and
-	 * execute the batch.
+	 * execute the batch.<p>
+	 * Each call will return a new Batch object but still they all operate on the same underlying
+	 * JDBC Statement, so you may store the Batch object in a local variable or just call this
+	 * method each time you need it.<p>
+	 *
+	 * @see StaticBatch#add(String)
 	 * @return the batch
 	 */
 	public StaticBatch batch()

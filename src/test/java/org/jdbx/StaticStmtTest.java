@@ -19,6 +19,7 @@ package org.jdbx;
 
 import java.util.List;
 import java.util.Map;
+import org.jdbx.StaticStmt.StaticBatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -140,12 +141,22 @@ public class StaticStmtTest extends JdbxTest
 
 	@Test public void testBatch() throws JdbxException
 	{
-		stmt_.batch().add("INSERT INTO STest (name) VALUES ('A'), ('B')");
-		stmt_.batch().add("INSERT INTO STest (name) VALUES ('C'), ('D')");
+		StaticBatch batch = stmt_.batch();
+		batch.add("INSERT INTO STest (name) VALUES ('X'), ('Y')");
+		batch.clear();
+		batch.add("INSERT INTO STest (name) VALUES ('A'), ('B')");
+		batch.add("INSERT INTO STest (name) VALUES ('C'), ('D')");
 		BatchResult<Void> result = stmt_.batch().run();
 		result.requireSize(2);
 		result.requireCount(0, 2);
 		result.requireCount(1, 2);
+//
+//		batch.add("INSERT INTO STest (name) VALUES ('E'), ('F')");
+//		BatchResult<List<Integer>> result2 = stmt_.batch().runGetCols(Integer.class);
+//		result2.requireSize(1);
+//		result2.requireCount(0, 2);
+//		List<Integer> keys = result2.value();
+//		assertEquals(List.of(5, 6), keys);
 	}
 
 

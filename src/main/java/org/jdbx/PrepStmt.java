@@ -533,7 +533,7 @@ public class PrepStmt extends Stmt
 	/**
 	 * A Batch implementation for PrepStmt.
 	 */
-	public class PrepBatch extends Batch
+	public class PrepBatch extends BatchGetCols
 	{
 		/**
 		 * Sets the parameters. Calls {@link PrepStmt#params(Object...)}

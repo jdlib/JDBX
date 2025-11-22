@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -24,9 +24,13 @@ import org.jdbx.function.GetReturnCols;
 /**
  * BatchResult is returned by various {@link Batch} methods
  * which execute the batch.
- * It stores the update counts of the batch and optionally the auto-generated keys.
- * @see Batch#runGetCols(org.jdbx.function.GetReturnCols)
- * @see Batch#runGetCols(Class)
+ * It stores the update counts of the batch and the auto-generated keys (available
+ * only for batches based on PrepStmt and CallStmt).
+ * @see Batch#run()
+ * @see PrepStmt.PrepBatch#runGetCols(org.jdbx.function.GetReturnCols)
+ * @see PrepStmt.PrepBatch#runGetCols(Class)
+ * @see CallStmt.CallBatch#runGetCols(org.jdbx.function.GetReturnCols)
+ * @see CallStmt.CallBatch#runGetCols(Class)
  */
 public class BatchResult<V>
 {
@@ -54,8 +58,8 @@ public class BatchResult<V>
 		 * The JDBC driver returned an invalid update count.
 		 */
 		INVALID;
-		
-		
+
+
 		public static CountType forCount(int count)
 		{
 			if (count >= 0)
@@ -78,8 +82,8 @@ public class BatchResult<V>
 	{
 		this(null, counts);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new BatchResult.
 	 * @param value the value of the BatchResult
@@ -115,8 +119,8 @@ public class BatchResult<V>
 			throw JdbxException.invalidResult("expected batch result size " + size + ", but was " + size());
 		return this;
 	}
-	
-	
+
+
 	/**
 	 * Returns the update count with the given index.
 	 * @param index the zero based index of the update count
@@ -137,7 +141,7 @@ public class BatchResult<V>
 		return counts_;
 	}
 
-	
+
 	/**
 	 * Returns the type of the update count with the given index.
 	 * @param index the zero based index of the update count
@@ -161,7 +165,7 @@ public class BatchResult<V>
 	 */
 	public BatchResult<V> requireCount(int index, int expectedCount) throws JdbxException
 	{
-		int actualCount = getCount(index); 
+		int actualCount = getCount(index);
 		if (actualCount != expectedCount)
 			throw JdbxException.invalidResult("#" + index + ": expected update count " + expectedCount + ", but was " + actualCount);
 		return this;
@@ -177,7 +181,7 @@ public class BatchResult<V>
 	 */
 	public BatchResult<V> requireCountType(int index, CountType expectedType) throws JdbxException
 	{
-		CountType actualType = getCountType(index); 
+		CountType actualType = getCountType(index);
 		if (actualType != expectedType)
 			throw JdbxException.invalidResult("#" + index + ": expected update count type " + expectedType + ", but was " + actualType);
 		return this;
@@ -195,8 +199,8 @@ public class BatchResult<V>
 			throw JdbxException.invalidResult("expected non-null value");
 		return value_;
 	}
-	
-	
+
+
 	public V value()
 	{
 		return value_;

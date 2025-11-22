@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -51,6 +51,18 @@ public abstract class Batch
 	}
 
 
+	protected final int[] runImpl()
+	{
+		return stmt().get(Statement::executeBatch);
+	}
+
+
+	protected abstract Stmt stmt();
+}
+
+
+abstract class BatchGetCols extends Batch
+{
 	/**
 	 * Runs the batched SQL commands and returns the auto-generated keys.
 	 * We assume that the batched commands contain a single column for which keys are generated.
@@ -67,7 +79,7 @@ public abstract class Batch
 
 	/**
 	 * Runs the command and passes the result-set of the auto-generated keys to the reader.
-	 * @param reader a reader which receives the result-set, 
+	 * @param reader a reader which receives the result-set,
 	 * 		extracts the generated keys and returns them as object of type V.
 	 * @param <V> the type of the value returned by the reader
 	 * @return a BatchResult containing the auto-generated keys
@@ -79,8 +91,8 @@ public abstract class Batch
 		try
 		{
 			int[] counts = runImpl();
-			try (ResultSet rs = stmt().getJdbcStmt().getGeneratedKeys()) 
-			{ 
+			try (ResultSet rs = stmt().getJdbcStmt().getGeneratedKeys())
+			{
 				V value = reader.read(counts != null ? counts.length : 0, Query.of(rs));
 				return new BatchResult<>(value, counts);
 			}
@@ -90,13 +102,4 @@ public abstract class Batch
 			throw JdbxException.of(e);
 		}
 	}
-
-
-	private int[] runImpl()
-	{
-		return stmt().get(Statement::executeBatch);
-	}
-
-
-	protected abstract Stmt stmt();
 }

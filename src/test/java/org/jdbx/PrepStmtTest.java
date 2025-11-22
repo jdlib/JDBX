@@ -17,6 +17,7 @@
 package org.jdbx;
 
 
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +28,13 @@ public class PrepStmtTest extends JdbxTest
 {
 	@BeforeAll public static void beforeClass() throws JdbxException
 	{
-		Jdbx.update(con(), "CREATE TABLE PTests(id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30), type INTEGER NOT NULL)");
+		Jdbx.update(con(), "CREATE TABLE ptests (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30), type INTEGER NOT NULL)");
 	}
 
 
 	@BeforeEach public void before() throws JdbxException
 	{
-		Jdbx.update(con(), "DELETE FROM PTests");
+		Jdbx.update(con(), "DELETE FROM ptests");
 		pstmt_ = new PrepStmt(con());
 	}
 
@@ -49,31 +50,33 @@ public class PrepStmtTest extends JdbxTest
 		assertFalse(pstmt_.isInitialized());
 
 		// insert a single record and remember the generated id
-		pstmt_.init().returnCols(1).sql("INSERT INTO PTests VALUES (DEFAULT, ?, ?)");
+		pstmt_.init().returnCols(1).sql("INSERT INTO ptests VALUES (DEFAULT, ?, ?)");
 		assertTrue(pstmt_.isInitialized());
 		pstmt_.params("a", 1);
 		Integer idA = pstmt_.createUpdate().runGetCol(Integer.class)
 			.requireCount(1)
 			.requireValue();
-
-		// insert a single record and remember it: use named parameters
-		pstmt_.init().namedParams().sql("INSERT INTO PTests VALUES (DEFAULT, :name, :type)");
-		pstmt_.param("name").setString("b");
-		pstmt_.param("type").setInt(15);
-		assertEquals(1, pstmt_.update().count());
+		assertEquals(0, idA);
 
 		// insert two records using a batch
 		pstmt_.param(1, "c").param(2, 2).batch().add();
 		pstmt_.param(1, "d");
 		pstmt_.param(2).setInt(3);
 		pstmt_.batch().add();
-		BatchResult<Void> result = pstmt_.batch().run();
+		BatchResult<List<Integer>> result = pstmt_.batch().runGetCols(Integer.class);
 		assertEquals(2, result.size());
 		result.requireCount(0, 1);
 		result.requireCount(1, 1);
+		assertEquals(List.of(1, 2), result.value());
+
+		// insert a single record using named parameters
+		pstmt_.init().namedParams().sql("INSERT INTO ptests VALUES (DEFAULT, :name, :type)");
+		pstmt_.param("name").setString("b");
+		pstmt_.param("type").setInt(15);
+		assertEquals(1, pstmt_.update().count());
 
 		// read a row by id
-		pstmt_.init("SELECT * FROM PTests WHERE id = ?");
+		pstmt_.init("SELECT * FROM ptests WHERE id = ?");
 		Dao dao = pstmt_.params(idA).query().row().read(Dao::read);
 		assertNotNull(dao);
 		assertEquals(idA, 	dao.id);
