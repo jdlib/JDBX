@@ -17,6 +17,8 @@
 package org.jdbx;
 
 
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ public class QueryResultTest extends JdbxTest
 {
 	@BeforeAll public static void beforeClass() throws JdbxException
 	{
-		Jdbx.update(con(), "CREATE TABLE qrtest (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
+		Jdbx.update(con(), "CREATE TABLE qrtest (id INTEGER PRIMARY KEY, name VARCHAR(30))");
 	}
 
 
@@ -34,7 +36,7 @@ public class QueryResultTest extends JdbxTest
 	{
 		stmt_ = new StaticStmt(con());
 		stmt_.update("DELETE FROM qrtest");
-		stmt_.update("INSERT INTO qrtest (name) VALUES ('A'), ('B'), ('C'), ('D')");
+		stmt_.update("INSERT INTO qrtest (id, name) VALUES (0, 'A'), (1, 'B'), (2, 'C'), (3, 'D')");
 	}
 
 
@@ -67,6 +69,52 @@ public class QueryResultTest extends JdbxTest
 			result.col().setString("Z");
 			assertTrue(result.row().isUpdated());
 			result.row().update();
+		}
+	}
+
+
+	@Test public void testCols()
+	{
+		try (QueryResult result = stmt_.query("SELECT id, name FROM qrtest WHERE id = 0").result())
+		{
+			assertTrue(result.nextRow());
+
+			Object[] row0 = result.cols().toArray();
+			assertArrayEquals(new Object[] { 0, "A"}, row0);
+
+			List<Object> row1 = result.cols(2, 1).toList();
+			assertEquals(List.of("A", 0), row1);
+
+			Map<String, Object> row2 = result.cols("id", "name").toMap();
+			assertEquals(Map.of("id", 0, "name", "A"), row2);
+		}
+	}
+
+
+	@Test public void testCol()
+	{
+		try (QueryResult result = stmt_.query("SELECT id, name FROM qrtest WHERE id = 0").result())
+		{
+			assertTrue(result.nextRow());
+			assertEquals(0, result.col().getInt());
+			assertEquals("A", result.col(2).getString());
+			assertEquals("A", result.col(2).getObject(String.class));
+			assertEquals("A", result.col("name").getString());
+			assertEquals("A", result.col("name").getObject(String.class));
+		}
+	}
+
+
+	@Test public void testNextCol()
+	{
+		try (QueryResult result = stmt_.query("SELECT id, name, id, name FROM qrtest WHERE id = 0").result())
+		{
+			assertTrue(result.nextRow());
+			assertEquals(1, result.getNextColNumber());
+			assertEquals(0, result.nextCol().getInt());
+			assertEquals(2, result.getNextColNumber());
+			result.setNextColNumber(4);
+			assertEquals("A", result.nextCol().getString());
 		}
 	}
 
