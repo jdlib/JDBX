@@ -116,6 +116,20 @@ public class StaticStmtTest extends JdbxTest
 	}
 
 
+	@Test public void testLargeUpdate() throws JdbxException
+	{
+		String sql = "INSERT INTO STest (name) VALUES ('D')";
+		UpdateResult<List<Integer>> result = stmt_.createUpdate(sql)
+			.enableLargeCount()
+			.returnCols("ID")
+			.runGetCols(Integer.class)
+			.requireCount(1L)
+			.requireCount(1L, 2L);
+		assertEquals(1L, result.count());
+		assertEquals(1, result.value().size());
+	}
+
+
 	@Test public void testExecute() throws JdbxException
 	{
 		stmt_.createExecute("INSERT INTO STest (name) VALUES ('A')").returnAutoKeyCols().run(r -> {

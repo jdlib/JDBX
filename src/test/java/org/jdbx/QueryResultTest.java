@@ -52,8 +52,14 @@ public class QueryResultTest extends JdbxTest
 			assertTrue(result.move().relative(2));
 			assertEquals("D", result.col().getString());
 			assertTrue(result.position().isLast());
+
 			result.move().afterLast();
 			assertTrue(result.position().isAfterLast());
+
+			result.move().beforeFirst();
+			assertTrue(result.position().isBeforeFirst());
+
+			assertTrue(result.move().first());
 		}
 	}
 
@@ -115,6 +121,36 @@ public class QueryResultTest extends JdbxTest
 			assertEquals(2, result.getNextColNumber());
 			result.setNextColNumber(4);
 			assertEquals("A", result.nextCol().getString());
+		}
+	}
+
+	@Test public void testAccessors()
+	{
+		try (QueryResult result = stmt_.query("SELECT id, name FROM qrtest WHERE id = 0").result())
+		{
+			assertTrue(result.isCloseResult());
+			QueryResult r2 = QueryResult.of(result.getJdbcResult());
+			assertFalse(r2.isCloseResult());
+
+			result.setFetchSize(50);
+			assertEquals(0, result.getFetchSize()); // fetch size is a hint, may not be supported
+			result.setFetchDirection(FetchDirection.FORWARD);
+			assertSame(FetchDirection.FORWARD, result.getFetchDirection());
+			assertSame(Holdability.HOLD_OVER_COMMIT, result.getHoldability());
+
+			assertNotNull(result.getJdbcResult());
+			assertNotNull(result.getMetaData());
+			assertNull(result.getWarnings());
+			assertNull(result.getCursorName());
+			result.clearWarnings();
+
+			assertEquals(1, result.findColumn("id"));
+			result.skipNextCol();
+			assertEquals(2, result.getNextColNumber());
+
+			result.nextRowRequired();
+			result.nextCol().getString();
+			assertFalse(result.wasNull());
 		}
 	}
 

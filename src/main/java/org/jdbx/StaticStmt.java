@@ -223,6 +223,13 @@ public class StaticStmt extends Stmt
 		}
 
 
+		@Override public StaticUpdate enableLargeCount()
+		{
+			super.enableLargeCount();
+			return this;
+		}
+
+
 		/**
 		 * Defines which columns should be returned for INSERTs.
 		 * @param cols the columns or null if no columns should be returned

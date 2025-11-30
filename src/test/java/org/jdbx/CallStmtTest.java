@@ -17,6 +17,7 @@
 package org.jdbx;
 
 
+import java.sql.JDBCType;
 import java.sql.ParameterMetaData;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -34,19 +35,19 @@ public class CallStmtTest extends JdbxTest
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
-			stmt.update("CREATE TABLE CallUser (id INT IDENTITY PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50))");
+			stmt.update("CREATE TABLE CallUser (id INT IDENTITY PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), salary DOUBLE)");
 
-			id_ = stmt.createUpdate("INSERT INTO CallUser VALUES (DEFAULT, 'Paul', 'Smith')")
+			id_ = stmt.createUpdate("INSERT INTO CallUser VALUES (DEFAULT, 'Paul', 'Smith', 1.2)")
 				.returnAutoKeyCols()
 				.runGetCol(Integer.class)
 				.requireCount(1)
 				.requireValue();
 
 			stmt.update(
-				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50))" +
+				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50), IN salary DOUBLE)" +
 			    "  MODIFIES SQL DATA" +
 			    "  BEGIN ATOMIC" +
-			    "     INSERT INTO CallUser VALUES (DEFAULT, firstname, lastname);" +
+			    "     INSERT INTO CallUser VALUES (DEFAULT, firstname, lastname, salary);" +
 			    "  END");
 
 			stmt.update(
@@ -85,11 +86,12 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testQueryReturnResultSet() throws JdbxException
 	{
+		cstmt_.options().setMaxRows(2000); // increase option coverage
 		cstmt_.init("{call GetUserAsResult(?)}");
 		cstmt_.param(1).setInteger(id_);
 		Object[] data = cstmt_.query().row().cols().toArray();
 		assertNotNull(data);
-		assertEquals(3, data.length);
+		assertEquals(4, data.length);
 		assertEquals(id_, data[0]);
 	}
 
@@ -100,9 +102,10 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testExecuteReturnGenKey() throws Exception
 	{
-		cstmt_.init("{call CreateUser(?,?)}");
+		cstmt_.init("{call CreateUser(?,?,?)}");
 		cstmt_.param("firstname").set("Alpha");
 		cstmt_.param("lastname").set("Beta");
+		cstmt_.param("salary").set(Double.valueOf(2.3));
 		cstmt_.createExecute().run(r -> {
 			assertTrue(r.next());
 			assertTrue(r.isUpdateResult());
@@ -126,7 +129,7 @@ public class CallStmtTest extends JdbxTest
 			return result;
 		});
 		assertNotNull(data);
-		assertEquals(3, data.size());
+		assertEquals(4, data.size());
 		assertEquals(id_, data.get(0));
 	}
 
@@ -136,7 +139,7 @@ public class CallStmtTest extends JdbxTest
 		cstmt_.init("{call GetUserName(?,?,?)}");
 		cstmt_.param(1).setDouble(1.1);
 		cstmt_.param(2).out(java.sql.Types.VARCHAR);
-		cstmt_.param(3).out(java.sql.Types.VARCHAR);
+		cstmt_.param(3).out(JDBCType.VARCHAR);
 		cstmt_.clearParams();
 		cstmt_.param(1, id_);
 		cstmt_.execute();
@@ -150,6 +153,7 @@ public class CallStmtTest extends JdbxTest
 		assertFalse(cstmt_.isInitialized());
 		cstmt_.init("{call GetUserName(?,?,?)}");
 		assertTrue(cstmt_.isInitialized());
+		assertTrue(cstmt_.toString().endsWith("[{call GetUserName(?,?,?)}]"));
 
 		ParameterMetaData md = cstmt_.getParamMetaData();
 		assertEquals(3, md.getParameterCount());
@@ -165,6 +169,12 @@ public class CallStmtTest extends JdbxTest
 
 		cstmt_.options().setResultType(ResultType.SCROLL_SENSITIVE);
 		assertSame(ResultType.SCROLL_SENSITIVE, cstmt_.options().getResultType());
+	}
+
+
+	@Test public void testBatch() throws Exception
+	{
+		// TODO
 	}
 
 
