@@ -19,6 +19,7 @@ package org.jdbx;
 
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,17 +27,27 @@ import org.junit.jupiter.api.Test;
 
 public class QueryResultTest extends JdbxTest
 {
-	@BeforeAll public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeAll()
 	{
 		Jdbx.update(con(), "CREATE TABLE qrtest (id INTEGER PRIMARY KEY, name VARCHAR(30))");
 	}
 
 
-	@BeforeEach public void before() throws JdbxException
+	@BeforeEach public void beforeEach()
 	{
 		stmt_ = new StaticStmt(con());
 		stmt_.update("DELETE FROM qrtest");
 		stmt_.update("INSERT INTO qrtest (id, name) VALUES (0, 'A'), (1, 'B'), (2, 'C'), (3, 'D')");
+	}
+
+
+	@AfterEach public void afterEach()
+	{
+		if (stmt_ != null)
+		{
+			stmt_.close();
+			stmt_ = null;
+		}
 	}
 
 
@@ -64,7 +75,7 @@ public class QueryResultTest extends JdbxTest
 	}
 
 
-	@Test public void testUpdate() throws Exception
+	@Test public void testResultUpdate() throws Exception
 	{
 		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
 		try (QueryResult result = stmt_.query("SELECT name FROM qrtest").result())
@@ -131,6 +142,7 @@ public class QueryResultTest extends JdbxTest
 			assertTrue(result.isCloseResult());
 			QueryResult r2 = QueryResult.of(result.getJdbcResult());
 			assertFalse(r2.isCloseResult());
+			r2.close(); // will not affect original result
 
 			result.setFetchSize(50);
 			assertEquals(0, result.getFetchSize()); // fetch size is a hint, may not be supported
