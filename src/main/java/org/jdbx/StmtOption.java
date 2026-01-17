@@ -24,16 +24,16 @@ import org.jdbx.function.CheckedFunction;
 
 class StmtOption<T>
 {
-	public static final StmtOption<Boolean> CLOSEONCOMPLETION		= new StmtOption<>(Boolean.FALSE, null, Statement::isCloseOnCompletion);
+	public static final StmtOption<Boolean> CLOSEONCOMPLETION	= new StmtOption<>(Boolean.FALSE, null, Statement::isCloseOnCompletion);
 	public static final StmtOption<String> 	CURSORNAME 			= new StmtOption<>(null, Statement::setCursorName, null);
-	public static final StmtOption<Boolean> ESCAPEPROCESSING		= new StmtOption<>(Boolean.TRUE, Statement::setEscapeProcessing, null);
+	public static final StmtOption<Boolean> ESCAPEPROCESSING	= new StmtOption<>(Boolean.TRUE, Statement::setEscapeProcessing, null);
 	public static final StmtOption<Integer> FETCHDIRECTION		= new StmtOption<>(Integer.valueOf(FetchDirection.UNKNOWN.getCode()), Statement::setFetchDirection, Statement::getFetchDirection);
 	public static final StmtOption<Integer> FETCHSIZE			= new StmtOption<>(null, Statement::setFetchSize, Statement::getFetchSize);
-	public static final StmtOption<Long>    LARGEMAXROWS			= new StmtOption<>(null, Statement::setLargeMaxRows, Statement::getLargeMaxRows);
-	public static final StmtOption<Integer> MAXFIELDSIZE			= new StmtOption<>(null, Statement::setMaxFieldSize, Statement::getMaxFieldSize);
+	public static final StmtOption<Long>    LARGEMAXROWS		= new StmtOption<>(null, Statement::setLargeMaxRows, Statement::getLargeMaxRows);
+	public static final StmtOption<Integer> MAXFIELDSIZE		= new StmtOption<>(null, Statement::setMaxFieldSize, Statement::getMaxFieldSize);
 	public static final StmtOption<Integer> MAXROWS				= new StmtOption<>(null, Statement::setMaxRows, Statement::getMaxRows);
 	public static final StmtOption<Boolean> POOLABLE  			= new StmtOption<>(null, Statement::setPoolable, Statement::isPoolable);
-	public static final StmtOption<Integer> QUERYTIMEOUT			= new StmtOption<>(null, Statement::setQueryTimeout, Statement::getQueryTimeout);
+	public static final StmtOption<Integer> QUERYTIMEOUT		= new StmtOption<>(null, Statement::setQueryTimeout, Statement::getQueryTimeout);
 
 
 	private StmtOption(T defaultValue, CheckedBiConsumer<Statement,T> setter, CheckedFunction<Statement,T> getter)
