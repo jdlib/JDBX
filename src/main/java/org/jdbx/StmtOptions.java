@@ -226,7 +226,7 @@ public class StmtOptions
 	 */
 	public int getFetchRows() throws JdbxException
 	{
-		return stmt_.get(Statement::getFetchSize).intValue();
+		return get(StmtOption.FETCHSIZE).intValue();
 	}
 
 
