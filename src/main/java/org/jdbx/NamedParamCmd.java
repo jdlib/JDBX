@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -151,8 +151,7 @@ public class NamedParamCmd
 
 
 	/**
-	 * Returns the original command string passed to the constructor.
-	 * @return the original command
+	 * @return the original command string passed to the constructor.
 	 */
 	public String getOriginal()
 	{
@@ -167,19 +166,18 @@ public class NamedParamCmd
 
 
 	/**
-	 * Returns the numbers of a parameter in the converted command.
-	 * @param name the parameter name
+	 * Returns the column numbers of a parameter in the converted command.
+	 * @param paramName the parameter name
 	 * @return the numbers
 	 */
-	public int[] getIndexes(String name)
+	public int[] getColNumbers(String paramName)
 	{
-		int[] numbers = paramMap_.get(name);
+		int[] numbers = paramMap_.get(paramName);
 		return numbers != null ? numbers.clone() : null;
 	}
 
 
 	/**
-	 * Returns an Iterator for the parameter names
 	 * @return an Iterator for the parameter names
 	 */
 	public Iterator<String> getNames()
@@ -189,7 +187,7 @@ public class NamedParamCmd
 
 
 	/**
-	 * Returns the command.
+	 * Returns the original command.
 	 */
 	@Override public String toString()
 	{
@@ -197,7 +195,7 @@ public class NamedParamCmd
 	}
 
 
-	private String cmd_;
-	private String converted_;
-	private Map<String,int[]> paramMap_ = new LinkedHashMap<>();
+	private final String cmd_;
+	private final String converted_;
+	private final Map<String,int[]> paramMap_ = new LinkedHashMap<>();
 }

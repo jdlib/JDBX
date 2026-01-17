@@ -27,36 +27,36 @@ public class NamedParamCmdTest extends JdbxTest
 		NamedParamCmd cmd;
 
 		cmd = assertParse("SELECT :x, :y, :x", "SELECT ?, ?, ?");
-		assertIndexes(cmd, "x", 1, 3);
-		assertIndexes(cmd, "y", 2);
-		assertNull(cmd.getIndexes("z"));
+		assertColNumbers(cmd, "x", 1, 3);
+		assertColNumbers(cmd, "y", 2);
+		assertNull(cmd.getColNumbers("z"));
 
 		cmd = assertParse("SELECT '1'::json, ':x', \":x\", :x", "SELECT '1'::json, ':x', \":x\", ?");
-		assertIndexes(cmd, "x", 1);
+		assertColNumbers(cmd, "x", 1);
 
 		cmd = assertParse("SELECT -1, --:x\n :x", "SELECT -1, --:x\n ?");
-		assertIndexes(cmd, "x", 1);
+		assertColNumbers(cmd, "x", 1);
 
 		cmd = assertParse("SELECT 1/2, /*:x/*:x */ :x", "SELECT 1/2, /*:x/*:x */ ?");
-		assertIndexes(cmd, "x", 1);
+		assertColNumbers(cmd, "x", 1);
 	}
 
 
-	private NamedParamCmd assertParse(String in, String converted)
+	private NamedParamCmd assertParse(String original, String converted)
 	{
-		NamedParamCmd cmd = new NamedParamCmd(in);
-		assertSame(in, cmd.toString());
-		assertSame(in, cmd.getOriginal());
+		NamedParamCmd cmd = new NamedParamCmd(original);
+		assertSame(original, cmd.toString());
+		assertSame(original, cmd.getOriginal());
 		assertEquals(converted, cmd.getConverted());
 		return cmd;
 	}
 
 
-	private void assertIndexes(NamedParamCmd cmd, String name, int... expected)
+	private void assertColNumbers(NamedParamCmd cmd, String paramName, int... expected)
 	{
-		int[] actual = cmd.getIndexes(name);
+		int[] actual = cmd.getColNumbers(paramName);
 		if (actual == null)
-			fail("no parameter: " + name);
+			fail("no parameter: " + paramName);
 		assertArrayEquals(expected, actual);
 	}
 }
