@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.jdlib</groupId>
 	<artifactId>jdbx</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.0</version> <!-- must match Jdbx.VERSION -->
 	<packaging>jar</packaging>
 	<name>JDBX</name>
 	<description>JDBX is a library which provides replacements for Java JDBC Statement and ResultSet classes to allow you to write compact and concise Java database code.</description>

@@ -30,7 +30,7 @@ public class Jdbx
 	/**
 	 * The current JDBX version.
 	 */
-	public static final String VERSION = "0.9.0";
+	public static final String VERSION = "1.1.0";
 
 
 	/**
