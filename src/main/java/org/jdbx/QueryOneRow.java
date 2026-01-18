@@ -28,8 +28,8 @@ import org.jdbx.function.GetForName;
 
 
 /**
- * QueryOneRow is a builder class to
- * retrieve the single-row result of a query.
+ * QueryOneRow is a builder class to retrieve the single-row result of a query.
+ * @see Query#row()
  */
 public class QueryOneRow
 {

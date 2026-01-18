@@ -38,8 +38,7 @@ import org.jdbx.function.GetForName;
 
 
 /**
- * QueryRows is a builder class to
- * extract a list of values from all remaining rows of a {@link QueryResult}.
+ * QueryRows is a builder class to extract a list of values from all remaining rows of a {@link QueryResult}.
  * @see Query#rows()
  */
 public class QueryRows
