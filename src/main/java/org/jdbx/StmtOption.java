@@ -24,23 +24,24 @@ import org.jdbx.function.CheckedFunction;
 
 class StmtOption<T>
 {
-	public static final StmtOption<Boolean> CLOSEONCOMPLETION	= new StmtOption<>(Boolean.FALSE, null, Statement::isCloseOnCompletion);
-	public static final StmtOption<String> 	CURSORNAME 			= new StmtOption<>(null, Statement::setCursorName, null);
-	public static final StmtOption<Boolean> ESCAPEPROCESSING	= new StmtOption<>(Boolean.TRUE, Statement::setEscapeProcessing, null);
-	public static final StmtOption<Integer> FETCHDIRECTION		= new StmtOption<>(Integer.valueOf(FetchDirection.UNKNOWN.getCode()), Statement::setFetchDirection, Statement::getFetchDirection);
-	public static final StmtOption<Integer> FETCHSIZE			= new StmtOption<>(null, Statement::setFetchSize, Statement::getFetchSize);
-	public static final StmtOption<Long>    LARGEMAXROWS		= new StmtOption<>(null, Statement::setLargeMaxRows, Statement::getLargeMaxRows);
-	public static final StmtOption<Integer> MAXFIELDSIZE		= new StmtOption<>(null, Statement::setMaxFieldSize, Statement::getMaxFieldSize);
-	public static final StmtOption<Integer> MAXROWS				= new StmtOption<>(null, Statement::setMaxRows, Statement::getMaxRows);
-	public static final StmtOption<Boolean> POOLABLE  			= new StmtOption<>(null, Statement::setPoolable, Statement::isPoolable);
-	public static final StmtOption<Integer> QUERYTIMEOUT		= new StmtOption<>(null, Statement::setQueryTimeout, Statement::getQueryTimeout);
+	public static final StmtOption<Boolean> CLOSEONCOMPLETION	= new StmtOption<>("CloseOnCompletion", Boolean.FALSE, null, Statement::isCloseOnCompletion);
+	public static final StmtOption<String> 	CURSORNAME 			= new StmtOption<>("CursorName", null, Statement::setCursorName, null);
+	public static final StmtOption<Boolean> ESCAPEPROCESSING	= new StmtOption<>("EscapeProcessing", Boolean.TRUE, Statement::setEscapeProcessing, null);
+	public static final StmtOption<Integer> FETCHDIRECTION		= new StmtOption<>("FetchDirection", Integer.valueOf(FetchDirection.UNKNOWN.getCode()), Statement::setFetchDirection, Statement::getFetchDirection);
+	public static final StmtOption<Integer> FETCHSIZE			= new StmtOption<>("FetchSize", null, Statement::setFetchSize, Statement::getFetchSize);
+	public static final StmtOption<Long>    LARGEMAXROWS		= new StmtOption<>("LargeMaxRows", null, Statement::setLargeMaxRows, Statement::getLargeMaxRows);
+	public static final StmtOption<Integer> MAXFIELDSIZE		= new StmtOption<>("MaxFieldSize", null, Statement::setMaxFieldSize, Statement::getMaxFieldSize);
+	public static final StmtOption<Integer> MAXROWS				= new StmtOption<>("MaxRows", null, Statement::setMaxRows, Statement::getMaxRows);
+	public static final StmtOption<Boolean> POOLABLE  			= new StmtOption<>("Poolable", null, Statement::setPoolable, Statement::isPoolable);
+	public static final StmtOption<Integer> QUERYTIMEOUT		= new StmtOption<>("QueryTimeout", null, Statement::setQueryTimeout, Statement::getQueryTimeout);
 
 
-	private StmtOption(T defaultValue, CheckedBiConsumer<Statement,T> setter, CheckedFunction<Statement,T> getter)
+	private StmtOption(String name, T defaultValue, CheckedBiConsumer<Statement,T> setter, CheckedFunction<Statement,T> getter)
 	{
+		this.name			= name;
 		this.defaultValue 	= defaultValue;
-		this.setter 			= setter;
-		this.getter 			= getter;
+		this.setter 		= setter;
+		this.getter 		= getter;
 	}
 
 
@@ -48,10 +49,17 @@ class StmtOption<T>
 	{
 		if (defaultValue != null)
 			return defaultValue;
-		throw JdbxException.illegalState(getter.toString() + ": default value is implementation dependent. To access it, first initialize the statement");
+		throw JdbxException.illegalState(name + ": default value is implementation dependent. To access it, first initialize the statement");
 	}
 
 
+	@Override public String toString()
+	{
+		return name;
+	}
+
+
+	public final String name;
 	private final T defaultValue; // null if the value is driver dependent
 	public final CheckedBiConsumer<Statement,T> setter;
 	public final CheckedFunction<Statement,T> getter;
