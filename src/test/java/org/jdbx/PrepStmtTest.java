@@ -17,6 +17,8 @@
 package org.jdbx;
 
 
+import java.sql.ParameterMetaData;
+import java.sql.ResultSetMetaData;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,37 +28,42 @@ import org.junit.jupiter.api.Test;
 
 public class PrepStmtTest extends JdbxTest
 {
-	@BeforeAll public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeAll() throws JdbxException
 	{
 		Jdbx.update(con(), "CREATE TABLE ptests (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30), type INTEGER NOT NULL)");
 	}
 
 
-	@BeforeEach public void before() throws JdbxException
+	@BeforeEach public void beforeEach() throws JdbxException
 	{
 		Jdbx.update(con(), "DELETE FROM ptests");
 		pstmt_ = new PrepStmt(con());
 	}
 
 
-	@AfterEach public void after() throws JdbxException
+	@AfterEach public void afterEach() throws JdbxException
 	{
-		pstmt_.close();
+		if (pstmt_ != null)
+			pstmt_.close();
 	}
 
 
-	@Test public void test() throws JdbxException
+	@Test public void testMisc() throws Exception
 	{
 		assertFalse(pstmt_.isInitialized());
+		assertTrue(pstmt_.toString().startsWith(PrepStmt.class.getName()));
 
 		// insert a single record and remember the generated id
-		pstmt_.init().returnCols(1).sql("INSERT INTO ptests VALUES (DEFAULT, ?, ?)");
+		final String insert = "INSERT INTO ptests VALUES (DEFAULT, ?, ?)";
+		pstmt_.init().returnCols(1).sql(insert);
 		assertTrue(pstmt_.isInitialized());
+		assertTrue(pstmt_.toString().endsWith('[' + insert + ']'));
+
+		pstmt_.clearParams(); // coverage
 		pstmt_.params("a", 1);
 		Integer idA = pstmt_.createUpdate().runGetCol(Integer.class)
 			.requireCount(1)
 			.requireValue();
-		assertEquals(0, idA);
 
 		// insert two records using a batch
 		pstmt_.param(1, "c").param(2, 2).batch().add();
@@ -67,13 +74,7 @@ public class PrepStmtTest extends JdbxTest
 		assertEquals(2, result.size());
 		result.requireCount(0, 1);
 		result.requireCount(1, 1);
-		assertEquals(List.of(1, 2), result.value());
-
-		// insert a single record using named parameters
-		pstmt_.init().namedParams().sql("INSERT INTO ptests VALUES (DEFAULT, :name, :type)");
-		pstmt_.param("name").setString("b");
-		pstmt_.param("type").setInt(15);
-		assertEquals(1, pstmt_.update().count());
+		assertEquals(List.of(idA +1, idA + 2), result.value());
 
 		// read a row by id
 		pstmt_.init("SELECT * FROM ptests WHERE id = ?");
@@ -82,6 +83,38 @@ public class PrepStmtTest extends JdbxTest
 		assertEquals(idA, 	dao.id);
 		assertEquals("a", 	dao.name);
 		assertEquals(1, 	dao.type);
+	}
+
+
+	@Test public void testNamedParams()
+	{
+		final String sql = "INSERT INTO ptests VALUES (DEFAULT, :name, :type)";
+		// insert a single record using named parameters
+		pstmt_.init().namedParams().sql(sql);
+		pstmt_.param("name").setString("b");
+		pstmt_.param("type").setInt(15);
+		assertEquals(1, pstmt_.update().count());
+
+		NamedParamCmd npcmd = new NamedParamCmd(sql);
+		pstmt_.init().sql(npcmd);
+		pstmt_.param("name").setString("c");
+		pstmt_.param("type").setInt(16);
+		assertEquals(1, pstmt_.update().count());
+	}
+
+
+	@Test public void testMetaData() throws Exception
+	{
+		pstmt_.init("SELECT name FROM ptests WHERE id = ?");
+		ResultSetMetaData rsmd = pstmt_.getMetaData();
+		assertNotNull(rsmd);
+		assertEquals(1, rsmd.getColumnCount());
+		assertEquals("NAME", rsmd.getColumnName(1));
+
+		ParameterMetaData pmd = pstmt_.getParamMetaData();
+		assertNotNull(pmd);
+		assertEquals(1, pmd.getParameterCount());
+		assertEquals(java.sql.Types.INTEGER, pmd.getParameterType(1));
 	}
 
 

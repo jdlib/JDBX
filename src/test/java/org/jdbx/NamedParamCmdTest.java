@@ -17,6 +17,7 @@
 package org.jdbx;
 
 
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 
@@ -30,6 +31,7 @@ public class NamedParamCmdTest extends JdbxTest
 		assertColNumbers(cmd, "x", 1, 3);
 		assertColNumbers(cmd, "y", 2);
 		assertNull(cmd.getColNumbers("z"));
+		assertEquals(Set.of("x", "y"), cmd.getParamNames());
 
 		cmd = assertParse("SELECT '1'::json, ':x', \":x\", :x", "SELECT '1'::json, ':x', \":x\", ?");
 		assertColNumbers(cmd, "x", 1);

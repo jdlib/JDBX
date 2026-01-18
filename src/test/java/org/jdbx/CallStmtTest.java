@@ -35,48 +35,56 @@ public class CallStmtTest extends JdbxTest
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
-			stmt.update("CREATE TABLE CallUser (id INT IDENTITY PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), salary DOUBLE)");
+			stmt.update("CREATE TABLE cstmtest (id INT IDENTITY PRIMARY KEY, firstname VARCHAR(50), lastname VARCHAR(50), salary DOUBLE)");
 
-			id_ = stmt.createUpdate("INSERT INTO CallUser VALUES (DEFAULT, 'Paul', 'Smith', 1.2)")
+			id_ = stmt.createUpdate("INSERT INTO cstmtest VALUES (DEFAULT, 'Paul', 'Smith', 1.2)")
 				.returnAutoKeyCols()
 				.runGetCol(Integer.class)
 				.requireCount(1)
 				.requireValue();
 
 			stmt.update(
-				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50), IN salary DOUBLE)" +
+				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50), IN salary DOUBLE, OUT newId INT)" +
 			    "  MODIFIES SQL DATA" +
 			    "  BEGIN ATOMIC" +
-			    "     INSERT INTO CallUser VALUES (DEFAULT, firstname, lastname, salary);" +
+			    "     INSERT INTO cstmtest VALUES (DEFAULT, firstname, lastname, salary);" +
+			    "     VALUES IDENTITY_VAL_LOCAL() INTO newId;" +
 			    "  END");
 
 			stmt.update(
 				"CREATE PROCEDURE GetUserName(IN theId INT, OUT firstname VARCHAR(50), OUT lastname VARCHAR(50))" +
 			    "  READS SQL DATA " +
 			    "  BEGIN ATOMIC" +
-			    "     SELECT firstName, lastName INTO firstname, lastname FROM CallUser WHERE id = theId;" +
+			    "     SELECT firstName, lastName INTO firstname, lastname FROM cstmtest WHERE id = theId;" +
 			    "  END");
 
 			stmt.update(
 				"CREATE PROCEDURE GetUserAsResult(IN theId INT)" +
 			    "  READS SQL DATA DYNAMIC RESULT SETS 1" +
 			    "  BEGIN ATOMIC" +
-			    "     DECLARE result CURSOR FOR SELECT * FROM CallUser WHERE id = theId;" +
+			    "     DECLARE result CURSOR FOR SELECT * FROM cstmtest WHERE id = theId;" +
 			    "     OPEN result;" +
 			    "  END");
 		}
 	}
 
 
-	@BeforeEach public void before() throws JdbxException
+	@BeforeEach public void beforeEach()
 	{
 		cstmt_ = new CallStmt(con());
 	}
 
 
-	@AfterEach public void after() throws JdbxException
+	@AfterEach public void afterEach()
 	{
 		cstmt_.close();
+	}
+
+
+	@Test public void testInitError()
+	{
+		String message = assertThrows(JdbxException.class, () -> cstmt_.init("x")).getMessage();
+		assertEquals("unexpected token: X in statement [x]", message);
 	}
 
 
@@ -93,6 +101,9 @@ public class CallStmtTest extends JdbxTest
 		assertNotNull(data);
 		assertEquals(4, data.length);
 		assertEquals(id_, data[0]);
+		assertEquals("Paul", data[1]);
+		assertEquals("Smith", data[2]);
+		assertEquals(1.2, data[3]);
 	}
 
 
