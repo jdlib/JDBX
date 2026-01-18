@@ -18,10 +18,11 @@ package org.jdbx;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -178,11 +179,11 @@ public class NamedParamCmd
 
 
 	/**
-	 * @return an Iterator for the parameter names
+	 * @return the parameter names as Set.
 	 */
-	public Iterator<String> getNames()
+	public Set<String> getParamNames()
 	{
-		return paramMap_.keySet().iterator();
+		return Collections.unmodifiableSet(paramMap_.keySet());
 	}
 
 
