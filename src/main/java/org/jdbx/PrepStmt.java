@@ -214,12 +214,7 @@ public class PrepStmt extends Stmt
 			try
 			{
 				if (jdbcStmt_ != null)
-				{
-					Statement old = jdbcStmt_;
-					jdbcStmt_ = null;
-					paramMap_ = null;	// TODO closeJdbcStmt should set it to null also
-					old.close();
-				}
+					closeJdbcStmt();
 
 				if (namedParams_)
 				{
@@ -587,6 +582,13 @@ public class PrepStmt extends Stmt
 	public PrepBatch batch()
 	{
 		return new PrepBatch();
+	}
+
+
+	@Override protected void closeJdbcStmt() throws JdbxException
+	{
+		paramMap_ = null;
+		super.closeJdbcStmt();
 	}
 
 
