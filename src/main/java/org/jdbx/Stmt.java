@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -95,8 +95,8 @@ public abstract class Stmt implements AutoCloseable
 	 * @see #isInitialized()
 	 */
 	public abstract Statement getJdbcStmt() throws JdbxException;
-	
-	
+
+
 	//------------------------------
 	// state
 	//------------------------------
@@ -105,12 +105,12 @@ public abstract class Stmt implements AutoCloseable
 	/**
 	 * Returns if the statement is initialized.
 	 * When initialized a statement can be used to execute sql commands.
-	 * In implementation terms initialized means that the JDBC statement on which this statement operates was created.   
+	 * In implementation terms initialized means that the JDBC statement on which this statement operates was created.
 	 * @return is the statement initialized
 	 */
 	public abstract boolean isInitialized();
 
-	
+
 	/**
 	 * Tests if the statement is initialized, i.e. {@link #getJdbcStmt()} may be called.
 	 * @throws JdbxException thrown when the statement is not initialized
@@ -122,7 +122,7 @@ public abstract class Stmt implements AutoCloseable
 			throw JdbxException.illegalState("statement not initialized");
 	}
 
-	
+
 	/**
 	 * Returns if the statement is closed.
 	 * @return is the statement closed
@@ -170,7 +170,7 @@ public abstract class Stmt implements AutoCloseable
 			try
 			{
 				if (closeAction_ == CloseAction.CONNECTION)
-					con_.close();
+					con_.close(); // this also closes the statement
 				else if ((jdbcStmt_ != null) && (closeAction_ == CloseAction.STATEMENT))
 					jdbcStmt_.close();
 			}
@@ -193,7 +193,7 @@ public abstract class Stmt implements AutoCloseable
 
 
 	/**
-	 * Returns the statement options. 
+	 * Returns the statement options.
 	 * @return the options
 	 */
 	public final StmtOptions options() throws JdbxException
