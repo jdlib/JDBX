@@ -31,7 +31,7 @@ public class CallStmtTest extends JdbxTest
 	private static Integer id_;
 
 
-	@BeforeAll public static void beforeClass() throws JdbxException
+	@BeforeAll public static void beforeAll() throws JdbxException
 	{
 		try (StaticStmt stmt = new StaticStmt(con()))
 		{
@@ -44,11 +44,10 @@ public class CallStmtTest extends JdbxTest
 				.requireValue();
 
 			stmt.update(
-				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50), IN salary DOUBLE, OUT newId INT)" +
+				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50), IN salary DOUBLE)" +
 			    "  MODIFIES SQL DATA" +
 			    "  BEGIN ATOMIC" +
 			    "     INSERT INTO cstmtest VALUES (DEFAULT, firstname, lastname, salary);" +
-			    "     VALUES IDENTITY_VAL_LOCAL() INTO newId;" +
 			    "  END");
 
 			stmt.update(
@@ -113,13 +112,24 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testExecuteReturnGenKey() throws Exception
 	{
+		/*
+				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50), IN salary DOUBLE, OUT newId INT)" +
+			    "  MODIFIES SQL DATA" +
+			    "  BEGIN ATOMIC" +
+			    "     INSERT INTO cstmtest VALUES (DEFAULT, firstname, lastname, salary);" +
+			    "     SET newId = IDENTITY();" +
+			    "  END");
+		 */
 		cstmt_.init("{call CreateUser(?,?,?)}");
 		cstmt_.param("firstname").set("Alpha");
 		cstmt_.param("lastname").set("Beta");
 		cstmt_.param("salary").set(Double.valueOf(2.3));
+		//cstmt_.param("newId").out(JDBCType.INTEGER).get
 		cstmt_.createExecute().run(r -> {
 			assertTrue(r.next());
 			assertTrue(r.isUpdateResult());
+			// TODO how to ge the generated keys
+			//cstmt_.param("newId").out(JDBCType.INTEGER).get
 			return null;
 		});
 	}
@@ -147,10 +157,10 @@ public class CallStmtTest extends JdbxTest
 
 	@Test public void testReturnOutParam() throws JdbxException
 	{
-		cstmt_.init("{call GetUserName(?,?,?)}");
+		cstmt_.init("{call GetUserName(?,?,?)}")
+			.registerOutParam(2).as(java.sql.Types.VARCHAR)
+			.registerOutParam(3).as(JDBCType.VARCHAR);
 		cstmt_.param(1).setDouble(1.1);
-		cstmt_.param(2).out(java.sql.Types.VARCHAR);
-		cstmt_.param(3).out(JDBCType.VARCHAR);
 		cstmt_.clearParams();
 		cstmt_.param(1, id_);
 		cstmt_.execute();

@@ -23,7 +23,6 @@ import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLType;
-import java.sql.Statement;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedSupplier;
@@ -114,9 +113,9 @@ public class CallStmt extends Stmt
 	/**
 	 * Initializes the SQL command which is executed by the CallStmt.
 	 * @param sql the sql command
-	 * @return this
+	 * @return a builder to register OUT or INOUT parameters
 	 */
-	public CallStmt init(String sql) throws JdbxException
+	public OutParams init(String sql) throws JdbxException
 	{
 		Check.notNull(sql, "sql");
 		checkOpen();
@@ -125,23 +124,160 @@ public class CallStmt extends Stmt
 		{
 			// close old statement if not null
 			if (jdbcStmt_ != null)
-			{
-				Statement old = jdbcStmt_;
-				jdbcStmt_ = null;
-				old.close();
-			}
+				closeJdbcStmt();
 
 			// create the new statement
-			jdbcStmt_ 	= createJdbcStmt(sql);
+			jdbcStmt_ = createJdbcStmt(sql);
 			// assign the sql once the jdbc statement creation succeeded
-			sql_ 	   	= sql;
+			sql_ = sql;
 
-			return this;
+			return new OutParamsImpl();
 		}
 		catch (Exception e)
 		{
 			throw JdbxException.of(e);
 		}
+	}
+
+
+	/**
+	 * Allows to register OUT or INOUT parameters of a CallStmt.
+	 * @see #init(String)
+	 */
+	public interface OutParams
+	{
+		/**
+		 * @return a OutParamType builder to register an out parameter by number.
+		 * @param number a parameter number, starting at 1.
+		 */
+		public OutParamType registerOutParam(int number);
+
+
+		/**
+		 * @return a OutParamType builder to register an out parameter by name.
+		 * @param name the parameter name
+		 */
+		public OutParamType registerOutParam(String name);
+	}
+
+
+	/**
+	 * Allows to register OUT or INOUT parameters of a CallStmt.
+	 * @see OutParams#registerOutParam(int)
+	 * @see OutParams#registerOutParam(String)
+	 */
+	public interface OutParamType
+	{
+		public OutParams as(int sqlType) throws JdbxException;
+
+
+		public OutParams as(int sqlType, int scale) throws JdbxException;
+
+
+		public OutParams as(int sqlType, String typeName) throws JdbxException;
+
+
+		public OutParams as(SQLType sqlType) throws JdbxException;
+
+
+		public OutParams as(SQLType sqlType, int scale) throws JdbxException;
+
+
+		public OutParams as(SQLType sqlType, String typeName) throws JdbxException;
+	}
+
+
+	private class OutParamsImpl implements OutParams, OutParamType
+	{
+		@Override public OutParamType registerOutParam(int number)
+		{
+			number_ = Check.number(number);
+			name_ 	= null;
+			return this;
+		}
+
+
+		@Override public OutParamType registerOutParam(String name)
+		{
+			name_ = Check.notNull(name, "name");
+			return this;
+		}
+
+
+		@Override public OutParams as(int sqlType) throws JdbxException
+		{
+			Unchecked.run(() -> {
+				if (name_ != null)
+					getJdbcStmt().registerOutParameter(name_, sqlType);
+				else
+					getJdbcStmt().registerOutParameter(number_, sqlType);
+			});
+			return this;
+		}
+
+
+		@Override public OutParams as(int sqlType, int scale) throws JdbxException
+		{
+			Unchecked.run(() -> {
+				if (name_ != null)
+					getJdbcStmt().registerOutParameter(name_, sqlType, scale);
+				else
+					getJdbcStmt().registerOutParameter(number_, sqlType, scale);
+			});
+			return this;
+		}
+
+
+		@Override public OutParams as(int sqlType, String typeName) throws JdbxException
+		{
+			Unchecked.run(() -> {
+				if (name_ != null)
+					getJdbcStmt().registerOutParameter(name_, sqlType, typeName);
+				else
+					getJdbcStmt().registerOutParameter(number_, sqlType, typeName);
+			});
+			return this;
+		}
+
+
+		@Override public OutParams as(SQLType sqlType) throws JdbxException
+		{
+			Unchecked.run(() -> {
+				if (name_ != null)
+					getJdbcStmt().registerOutParameter(name_, sqlType);
+				else
+					getJdbcStmt().registerOutParameter(number_, sqlType);
+			});
+			return this;
+		}
+
+
+		@Override public OutParams as(SQLType sqlType, int scale) throws JdbxException
+		{
+			Unchecked.run(() -> {
+				if (name_ != null)
+					getJdbcStmt().registerOutParameter(name_, sqlType, scale);
+				else
+					getJdbcStmt().registerOutParameter(number_, sqlType, scale);
+			});
+			return this;
+		}
+
+
+		@Override public OutParams as(SQLType sqlType, String typeName) throws JdbxException
+		{
+			Unchecked.run(() -> {
+				if (name_ != null)
+					getJdbcStmt().registerOutParameter(name_, sqlType, typeName);
+				else
+					getJdbcStmt().registerOutParameter(number_, sqlType, typeName);
+			});
+			return this;
+		}
+
+
+		private int number_;
+		private String name_;
 	}
 
 
@@ -234,46 +370,11 @@ public class CallStmt extends Stmt
 	/**
 	 * A builder class to manage a parameter value specified by a parameter number.
 	 */
-	public class NumberedParam implements GetValue, RegisterOut<NumberedParam>, SetParam<CallableStatement>
+	public class NumberedParam implements GetValue, SetParam<CallableStatement>
 	{
 		private NumberedParam(int number)
 		{
 			number_ = Check.number(number);
-		}
-
-
-		@Override public NumberedParam out(int sqlType) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType));
-			return this;
-		}
-
-
-		@Override public NumberedParam out(int sqlType, int scale) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType, scale));
-			return this;
-		}
-
-
-		@Override public NumberedParam out(SQLType sqlType) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType));
-			return this;
-		}
-
-
-		@Override public NumberedParam out(SQLType sqlType, int scale) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType, scale));
-			return this;
-		}
-
-
-		@Override public NumberedParam out(SQLType sqlType, String typeName) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(number_, sqlType, typeName));
-			return this;
 		}
 
 
@@ -365,46 +466,11 @@ public class CallStmt extends Stmt
 	/**
 	 * A builder class to manage a parameter value specified by a parameter name.
 	 */
-	public class NamedParam implements GetValue, RegisterOut<NamedParam>
+	public class NamedParam implements GetValue
 	{
 		private NamedParam(String name)
 		{
 			name_ = Check.name(name);
-		}
-
-
-		@Override public NamedParam out(int sqlType) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
-			return this;
-		}
-
-
-		@Override public NamedParam out(int sqlType, int scale) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
-			return this;
-		}
-
-
-		@Override public NamedParam out(SQLType sqlType) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType));
-			return this;
-		}
-
-
-		@Override public NamedParam out(SQLType sqlType, int scale) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType, scale));
-			return this;
-		}
-
-
-		@Override public NamedParam out(SQLType sqlType, String typeName) throws JdbxException
-		{
-			Unchecked.run(() -> getJdbcStmt().registerOutParameter(name_, sqlType, typeName));
-			return this;
 		}
 
 

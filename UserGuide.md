@@ -151,14 +151,19 @@ setter:
     pstmt.param("last").setString("John");     
     pstmt.param("first").setString("Doe");
 
-Setting parameters on a `CallStmt` works exactly the same. Additionally you can register OUT and INOUT parameters, and 
-read the values of OUT and INOUT parameters after the statement has been executed:
+Parameters in `CallStmt` work similar. OUT or INOUT parameters have to be specified once
+when the `CallStmt` is initialized. 
 
+	// in this example the stored procedure has 3 params, 2 of them being OUT params
 	CallStmt ctstmt = ...
-    cstmt.init("{call GetUserName(?,?,?)}");         // the SQL cmd has three parameters 
+	cstmt.init("{call GetUserName(?,?,?)}")
+		.registerOutParam(2).as(java.sql.Types.VARCHAR)
+		.registerOutParam(3).as(java.sql.Types.VARCHAR);
+
+Before executing a `CallStmt` specify the value of IN or INOUT parameters.
+After execution read the values of OUT or INOUT parameters:
+
     cstmt.param(1).setLong(831L);                    // set the value of IN parameter 1
-    cstmt.param(2).out(java.sql.Types.VARCHAR);      // register type of OUT parameter 2
-    cstmt.param(3).out(java.sql.Types.VARCHAR);      // register type of OUT parameter 3
     cstmt.execute();                                 // execute the command, explained in next chapters
     String lastName  = cstmt.param(2).getString();   // read the value of OUT parameter 2 
     String firstName = cstmt.param(3).getString();   // read the value of OUT parameter 3

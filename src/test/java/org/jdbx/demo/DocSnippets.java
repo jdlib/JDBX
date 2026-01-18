@@ -119,10 +119,10 @@ public class DocSnippets
 	    pstmt.param("lastname").setString("John");
 	    pstmt.param("firstname").setString("Doe");
 
-		cstmt.init("{call GetUserName(?,?,?)}");
+		cstmt.init("{call GetUserName(?,?,?)}")
+			.registerOutParam(2).as(java.sql.Types.VARCHAR)
+			.registerOutParam(3).as(java.sql.Types.VARCHAR);
 		cstmt.param(1).setLong(831L);
-		cstmt.param(2).out(java.sql.Types.VARCHAR);
-		cstmt.param(3).out(java.sql.Types.VARCHAR);
 		cstmt.execute(); // explained in next chapters
 		String lastName  = cstmt.param(2).getString();
 		String firstName = cstmt.param(3).getString();
