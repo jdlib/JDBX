@@ -39,7 +39,8 @@ import org.jdbx.function.GetForName;
 
 /**
  * QueryRows is a builder class to
- * extract a list of values from all rows of a query result.
+ * extract a list of values from all remaining rows of a {@link QueryResult}.
+ * @see Query#rows()
  */
 public class QueryRows
 {
@@ -188,9 +189,10 @@ public class QueryRows
 
 
 	/**
-	 * Returns a column object for the first result column. Use getters of the column object
+	 * Returns a NumberedCol object representing the first result. Use getters of NumberedCol
+	 * to return a list of values of the column.
 	 * to return a list of values for the column,
-	 * @return a column object.
+	 * @return the NumberedCol
 	 */
 	public NumberedCol col()
 	{
@@ -199,10 +201,10 @@ public class QueryRows
 
 
 	/**
-	 * Returns a column object for the result column with the given number. Use getters of the column object
-	 * to return a list of values for the column,
+	 * Returns a NumberedCol object representing the result column with the number. Use getters of NumberedCol
+	 * to return a list of values of the column.
 	 * @param number a column number, starting at 1
-	 * @return a column object.
+	 * @return the NumberedCol
 	 */
 	public NumberedCol col(int number)
 	{
@@ -211,10 +213,10 @@ public class QueryRows
 
 
 	/**
-	 * Returns a column object for the result column with the given name. Use getters of the column object
-	 * to return a list of values for the column,
+	 * Returns a NamedCol object representing the result column with the given name. Use getters of NamedCol
+	 * to return a list of values of the column.
 	 * @param name a column name
-	 * @return a column object.
+	 * @return the NamedCol
 	 */
 	public NamedCol col(String name)
 	{
@@ -223,14 +225,13 @@ public class QueryRows
 
 
 	/**
-	 * Column is a builder class to
-	 * define the single result column of a multi row result.
+	 * Column is a builder base class to represent the single result column of a multi row result.
+	 * I allows to specify the type of the column and return a list of it's values from all rows.
 	 */
 	public abstract class Column
 	{
 		/**
-		 * Returns a list of BigDecimal objects.
-		 * @return the list
+		 * @return a list of BigDecimal objects.
 		 */
 		public List<BigDecimal> getBigDecimal() throws JdbxException
 		{
@@ -239,8 +240,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Blob objects.
-		 * @return the list
+		 * @return a list of Blob objects.
 		 */
 		public List<Blob> getBlob() throws JdbxException
 		{
@@ -249,8 +249,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Boolean objects.
-		 * @return the list
+		 * @return a list of Boolean objects.
 		 */
 		public List<Boolean> getBooleanObject() throws JdbxException
 		{
@@ -259,8 +258,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Byte objects.
-		 * @return the list
+		 * @return a list of Byte objects.
 		 */
 		public List<Byte> getByteObject() throws JdbxException
 		{
@@ -269,8 +267,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of byte arrays.
-		 * @return the list
+		 * @return a list of byte arrays.
 		 */
 		public List<byte[]> getBytes() throws JdbxException
 		{
@@ -279,8 +276,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Reader objects.
-		 * @return the list
+		 * @return a list of Reader objects.
 		 */
 		public List<Reader> getCharacterStream() throws JdbxException
 		{
@@ -289,8 +285,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Clob objects.
-		 * @return the list
+		 * @return a list of Clob objects.
 		 */
 		public List<Clob> getClob() throws JdbxException
 		{
@@ -299,8 +294,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Double objects.
-		 * @return the list
+		 * @return a list of Double objects.
 		 */
 		public List<Double> getDouble() throws JdbxException
 		{
@@ -309,8 +303,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Float objects.
-		 * @return the list
+		 * @return a list of Float objects.
 		 */
 		public List<Float> getFloatObject() throws JdbxException
 		{
@@ -319,8 +312,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Integer objects.
-		 * @return the list
+		 * @return a list of Integer objects.
 		 */
 		public List<Integer> getInteger() throws JdbxException
 		{
@@ -329,8 +321,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Long objects.
-		 * @return the list
+		 * @return a list of Long objects.
 		 */
 		public List<Long> getLong() throws JdbxException
 		{
@@ -339,8 +330,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Reader objects.
-		 * @return the list
+		 * @return a list of Reader objects.
 		 */
 		public List<Reader> getNCharacterStream() throws JdbxException
 		{
@@ -349,8 +339,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of NClob objects.
-		 * @return the list
+		 * @return a list of NClob objects.
 		 */
 		public List<NClob> getNClob() throws JdbxException
 		{
@@ -359,8 +348,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of String objects.
-		 * @return the list
+		 * @return a list of String objects.
 		 */
 		public List<String> getNString() throws JdbxException
 		{
@@ -369,8 +357,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of RowId objects.
-		 * @return the list
+		 * @return a list of RowId objects.
 		 */
 		public List<RowId> getRowId() throws JdbxException
 		{
@@ -379,8 +366,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of Short objects.
-		 * @return the list
+		 * @return a list of Short objects.
 		 */
 		public List<Short> getShort() throws JdbxException
 		{
@@ -389,8 +375,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of SQL array objects.
-		 * @return the list
+		 * @return a list of SQL array objects.
 		 */
 		public List<Array> getSqlArray() throws JdbxException
 		{
@@ -399,8 +384,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of SQL Date objects.
-		 * @return the list
+		 * @return a list of SQL Date objects.
 		 */
 		public List<java.sql.Date> getSqlDate() throws JdbxException
 		{
@@ -409,8 +393,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of SQL ref objects.
-		 * @return the list
+		 * @return a list of SQL ref objects.
 		 */
 		public List<Ref> getSqlRef() throws JdbxException
 		{
@@ -419,8 +402,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of SQL array objects.
-		 * @return the list
+		 * @return a list of SQL array objects.
 		 */
 		public List<java.sql.Time> getSqlTime() throws JdbxException
 		{
@@ -429,8 +411,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of SQL timestamp objects.
-		 * @return the list
+		 * @return a list of SQL timestamp objects.
 		 */
 		public List<java.sql.Timestamp> getSqlTimestamp() throws JdbxException
 		{
@@ -439,8 +420,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of SQL array objects.
-		 * @return the list
+		 * @return a list of SQL array objects.
 		 */
 		public List<SQLXML> getSqlXml() throws JdbxException
 		{
@@ -449,8 +429,7 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of String objects.
-		 * @return the list
+		 * @return a list of String objects.
 		 */
 		public List<String> getString() throws JdbxException
 		{
@@ -459,28 +438,25 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of objects.
-		 * @return the list
+		 * @return a list of objects.
 		 */
-		public List<Object> get() throws JdbxException
+		public List<Object> getObject() throws JdbxException
 		{
 			return get(GetAccessors.OBJECT);
 		}
 
 
 		/**
-		 * Returns a list of objects.
+		 * @return a list of objects.
 		 * @param type the object type
 		 * @param <T> the object type
-		 * @return the list
 		 */
 		public abstract <T> List<T> get(Class<T> type) throws JdbxException;
 
 
 		/**
-		 * Returns a list of objects.
+		 * @return a list of objects
 		 * @param accessor the accessor for the object
-		 * @return the list
 		 */
 		protected abstract <T> List<T> get(GetAccessors<T> accessor) throws JdbxException;
 	}
@@ -498,9 +474,8 @@ public class QueryRows
 
 
 		/**
-		 * Returns a list of objects.
+		 * @return a list of objects.
 		 * @param type the object type
-		 * @return the list
 		 */
 		@Override public <T> List<T> get(Class<T> type) throws JdbxException
 		{
