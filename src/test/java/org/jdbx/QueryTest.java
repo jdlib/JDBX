@@ -46,6 +46,7 @@ public class QueryTest extends JdbxTest
 
 	@Test public void testRowsCols()
 	{
+		// toMap - all
 		List<Map<String,Object>> mapList = query().rows().cols().toMap();
 		assertEquals(4, mapList.size());
 		Map<String,Object> row3 = mapList.get(3);
@@ -53,12 +54,32 @@ public class QueryTest extends JdbxTest
 		assertEquals(3, row3.get("ID")); // h2 converts unquoted column names to upper case
 		assertEquals("D", row3.get("NAME"));
 
+		// toList - by index
 		List<List<Object>> listList = query().rows().cols(2, 1).toList();
 		assertEquals(4, listList.size());
 		List<Object> row2 = listList.get(2);
 		assertEquals(2, row2.size());
 		assertEquals("C", row2.get(0));
 		assertEquals(2, row2.get(1));
+
+		// toArray - by name
+		List<Object[]> listArray = query().rows().max(2).cols("NAME", "ID").toArray();
+		assertEquals(2, listArray.size());
+		Object[] row0 = listArray.get(0);
+		assertEquals(2, row0.length);
+		assertEquals("A", row0[0]);
+		assertEquals(0, row0[1]);
+	}
+
+
+	@Test public void testRowsColByName()
+	{
+		List<String> stringList = query().rows().col("NAME").getString();
+		assertEquals(List.of("A", "B", "C", "D"), stringList);
+
+		List<String> asStringList = query().skip(2).rows().col("NAME").get(String.class);
+		assertEquals(List.of("C", "D"), asStringList);
+
 	}
 
 

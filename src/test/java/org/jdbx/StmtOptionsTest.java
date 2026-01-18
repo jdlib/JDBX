@@ -46,4 +46,32 @@ public class StmtOptionsTest extends JdbxTest
 			assertSame(Holdability.HOLD_OVER_COMMIT, options.getResultHoldability());
 		}
 	}
+
+
+	@Test public void testMisc()
+	{
+		assertSame(StmtOption.CLOSEONCOMPLETION.name, StmtOption.CLOSEONCOMPLETION.toString());
+	}
+
+
+	@Test public void testWithoutJdbcStmt()
+	{
+		try (PrepStmt pstmt = new PrepStmt(con()))
+		{
+			// make sure that there is no underlying JDBC statement
+			assertNull(pstmt.jdbcStmt_);
+
+			// no defined default value
+			assertEquals(
+				"Poolable: default value is implementation dependent. To access it, first initialize the statement",
+				assertThrows(JdbxException.class, () -> pstmt.options().isPoolable()).getMessage());
+
+			// with defined default value
+			assertSame(FetchDirection.UNKNOWN, pstmt.options().getFetchDirection());
+
+			// set a value which is - since there is no underlying JDBC statement - only stored in the options
+			pstmt.options().setFetchDirection(FetchDirection.FORWARD);
+			assertSame(FetchDirection.FORWARD, pstmt.options().getFetchDirection());
+		}
+	}
 }
