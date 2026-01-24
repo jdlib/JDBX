@@ -19,8 +19,10 @@ package org.jdbx;
 
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
+import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.NClob;
 import java.sql.Ref;
@@ -500,6 +502,17 @@ interface GetValue
 	public default String getString() throws JdbxException
 	{
 		return get(GetAccessors.STRING);
+	}
+
+
+	/**
+	 * @return the value as URL.
+	 * @see ResultSet#getURL
+	 * @see CallableStatement#getURL
+	 */
+	public default URL getURL() throws JdbxException
+	{
+		return get(GetAccessors.URL);
 	}
 
 

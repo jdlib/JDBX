@@ -19,11 +19,13 @@ package org.jdbx;
 
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.NClob;
+import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLXML;
@@ -380,6 +382,17 @@ interface SetValue
 	public default void setString(String value) throws JdbxException
 	{
 		set(SetAccessors.STRING, value);
+	}
+
+
+	/**
+	 * Sets a URL value.
+	 * @param value the value
+	 * @see PreparedStatement#setURL(int, URL)
+	 */
+	public default void setURL(URL value) throws JdbxException
+	{
+		set(SetAccessors.URL, value);
 	}
 
 
