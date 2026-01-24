@@ -41,11 +41,56 @@ import java.util.Map;
 interface GetValue
 {
 	/**
-	 * @return the value as an Array.
+	 * @return the value as a SQL Array.
 	 */
 	public default Array getArray() throws JdbxException
 	{
 		return get(GetAccessors.ARRAY);
+	}
+
+
+	/**
+	 * @return the value as a Java array with the given element type.
+	 * @param<T> the element type
+	 * @param elemType the element type class
+	 */
+	@SuppressWarnings("unchecked")
+	public default <T> T[] getArray(Class<T> elemType) throws JdbxException
+	{
+		Check.notNull(elemType, "elemType");
+		Array sqlArray = getArray();
+		if (sqlArray == null)
+			return null;
+		try
+		{
+			try
+			{
+				Object arrayObj = sqlArray.getArray();
+				if (arrayObj == null)
+					return null;
+				if (!arrayObj.getClass().isArray())
+					throw JdbxException.invalidResult("not an array " + arrayObj.getClass().getName() + ": " + arrayObj);
+				if (elemType.isAssignableFrom(arrayObj.getClass().getComponentType()))
+					return (T[])arrayObj;
+
+				int length = java.lang.reflect.Array.getLength(arrayObj);
+				T[] result = (T[])java.lang.reflect.Array.newInstance(elemType, length);
+				for (int i = 0; i < length; i++)
+				{
+					Object elemObj = java.lang.reflect.Array.get(arrayObj, i);
+					result[i] = elemType.cast(elemObj);
+				}
+				return result;
+			}
+			finally
+			{
+				sqlArray.free();
+			}
+		}
+		catch (Exception e)
+		{
+			throw JdbxException.of(e);
+		}
 	}
 
 
