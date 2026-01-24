@@ -64,6 +64,14 @@ public class CallStmtTest extends JdbxTest
 			    "     DECLARE result CURSOR FOR SELECT * FROM cstmtest WHERE id = theId;" +
 			    "     OPEN result;" +
 			    "  END");
+
+			stmt.update(
+				"CREATE PROCEDURE MathOps(IN v DECIMAL(10,2), OUT plus DECIMAL(10,2), OUT mult DECIMAL(10,2))" +
+			    "  READS SQL DATA" +
+			    "  BEGIN ATOMIC" +
+			    "     SET plus = v + v;" +
+			    "     SET mult = v * v;" +
+			    "  END");
 		}
 	}
 
@@ -158,14 +166,22 @@ public class CallStmtTest extends JdbxTest
 	@Test public void testReturnOutParam() throws JdbxException
 	{
 		cstmt_.init("{call GetUserName(?,?,?)}")
-			.registerOutParam(2).as(java.sql.Types.VARCHAR)
-			.registerOutParam(3).as(JDBCType.VARCHAR);
+			.registerOutParam(2).as(java.sql.Types.VARCHAR) // by number
+			.registerOutParam("lastname").as(JDBCType.VARCHAR); // by name
 		cstmt_.param(1).setDouble(1.1);
-		cstmt_.clearParams();
+		cstmt_.clearParams(); // coverage
 		cstmt_.param(1, id_);
 		cstmt_.execute();
 		assertEquals("Paul",  cstmt_.param(2).getString());
 		assertEquals("Smith", cstmt_.param(3).getString());
+
+		cstmt_.init("{call MathOps(?,?,?)}")
+			.registerOutParam(2).as(java.sql.Types.DECIMAL, 2)
+			.registerOutParam(3).as(JDBCType.DECIMAL, 2);
+		cstmt_.param(1).setDouble(2.25);
+		cstmt_.execute();
+		assertEquals(4.5,  cstmt_.param(2).getDouble());
+		assertEquals(5.06, cstmt_.param(3).getDouble());
 	}
 
 
