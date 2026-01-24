@@ -19,6 +19,7 @@ package org.jdbx;
 
 import java.sql.JDBCType;
 import java.sql.ParameterMetaData;
+import java.sql.SQLException;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,12 +66,14 @@ public class CallStmtTest extends JdbxTest
 			    "     OPEN result;" +
 			    "  END");
 
+			stmt.update("CREATE TYPE int_array AS INTEGER ARRAY");
 			stmt.update(
-				"CREATE PROCEDURE MathOps(IN v DECIMAL(10,2), OUT plus DECIMAL(10,2), OUT mult DECIMAL(10,2))" +
+				"CREATE PROCEDURE MathOps(IN v DECIMAL(10,2), OUT plus DECIMAL(10,2), OUT mult DECIMAL(10,2), OUT bounds int_array)" +
 			    "  READS SQL DATA" +
 			    "  BEGIN ATOMIC" +
 			    "     SET plus = v + v;" +
 			    "     SET mult = v * v;" +
+		        "     SET bounds = ARRAY[CAST(FLOOR(v) AS INTEGER), CAST(CEILING(v) AS INTEGER)];" +
 			    "  END");
 		}
 	}
@@ -120,14 +123,6 @@ public class CallStmtTest extends JdbxTest
 	 */
 	@Test public void testExecuteReturnGenKey() throws Exception
 	{
-		/*
-				"CREATE PROCEDURE CreateUser(IN firstname VARCHAR(50), IN lastname VARCHAR(50), IN salary DOUBLE, OUT newId INT)" +
-			    "  MODIFIES SQL DATA" +
-			    "  BEGIN ATOMIC" +
-			    "     INSERT INTO cstmtest VALUES (DEFAULT, firstname, lastname, salary);" +
-			    "     SET newId = IDENTITY();" +
-			    "  END");
-		 */
 		cstmt_.init("{call CreateUser(?,?,?)}");
 		cstmt_.param("firstname").set("Alpha");
 		cstmt_.param("lastname").set("Beta");
@@ -163,7 +158,7 @@ public class CallStmtTest extends JdbxTest
 	}
 
 
-	@Test public void testReturnOutParam() throws JdbxException
+	@Test public void testReturnOutParam() throws JdbxException, SQLException
 	{
 		cstmt_.init("{call GetUserName(?,?,?)}")
 			.registerOutParam(2).as(java.sql.Types.VARCHAR) // by number
@@ -172,16 +167,22 @@ public class CallStmtTest extends JdbxTest
 		cstmt_.clearParams(); // coverage
 		cstmt_.param(1, id_);
 		cstmt_.execute();
-		assertEquals("Paul",  cstmt_.param(2).getString());
-		assertEquals("Smith", cstmt_.param(3).getString());
+		CallStmt.NumberedParam firstname = cstmt_.param(2);
+		assertEquals("Paul",  firstname.getString());
+		CallStmt.NamedParam lastname = cstmt_.param("lastname");
+		assertEquals("Smith", lastname.getString());
+		assertEquals("Smith", lastname.getObject(String.class));
 
-		cstmt_.init("{call MathOps(?,?,?)}")
+		cstmt_.init("{call MathOps(?,?,?,?)}")
 			.registerOutParam(2).as(java.sql.Types.DECIMAL, 2)
-			.registerOutParam(3).as(JDBCType.DECIMAL, 2);
-		cstmt_.param(1).setDouble(2.25);
+			.registerOutParam(3).as(JDBCType.DECIMAL, 2)
+			.registerOutParam(4).as(JDBCType.ARRAY, "INT_ARRAY");
+		cstmt_.param("v").set(Double.valueOf(2.25), JDBCType.DECIMAL);
 		cstmt_.execute();
 		assertEquals(4.5,  cstmt_.param(2).getDouble());
-		assertEquals(5.06, cstmt_.param(3).getDouble());
+		assertEquals(5.06, cstmt_.param(3).getObject(Double.class));
+		Integer[] bounds = cstmt_.param(4).getArray(Integer.class);
+		assertArrayEquals(new Integer[] {2, 3}, bounds);
 	}
 
 
