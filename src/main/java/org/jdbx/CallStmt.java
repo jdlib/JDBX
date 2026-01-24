@@ -26,8 +26,6 @@ import java.sql.SQLType;
 import java.util.Map;
 import javax.sql.DataSource;
 import org.jdbx.function.CheckedSupplier;
-import org.jdbx.function.DoForNumber;
-import org.jdbx.function.DoForName;
 import org.jdbx.function.GetForNumber;
 import org.jdbx.function.GetForName;
 import org.jdbx.function.SetForNumber;
@@ -441,13 +439,6 @@ public class CallStmt extends Stmt
 		}
 
 
-		public <T> void apply(DoForNumber<CallableStatement> runner) throws JdbxException
-		{
-			Check.notNull(runner, "runner");
-			Unchecked.run(() -> runner.accept(getJdbcStmt(), number_));
-		}
-
-
 		private final int number_;
 	}
 
@@ -491,13 +482,6 @@ public class CallStmt extends Stmt
 		{
 			Check.notNull(setter, "setter");
 			Unchecked.run(() -> setter.set(getJdbcStmt(), name_, value));
-		}
-
-
-		public <T> void apply(DoForName<CallableStatement> runner) throws JdbxException
-		{
-			Check.notNull(runner, "runner");
-			Unchecked.run(() -> runner.accept(getJdbcStmt(), name_));
 		}
 
 
