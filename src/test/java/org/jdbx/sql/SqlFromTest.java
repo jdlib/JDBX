@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 JDBX
+ * Copyright (C) 2026 JDBX
  *
  * https://github.com/jdlib/JDBX
  *
@@ -21,19 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 
-class SqlInsertTest
+public class SqlFromTest
 {
-	@Test public void test()
+	@Test public void testBasics()
 	{
-		SqlInsert insert = new SqlInsert("t")
-			.col("a").value("1")
-			.col("b").valParam()
-			.colValue("c", "3");
-		assertEquals("INSERT INTO t (a, b, c) VALUES (1, ?, 3)", insert.toString());
+		SqlFrom from = new SqlFrom();
+		assertTrue(from.isEmpty());
+		assertEquals("", from.toString());
 
-		insert = new SqlInsert("t")
-			.value("1")
-			.value("2");
-		assertEquals("INSERT INTO t VALUES (1, 2)", insert.toString());
+		from.add("t");
+		assertFalse(from.isEmpty());
+		assertEquals("t", from.toString());
 	}
 }

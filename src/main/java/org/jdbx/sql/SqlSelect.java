@@ -51,10 +51,9 @@ public class SqlSelect
 	}
 
 
-	public SqlSelect from(Consumer<SqlFrom> from)
+	public SqlSelect from(Consumer<SqlFrom> consumer)
 	{
-		if (from != null)
-			from.accept(from_);
+		consumer.accept(from_);
 		return this;
 	}
 

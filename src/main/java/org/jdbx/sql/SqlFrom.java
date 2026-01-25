@@ -51,6 +51,12 @@ public class SqlFrom
 	}
 
 
+	public boolean isEmpty()
+	{
+		return cb_.isEmpty();
+	}
+
+
 	@Override public String toString()
 	{
 		return cb_.toString();

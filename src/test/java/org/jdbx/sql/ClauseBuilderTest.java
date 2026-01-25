@@ -21,19 +21,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 
-class SqlInsertTest
+public class ClauseBuilderTest
 {
-	@Test public void test()
+	@Test public void testAddTo()
 	{
-		SqlInsert insert = new SqlInsert("t")
-			.col("a").value("1")
-			.col("b").valParam()
-			.colValue("c", "3");
-		assertEquals("INSERT INTO t (a, b, c) VALUES (1, ?, 3)", insert.toString());
+		ClauseBuilder cb = new ClauseBuilder(", ");
+		assertTrue(cb.isEmpty());
 
-		insert = new SqlInsert("t")
-			.value("1")
-			.value("2");
-		assertEquals("INSERT INTO t VALUES (1, 2)", insert.toString());
+		cb.add(null);
+		assertTrue(cb.isEmpty());
+
+		cb.add("");
+		assertTrue(cb.isEmpty());
+
+		cb.add("one");
+		assertFalse(cb.isEmpty());
+		assertEquals("one", cb.toString());
 	}
 }

@@ -46,6 +46,15 @@ public class SqlSelectTest
 	}
 
 
+	@Test public void testFrom()
+	{
+		SqlSelect select = new SqlSelect()
+			.from("t1")
+			.from(f -> f.comma().add("t2"));
+		assertEquals("SELECT FROM t1, t2", select.toString());
+	}
+
+
 	@Test public void testWhere()
 	{
 		SqlSelect select = new SqlSelect()

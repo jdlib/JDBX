@@ -17,6 +17,7 @@
 package org.jdbx.sql;
 
 
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 
@@ -24,5 +25,10 @@ public class SqlDeleteTest
 {
 	@Test public void test()
 	{
+		SqlDelete delete = new SqlDelete("t");
+		assertEquals("DELETE FROM t", delete.toString());
+
+		delete.where("id = 3").where(w -> w.and().add("locked = false"));
+		assertEquals("DELETE FROM t WHERE id = 3 AND locked = false", delete.toString());
 	}
 }

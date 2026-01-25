@@ -30,23 +30,16 @@ class ClauseBuilder
 	}
 
 
-	public ClauseBuilder add(int value)
-	{
-		return add(Integer.toString(value));
-	}
-
-
 	public ClauseBuilder add(String item)
 	{
 		if (item != null && !item.isEmpty())
 		{
-			if (sb_ == null)
-				sb_ = new StringBuilder();
-			else if (skipSep_)
+			StringBuilder sb = sb();
+			if (skipSep_)
 				skipSep_ = false;
-			else
-				sb_.append(sep_);
-			sb_.append(item);
+			else if (!isEmpty())
+				sb.append(sep_);
+			sb.append(item);
 		}
 		return this;
 	}
@@ -54,10 +47,16 @@ class ClauseBuilder
 
 	public ClauseBuilder addDirect(String item)
 	{
+		sb().append(item);
+		return this;
+	}
+
+
+	private StringBuilder sb()
+	{
 		if (sb_ == null)
 			sb_ = new StringBuilder();
-		sb_.append(item);
-		return this;
+		return sb_;
 	}
 
 
@@ -88,7 +87,7 @@ class ClauseBuilder
 
 	public boolean isEmpty()
 	{
-		return sb_ == null;
+		return sb_ == null || sb_.length() == 0;
 	}
 
 

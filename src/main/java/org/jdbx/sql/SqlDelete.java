@@ -16,6 +16,7 @@
  */
 package org.jdbx.sql;
 
+import java.util.function.Consumer;
 
 public class SqlDelete
 {
@@ -31,7 +32,14 @@ public class SqlDelete
 
 	public SqlDelete where(String item)
 	{
-		where_.add(item);
+		where().add(item);
+		return this;
+	}
+
+
+	SqlDelete where(Consumer<SqlExpr> consumer)
+	{
+		consumer.accept(where());
 		return this;
 	}
 

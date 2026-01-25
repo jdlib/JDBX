@@ -27,8 +27,9 @@ public class SqlUpdateTest
 	{
 		SqlUpdate update = new SqlUpdate("t")
 			.set("a", "1")
-			.set("b", "2");
-		update.where().add("id = 3").and().add("locked = false");
-		assertEquals("UPDATE t SET a = 1, b = 2 WHERE id = 3 AND locked = false", update.toString());
+			.setParam("b")
+			.where("id = 3")
+			.where(w -> w.and().add("locked = false"));
+		assertEquals("UPDATE t SET a = 1, b = ? WHERE id = 3 AND locked = false", update.toString());
 	}
 }

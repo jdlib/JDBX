@@ -16,6 +16,7 @@
  */
 package org.jdbx.sql;
 
+import java.util.function.Consumer;
 
 public class SqlUpdate
 {
@@ -46,6 +47,13 @@ public class SqlUpdate
 	public SqlUpdate where(String item)
 	{
 		where_.add(item);
+		return this;
+	}
+
+
+	public SqlUpdate where(Consumer<SqlExpr> consumer)
+	{
+		consumer.accept(where());
 		return this;
 	}
 

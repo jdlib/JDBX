@@ -46,4 +46,13 @@ public class CreateTableTest
 			.col("a INT");
 		assertEquals("CREATE TABLE IF NOT EXISTS t (a INT)", ct.toString());
 	}
+
+
+	@Test public void testSuffix()
+	{
+		CreateTable ct = new CreateTable("t")
+			.col("a INT")
+			.suffix("ENGINE=InnoDB");
+		assertEquals("CREATE TABLE t (a INT) ENGINE=InnoDB", ct.toString());
+	}
 }

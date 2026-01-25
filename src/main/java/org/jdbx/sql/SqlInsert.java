@@ -44,6 +44,12 @@ public class SqlInsert
 	}
 
 
+	public SqlInsert valParam()
+	{
+		return value("?");
+	}
+
+
 	public SqlInsert colValue(String name, String value)
 	{
 		col(name);
@@ -54,12 +60,6 @@ public class SqlInsert
 	public SqlInsert colParam(String name)
 	{
 		return colValue(name, "?");
-	}
-
-
-	public SqlInsert valParam()
-	{
-		return value("?");
 	}
 
 
