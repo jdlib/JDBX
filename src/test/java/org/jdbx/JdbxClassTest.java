@@ -26,4 +26,20 @@ public class JdbxClassTest extends JdbxTest
 			System.setOut(oldOut);
 		}
 	}
+
+
+	@Test public void testFastQuery()
+	{
+		Query query = Jdbx.query(con(), "VALUES (1)");
+		assertEquals("Query:VALUES (1)", query.toString());
+		assertEquals(1, query.row().col().getInt());
+	}
+
+
+	@Test public void testFastUpdate()
+	{
+		Query query = Jdbx.query(con(), "VALUES (1)");
+		assertEquals("Query:VALUES (1)", query.toString());
+		assertEquals(1, query.row().col().getInt());
+	}
 }
