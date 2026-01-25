@@ -53,6 +53,9 @@ public enum ResultType implements JdbcEnum
 	INVALID(-1);
 
 
+	static final JdbcEnumMap<ResultType> map = new JdbcEnumMap<>(INVALID);
+
+
 	ResultType(int code)
 	{
 		code_ = code;

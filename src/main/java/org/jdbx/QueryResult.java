@@ -479,7 +479,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public FetchDirection getFetchDirection() throws JdbxException
 	{
-		return JdbcEnumMap.FETCH_DIRECTION.forCode(toInt(ResultSet::getFetchDirection));
+		return FetchDirection.map.forCode(toInt(ResultSet::getFetchDirection));
 	}
 
 
@@ -500,7 +500,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public Concurrency getConcurrency() throws JdbxException
 	{
-		return JdbcEnumMap.CONCURRENCY.forCode(toInt(ResultSet::getConcurrency));
+		return Concurrency.map.forCode(toInt(ResultSet::getConcurrency));
 	}
 
 
@@ -510,7 +510,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public Holdability getHoldability() throws JdbxException
 	{
-		return JdbcEnumMap.HOLDABILITY.forCode(toInt(ResultSet::getHoldability));
+		return Holdability.map.forCode(toInt(ResultSet::getHoldability));
 	}
 
 
@@ -520,7 +520,7 @@ public class QueryResult implements AutoCloseable
 	 */
 	public ResultType getType() throws JdbxException
 	{
-		return JdbcEnumMap.RESULT_TYPE.forCode(toInt(ResultSet::getType));
+		return ResultType.map.forCode(toInt(ResultSet::getType));
 	}
 
 

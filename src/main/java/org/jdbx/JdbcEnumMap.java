@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -22,34 +22,11 @@ package org.jdbx;
  */
 class JdbcEnumMap<E extends Enum<E> & JdbcEnum>
 {
-	/**
-	 * A JdbcEnumMap for Concurrency.
-	 */
-	public static final JdbcEnumMap<Concurrency> CONCURRENCY = new JdbcEnumMap<>(Concurrency.class, Concurrency.INVALID);
-
-
-	/**
-	 * A JdbcEnumMap for FetchDirection.
-	 */
-	public static final JdbcEnumMap<FetchDirection> FETCH_DIRECTION = new JdbcEnumMap<>(FetchDirection.class, FetchDirection.INVALID);
-
-
-	/**
-	 * A JdbcEnumMap for Holdability.
-	 */
-	public static final JdbcEnumMap<Holdability> HOLDABILITY = new JdbcEnumMap<>(Holdability.class, Holdability.INVALID);
-
-
-	/**
-	 * A JdbcEnumMap for ResultType.
-	 */
-	public static final JdbcEnumMap<ResultType> RESULT_TYPE = new JdbcEnumMap<>(ResultType.class, ResultType.INVALID);
-	
-
-	public JdbcEnumMap(Class<E> type, E unknown)
+	@SuppressWarnings("unchecked")
+	public JdbcEnumMap(E invalid)
 	{
-		values_ 	= type.getEnumConstants();
-		unknown_ 	= unknown;
+		values_ 		= ((Class<E>)invalid.getClass()).getEnumConstants();
+		invalid_ 	= invalid;
 	}
 
 
@@ -60,16 +37,16 @@ class JdbcEnumMap<E extends Enum<E> & JdbcEnum>
 			if (e.getCode() == code)
 				return e;
 		}
-		return unknown_;
+		return invalid_;
 	}
 
 
 	public E forCode(Integer code)
 	{
-		return code != null ? forCode(code.intValue()) : unknown_;
+		return code != null ? forCode(code.intValue()) : invalid_;
 	}
 
 
 	private final E[] values_;
-	private final E unknown_;
+	private final E invalid_;
 }
