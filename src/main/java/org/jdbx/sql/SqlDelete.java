@@ -20,7 +20,7 @@ package org.jdbx.sql;
 public class SqlDelete
 {
 	private final String table_;
-	private SqlWhere where_ = new SqlWhere();
+	private SqlExpr where_ = new SqlExpr();
 
 
 	public SqlDelete(String table)
@@ -36,7 +36,7 @@ public class SqlDelete
 	}
 
 
-	public SqlWhere where()
+	public SqlExpr where()
 	{
 		return where_;
 	}

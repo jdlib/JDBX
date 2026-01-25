@@ -21,7 +21,7 @@ public class SqlUpdate
 {
 	private final String table_;
 	private ClauseBuilder set_ = new ClauseBuilder(", ");
-	private SqlWhere where_ = new SqlWhere();
+	private SqlExpr where_ = new SqlExpr();
 
 
 	public SqlUpdate(String table)
@@ -50,7 +50,7 @@ public class SqlUpdate
 	}
 
 
-	public SqlWhere where()
+	public SqlExpr where()
 	{
 		return where_;
 	}

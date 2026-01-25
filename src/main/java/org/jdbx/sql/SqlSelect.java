@@ -24,9 +24,9 @@ public class SqlSelect
 {
 	private final ClauseBuilder out_ = new ClauseBuilder(", ");
 	private final SqlFrom from_ = new SqlFrom();
-	private final SqlWhere where_ = new SqlWhere();
+	private final SqlExpr where_ = new SqlExpr();
 	private ClauseBuilder groupBy_;
-	private SqlWhere having_;
+	private SqlExpr having_;
 	private ClauseBuilder orderBy_;
 
 
@@ -66,14 +66,14 @@ public class SqlSelect
 	}
 
 
-	public SqlSelect where(Consumer<SqlWhere> consumer)
+	public SqlSelect where(Consumer<SqlExpr> consumer)
 	{
 		consumer.accept(where());
 		return this;
 	}
 
 
-	public SqlWhere where()
+	public SqlExpr where()
 	{
 		return where_;
 	}
@@ -95,17 +95,17 @@ public class SqlSelect
 	}
 
 
-	public SqlSelect having(Consumer<SqlWhere> consumer)
+	public SqlSelect having(Consumer<SqlExpr> consumer)
 	{
 		consumer.accept(having());
 		return this;
 	}
 
 
-	public SqlWhere having()
+	public SqlExpr having()
 	{
 		if (having_ == null)
-			having_ = new SqlWhere();
+			having_ = new SqlExpr();
 		return having_;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 JDBX
+ * Copyright (C) 2026 JDBX
  *
  * https://github.com/jdlib/JDBX
  *
@@ -17,58 +17,28 @@
 package org.jdbx.sql;
 
 
-public class SqlWhere
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+
+public class SqlExprTest
 {
-	private ClauseBuilder cb_ = new ClauseBuilder(" ");
-
-
-	public SqlWhere add(String item)
+	@Test public void testWhere()
 	{
-		cb_.add(item);
-		return this;
-	}
-
-
-	ClauseBuilder builder()
-	{
-		return cb_;
-	}
-
-
-	public SqlWhere and()
-	{
-		return add("AND");
-	}
-
-
-	public SqlWhere or()
-	{
-		return add("OR");
-	}
-
-
-	public SqlWhere openParen()
-	{
-		cb_.add("(").skipSep();
-		return this;
-	}
-
-
-	public SqlWhere closeParen()
-	{
-		cb_.addDirect(")");
-		return this;
-	}
-
-
-	public boolean isEmpty()
-	{
-		return cb_.isEmpty();
-	}
-
-
-	@Override public String toString()
-	{
-		return cb_.toString();
+		SqlExpr expr = new SqlExpr();
+		assertTrue(expr.isEmpty());
+		assertEquals("", expr.toString());
+		expr
+			.add("a > 5")
+			.and()
+			.openParen()
+				.openParen()
+					.add("b < 10")
+				.closeParen()
+				.or()
+				.add("b IS NULL")
+			.closeParen();
+		assertFalse(expr.isEmpty());
+		assertEquals("a > 5 AND ((b < 10) OR b IS NULL)", expr.toString());
 	}
 }

@@ -68,7 +68,7 @@ public class SqlSelectTest
 			.groupBy("a")
 			.groupBy("b")
 			.having("count(b) > 5")
-			.having(w -> w.and().add("sum(d) < 5"));
+			.having(h -> h.and().add("sum(d) < 5"));
 		assertEquals("SELECT a, b, count(c), sum(d) FROM t GROUP BY a, b HAVING count(b) > 5 AND sum(d) < 5", select.toString());
 	}
 }
