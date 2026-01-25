@@ -47,10 +47,25 @@ public class SqlWhere
 	}
 
 
+	public SqlWhere openParen()
+	{
+		cb_.add("(").skipSep();
+		return this;
+	}
+
+
+	public SqlWhere closeParen()
+	{
+		cb_.addDirect(")");
+		return this;
+	}
+
+
 	public boolean isEmpty()
 	{
 		return cb_.isEmpty();
 	}
+
 
 	@Override public String toString()
 	{

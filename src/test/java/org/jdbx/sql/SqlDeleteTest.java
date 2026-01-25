@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 JDBX
+ * Copyright (C) 2026 JDBX
  *
  * https://github.com/jdlib/JDBX
  *
@@ -17,42 +17,12 @@
 package org.jdbx.sql;
 
 
-public class SqlFrom
+import org.junit.jupiter.api.Test;
+
+
+public class SqlDeleteTest
 {
-	private ClauseBuilder cb_ = new ClauseBuilder(" ");
-
-
-	ClauseBuilder builder()
+	@Test public void test()
 	{
-		return cb_;
-	}
-
-
-	public SqlFrom add(String item)
-	{
-		cb_.add(item);
-		return this;
-	}
-
-
-	public SqlFrom add(String... items)
-	{
-		for (String item : items)
-			cb_.add(item);
-		return this;
-	}
-
-
-	public SqlFrom comma()
-	{
-		if (!cb_.isEmpty())
-			cb_.addDirect(",");
-		return this;
-	}
-
-
-	@Override public String toString()
-	{
-		return cb_.toString();
 	}
 }

@@ -21,6 +21,7 @@ class ClauseBuilder
 {
 	private StringBuilder sb_;
 	private final String sep_;
+	private boolean skipSep_;
 
 
 	public ClauseBuilder(String sep)
@@ -41,6 +42,8 @@ class ClauseBuilder
 		{
 			if (sb_ == null)
 				sb_ = new StringBuilder();
+			else if (skipSep_)
+				skipSep_ = false;
 			else
 				sb_.append(sep_);
 			sb_.append(item);
@@ -74,6 +77,12 @@ class ClauseBuilder
 			if (suffix != null)
 				sb.append(suffix);
 		}
+	}
+
+
+	public void skipSep()
+	{
+		skipSep_ = true;
 	}
 
 

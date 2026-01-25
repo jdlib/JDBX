@@ -1,4 +1,23 @@
+/*
+ * Copyright (C) 2025 JDBX
+ *
+ * https://github.com/jdlib/JDBX
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jdbx.sql;
+
+
+import java.util.function.Consumer;
 
 
 public class SqlSelect
@@ -7,7 +26,7 @@ public class SqlSelect
 	private final SqlFrom from_ = new SqlFrom();
 	private final SqlWhere where_ = new SqlWhere();
 	private ClauseBuilder groupBy_;
-	private ClauseBuilder having_;
+	private SqlWhere having_;
 	private ClauseBuilder orderBy_;
 
 
@@ -25,15 +44,31 @@ public class SqlSelect
 	}
 
 
-	public SqlFrom from()
+	public SqlSelect from(String... items)
 	{
-		return from_;
+		from_.add(items);
+		return this;
+	}
+
+
+	public SqlSelect from(Consumer<SqlFrom> from)
+	{
+		if (from != null)
+			from.accept(from_);
+		return this;
 	}
 
 
 	public SqlSelect where(String item)
 	{
-		where_.add(item);
+		where().add(item);
+		return this;
+	}
+
+
+	public SqlSelect where(Consumer<SqlWhere> consumer)
+	{
+		consumer.accept(where());
 		return this;
 	}
 
@@ -55,10 +90,23 @@ public class SqlSelect
 
 	public SqlSelect having(String item)
 	{
-		if (having_ == null)
-			having_ = new ClauseBuilder(", ");
-		having_.add(item);
+		having().add(item);
 		return this;
+	}
+
+
+	public SqlSelect having(Consumer<SqlWhere> consumer)
+	{
+		consumer.accept(having());
+		return this;
+	}
+
+
+	public SqlWhere having()
+	{
+		if (having_ == null)
+			having_ = new SqlWhere();
+		return having_;
 	}
 
 
@@ -74,17 +122,16 @@ public class SqlSelect
 	@Override public String toString()
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT ");
-		out_.addTo(sb, "SELECT ");
+		sb.append("SELECT");
+		out_.addTo(sb, " ");
 		from_.builder().addTo(sb, " FROM ");
 		where_.builder().addTo(sb, " WHERE ");
 		if (groupBy_ != null)
 			groupBy_.addTo(sb, " GROUP BY ");
 		if (having_ != null)
-			having_.addTo(sb, " HAVING ");
+			having_.builder().addTo(sb, " HAVING ");
 		if (orderBy_ != null)
 			orderBy_.addTo(sb, " ORDER BY ");
 		return sb.toString();
 	}
-
 }
