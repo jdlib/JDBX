@@ -84,10 +84,19 @@ public class QueryResultTest extends JdbxTest
 
 	@Test public void testResultUpdate() throws Exception
 	{
-		stmt_.options().setResultType(ResultType.SCROLL_INSENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
-		try (QueryResult result = stmt_.query("SELECT name FROM qrtest").result())
+		// create an own table to not interfere with other tests
+		stmt_.update("CREATE TABLE qrupdate (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(30))");
+		stmt_.update("INSERT INTO qrupdate (name) VALUES ('A'), ('B'), ('C'), ('D')");
+		stmt_.options()
+			.setResultType(ResultType.SCROLL_INSENSITIVE) // allow positioning
+			.setResultHoldability(Holdability.HOLD_OVER_COMMIT) // hold over commit
+			.setResultConcurrency(Concurrency.CONCUR_UPDATABLE) // allow updates
+			;
+		try (QueryResult result = stmt_.query("SELECT name FROM qrupdate").result()) // can't have a ORDER BY clause to be updateable
 		{
+			assertSame(ResultType.SCROLL_INSENSITIVE, result.getType());
 			assertSame(Concurrency.CONCUR_UPDATABLE, result.getConcurrency());
+			assertSame(Holdability.HOLD_OVER_COMMIT, result.getHoldability());
 
 			assertTrue(result.move().absolute(1));
 			assertFalse(result.row().isUpdated());
@@ -95,7 +104,26 @@ public class QueryResultTest extends JdbxTest
 			assertFalse(result.row().isInserted());
 			result.col().setString("Z");
 			result.row().update();
-			// assertTrue(result.row().isUpdated()); fails with an exception "invalid cursor state: identified cursor is not open"
+			assertTrue(result.row().isUpdated());
+
+			result.move().absolute(2);
+			result.row().delete();
+			assertTrue(result.row().isDeleted());
+
+			result.move().absolute(3);
+			result.col().setString("Z");
+			result.row().cancelUpdates();
+			assertFalse(result.row().isUpdated());
+
+			result.row().refresh();
+
+			result.move().toInsertRow();
+			result.col(1).setString("Y");
+			result.row().insert();
+			assertFalse(stmt_.getConnection().getMetaData().insertsAreDetected(result.getType().getCode()));
+			assertFalse(result.row().isInserted());
+
+			result.move().toCurrentRow();
 		}
 	}
 

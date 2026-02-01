@@ -19,6 +19,14 @@ public class StmtTest extends JdbxTest
 		{
 			assertNotNull(mstmt.getConnection());
 		}
+
+		try (StaticStmt stmt = new StaticStmt(ds::getConnection, false);
+			PrepStmt pstmt = new PrepStmt(ds::getConnection, false);
+			CallStmt cstmt = new CallStmt(ds::getConnection, false);
+			MultiStmt mstmt = new MultiStmt(ds::getConnection, false))
+		{
+			assertNotNull(mstmt.getConnection());
+		}
 	}
 
 

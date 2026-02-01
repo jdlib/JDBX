@@ -133,8 +133,6 @@ public class QueryTest extends JdbxTest
 	}
 
 
-
-
 	@Test public void testRowsColByName()
 	{
 		List<String> stringList = query().rows().col("NAME").getString();
@@ -157,10 +155,16 @@ public class QueryTest extends JdbxTest
 
 		List<Object> list = query().row().cols("ID", "NAME").toList();
 		assertEquals(List.of(0, "A"), list);
+	}
 
-		assertThrows(JdbxException.class, () -> query().row().unique().col().getObject());
+
+	@Test public void testRowCol()
+	{
+		assertEquals("query returned more than one row",
+			assertThrows(JdbxException.class, () -> query().row().unique().col().getObject()).getMessage());
 
 		assertEquals("A", query().row().col("NAME").getObject(String.class));
+		assertEquals("A", query().row().col("NAME").getObject(Map.of()));
 	}
 
 

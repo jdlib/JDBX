@@ -21,6 +21,8 @@ import java.sql.JDBCType;
 import java.sql.ParameterMetaData;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import org.jdbx.BatchResult.CountType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -171,9 +173,14 @@ public class CallStmtTest extends JdbxTest
 		cstmt_.execute();
 		CallStmt.NumberedParam firstname = cstmt_.param(2);
 		assertEquals("Paul",  firstname.getString());
+		assertEquals("Paul",  firstname.getObject(String.class));
+		assertThrows(JdbxException.class, () -> firstname.getObject(getClass()));
+		assertThrows(JdbxException.class, () -> firstname.getObject(Map.of()));
 		CallStmt.NamedParam lastname = cstmt_.param("lastname");
 		assertEquals("Smith", lastname.getString());
 		assertEquals("Smith", lastname.getObject(String.class));
+		assertThrows(JdbxException.class, () -> lastname.getObject(getClass()));
+		assertThrows(JdbxException.class, () -> lastname.getObject(Map.of()));
 
 		cstmt_.init("{call MathOps(?,?,?,?)}") // test all variations of int type and SQLType, by name and by number
 			.registerOutParam("plus").scale(2).as(java.sql.Types.DECIMAL)
@@ -219,7 +226,18 @@ public class CallStmtTest extends JdbxTest
 
 	@Test public void testBatch() throws Exception
 	{
-		// TODO
+		cstmt_.init("{call CreateUser(?,?,?)}");
+		cstmt_.param("firstname").set("Alpha");
+		cstmt_.param("lastname").set("A");
+		cstmt_.param("salary").set(Double.valueOf(2.3));
+		cstmt_.batch().add();
+		cstmt_.param("firstname").set("Beta");
+		cstmt_.param("lastname").set("B");
+		cstmt_.param("salary").set(Double.valueOf(4.6));
+		cstmt_.batch().add().run()
+			.requireSize(2)
+			.requireCountType(0, CountType.SUCCESS_NO_INFO)
+			.requireCountType(1, CountType.SUCCESS_NO_INFO);
 	}
 
 

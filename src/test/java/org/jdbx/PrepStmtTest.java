@@ -93,6 +93,8 @@ public class PrepStmtTest extends JdbxTest
 		pstmt_.init().namedParams().sql(sql);
 		pstmt_.param("name").setString("b");
 		pstmt_.param("type").setInt(15);
+		assertEquals("sql command does not contain parameter 'unknown'",
+			assertThrows(IllegalArgumentException.class, () -> pstmt_.param("unknown")).getMessage());
 		assertEquals(1, pstmt_.update().count());
 
 		NamedParamCmd npcmd = new NamedParamCmd(sql);
@@ -100,6 +102,10 @@ public class PrepStmtTest extends JdbxTest
 		pstmt_.param("name").setString("c");
 		pstmt_.param("type").setInt(16);
 		assertEquals(1, pstmt_.update().count());
+
+		pstmt_.init().sql("INSERT INTO ptests VALUES (DEFAULT, ?, ?)");
+		assertEquals("statement is not named: use init().named().cmd(sql) to create a named statement",
+			assertThrows(IllegalArgumentException.class, () -> pstmt_.param("name")).getMessage());
 	}
 
 
@@ -115,6 +121,29 @@ public class PrepStmtTest extends JdbxTest
 		assertNotNull(pmd);
 		assertEquals(1, pmd.getParameterCount());
 		assertEquals(java.sql.Types.INTEGER, pmd.getParameterType(1));
+	}
+
+
+	@Test public void testInitVariants() throws Exception
+	{
+		final String sql = "INSERT INTO ptests VALUES (DEFAULT, ?, ?)";
+
+		pstmt_.options().setPoolable(true); // coverage, apply options to newly created JDBC statement
+
+		pstmt_.init().returnCol("id").sql(sql);
+		pstmt_.params("x", 5).createUpdate().runGetCol(Integer.class)
+			.requireCount(1)
+			.requireValue();
+
+		pstmt_.init().returnCol(1).sql(sql);
+		pstmt_.params("x", 5).createUpdate().runGetCol(Integer.class)
+			.requireCount(1)
+			.requireValue();
+
+		pstmt_.init().returnAutoKeyCols().sql(sql);
+		pstmt_.params("x", 5).createUpdate().runGetCol(Integer.class)
+			.requireCount(1)
+			.requireValue();
 	}
 
 

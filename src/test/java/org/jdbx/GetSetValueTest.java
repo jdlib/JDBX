@@ -1,6 +1,7 @@
 package org.jdbx;
 
 
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.SQLException;
@@ -59,6 +60,50 @@ public class GetSetValueTest extends JdbxTest
 			.col("VARCHAR(10) ARRAY", sqlArray, GetResultValue::getArray, SetValue::setArray, (a1,a2,msg) -> assertArrayEquals(toArray(a1),toArray(a2), msg))
 			.col("VARBINARY(10)", "hello".getBytes(), GetResultValue::getBytes, SetValue::setBytes, (b1,b2,msg) -> assertArrayEquals(b1,b2,msg))
 			.run();
+	}
+
+
+	@Test public void testMiscAccessors() throws Exception
+	{
+		StringReader reader = new StringReader("example");
+
+		TestSetValue tsv = new TestSetValue();
+		tsv.setBlob(null);
+		tsv.assertSet(SetAccessors.BLOB, null);
+		tsv.setBoolean(true);
+		tsv.assertSet(SetAccessors.BOOLEAN, true);
+		tsv.setByte((byte)4);
+		tsv.assertSet(SetAccessors.BYTE, (byte)4);
+		tsv.setCharacterStream(reader);
+		tsv.assertSet(SetAccessors.CHARACTERSTREAM, reader);
+		tsv.setClob(null);
+		tsv.assertSet(SetAccessors.CLOB, null);
+		tsv.setFloat(4.5f);
+		tsv.assertSet(SetAccessors.FLOAT, 4.5f);
+		tsv.setLocalDate(null);
+		tsv.assertSet(SetAccessors.SQLDATE, null);
+		tsv.setLocalDateTime(null);
+		tsv.assertSet(SetAccessors.SQLTIMESTAMP, null);
+		tsv.setLocalTime(null);
+		tsv.assertSet(SetAccessors.SQLTIME, null);
+		tsv.setLong(10L);
+		tsv.assertSet(SetAccessors.LONG, 10L);
+		tsv.setNCharacterStream(reader);
+		tsv.assertSet(SetAccessors.NCHARACTERSTREAM, reader);
+		tsv.setNClob(null);
+		tsv.assertSet(SetAccessors.NCLOB, null);
+		tsv.setNString("s");
+		tsv.assertSet(SetAccessors.NSTRING, "s");
+		tsv.setRef(null);
+		tsv.assertSet(SetAccessors.REF, null);
+		tsv.setRowId(null);
+		tsv.assertSet(SetAccessors.ROWID, null);
+		tsv.setShort((short)3);
+		tsv.assertSet(SetAccessors.SHORT, (short)3);
+		tsv.setSqlXml(null);
+		tsv.assertSet(SetAccessors.SQLXML, null);
+		tsv.setURL(null);
+		tsv.assertSet(SetAccessors.URL, null);
 	}
 
 
@@ -143,7 +188,6 @@ public class GetSetValueTest extends JdbxTest
 	}
 
 
-
 	private static class Column<T>
 	{
 		public final String type;
@@ -160,6 +204,26 @@ public class GetSetValueTest extends JdbxTest
 			this.getter = getter;
 			this.setter = setter;
 			this.assertion = assertion;
+		}
+	}
+
+
+	private static class TestSetValue implements SetValue
+	{
+		public SetAccessors<?> accessors;
+		public Object value;
+
+		@Override public <T> void set(SetAccessors<T> accessors, T value) throws JdbxException
+		{
+			this.accessors = accessors;
+			this.value = value;
+		}
+
+
+		public <T> void assertSet(SetAccessors<T> expectedAccessors, T expectedValue)
+		{
+			assertSame(expectedAccessors, accessors);
+			assertEquals(expectedValue, value);
 		}
 	}
 }
