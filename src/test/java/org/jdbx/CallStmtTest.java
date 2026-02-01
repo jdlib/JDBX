@@ -175,10 +175,15 @@ public class CallStmtTest extends JdbxTest
 		assertEquals("Smith", lastname.getString());
 		assertEquals("Smith", lastname.getObject(String.class));
 
-		cstmt_.init("{call MathOps(?,?,?,?)}")
-			.registerOutParam(2).as(java.sql.Types.DECIMAL, 2)
-			.registerOutParam(3).as(JDBCType.DECIMAL, 2)
-			.registerOutParam(4).as(JDBCType.ARRAY, "INT_ARRAY");
+		cstmt_.init("{call MathOps(?,?,?,?)}") // test all variations of int type and SQLType, by name and by number
+			.registerOutParam("plus").scale(2).as(java.sql.Types.DECIMAL)
+			.registerOutParam("plus").scale(2).as(JDBCType.DECIMAL)
+			.registerOutParam(2).scale(2).as(java.sql.Types.DECIMAL)
+			.registerOutParam(3).scale(2).as(JDBCType.DECIMAL)
+			.registerOutParam("bounds").typeName("INT_ARRAY").as(JDBCType.ARRAY)
+			.registerOutParam("bounds").typeName("INT_ARRAY").as(java.sql.Types.ARRAY)
+			.registerOutParam(4).typeName("INT_ARRAY").as(JDBCType.ARRAY)
+			.registerOutParam(4).typeName("INT_ARRAY").as(java.sql.Types.ARRAY);
 		cstmt_.param("v").set(Double.valueOf(2.25), JDBCType.DECIMAL);
 		cstmt_.execute();
 		assertEquals(4.5,  cstmt_.param(2).getDouble());

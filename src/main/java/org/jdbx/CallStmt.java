@@ -164,40 +164,76 @@ public class CallStmt extends Stmt
 	 * @see OutParams#registerOutParam(int)
 	 * @see OutParams#registerOutParam(String)
 	 */
-	public interface OutParamType
+	public interface OutParamAs
 	{
 		public OutParams as(int sqlType) throws JdbxException;
 
 
-		public OutParams as(int sqlType, int scale) throws JdbxException;
-
-
-		public OutParams as(int sqlType, String typeName) throws JdbxException;
-
-
 		public OutParams as(SQLType sqlType) throws JdbxException;
+	}
 
 
-		public OutParams as(SQLType sqlType, int scale) throws JdbxException;
+	/**
+	 * Allows to register OUT or INOUT parameters of a CallStmt.
+	 * @see OutParams#registerOutParam(int)
+	 * @see OutParams#registerOutParam(String)
+	 */
+	public interface OutParamType extends OutParamAs
+	{
+		public OutParamAs scale(int scale) throws JdbxException;
 
 
-		public OutParams as(SQLType sqlType, String typeName) throws JdbxException;
+		public OutParamAs typeName(String typeName) throws JdbxException;
 	}
 
 
 	private class OutParamsImpl implements OutParams, OutParamType
 	{
+		private OutParamType init(int number, String name)
+		{
+			number_ 	= number;
+			name_ 		= name;
+			scale_ 		= null;
+			typeName_ 	= null;
+			return this;
+		}
+
 		@Override public OutParamType registerOutParam(int number)
 		{
-			number_ = Check.number(number);
-			name_ 	= null;
-			return this;
+			return init(Check.number(number), null);
 		}
 
 
 		@Override public OutParamType registerOutParam(String name)
 		{
-			name_ = Check.notNull(name, "name");
+			return init(0, Check.notNull(name, "name"));
+		}
+
+
+		/**
+		 * Instructs this builder to use the given scale when registering the out parameter.
+		 * It should be used when the parameter is of JDBC type <code>NUMERIC</code>
+		 * or <code>DECIMAL</code>.
+	     * @param scale the desired number of digits to the right of the
+	     * 		decimal point. It must be greater than or equal to zero.
+		 */
+		@Override public OutParamAs scale(int scale) throws JdbxException
+		{
+			scale_ = Integer.valueOf(Check.scale(scale));
+			return this;
+		}
+
+
+		/**
+		 * Instructs this builder to use the given typeName when registering the out parameter.
+		 * It should be used for a user-defined or <code>REF</code> output parameter.
+		 * Examples of user-defined types include: <code>STRUCT</code>, <code>DISTINCT</code>,
+	     * <code>JAVA_OBJECT</code>, and named array types.
+		 * @param typeName the fully-qualified name of an SQL structured type
+		 */
+		@Override public OutParamAs typeName(String typeName) throws JdbxException
+		{
+			typeName_ = Check.notNull(typeName, "typeName");
 			return this;
 		}
 
@@ -205,34 +241,25 @@ public class CallStmt extends Stmt
 		@Override public OutParams as(int sqlType) throws JdbxException
 		{
 			Unchecked.run(() -> {
+				CallableStatement cs = getJdbcStmt();
 				if (name_ != null)
-					getJdbcStmt().registerOutParameter(name_, sqlType);
+				{
+					if (typeName_ != null)
+						cs.registerOutParameter(name_, sqlType, typeName_);
+					else if (scale_ != null)
+						cs.registerOutParameter(name_, sqlType, scale_.intValue());
+					else
+						cs.registerOutParameter(name_, sqlType);
+				}
 				else
-					getJdbcStmt().registerOutParameter(number_, sqlType);
-			});
-			return this;
-		}
-
-
-		@Override public OutParams as(int sqlType, int scale) throws JdbxException
-		{
-			Unchecked.run(() -> {
-				if (name_ != null)
-					getJdbcStmt().registerOutParameter(name_, sqlType, scale);
-				else
-					getJdbcStmt().registerOutParameter(number_, sqlType, scale);
-			});
-			return this;
-		}
-
-
-		@Override public OutParams as(int sqlType, String typeName) throws JdbxException
-		{
-			Unchecked.run(() -> {
-				if (name_ != null)
-					getJdbcStmt().registerOutParameter(name_, sqlType, typeName);
-				else
-					getJdbcStmt().registerOutParameter(number_, sqlType, typeName);
+				{
+					if (typeName_ != null)
+						cs.registerOutParameter(number_, sqlType, typeName_);
+					else if (scale_ != null)
+						cs.registerOutParameter(number_, sqlType, scale_.intValue());
+					else
+						cs.registerOutParameter(number_, sqlType);
+				}
 			});
 			return this;
 		}
@@ -241,34 +268,25 @@ public class CallStmt extends Stmt
 		@Override public OutParams as(SQLType sqlType) throws JdbxException
 		{
 			Unchecked.run(() -> {
+				CallableStatement cs = getJdbcStmt();
 				if (name_ != null)
-					getJdbcStmt().registerOutParameter(name_, sqlType);
+				{
+					if (typeName_ != null)
+						cs.registerOutParameter(name_, sqlType, typeName_);
+					else if (scale_ != null)
+						cs.registerOutParameter(name_, sqlType, scale_.intValue());
+					else
+						cs.registerOutParameter(name_, sqlType);
+				}
 				else
-					getJdbcStmt().registerOutParameter(number_, sqlType);
-			});
-			return this;
-		}
-
-
-		@Override public OutParams as(SQLType sqlType, int scale) throws JdbxException
-		{
-			Unchecked.run(() -> {
-				if (name_ != null)
-					getJdbcStmt().registerOutParameter(name_, sqlType, scale);
-				else
-					getJdbcStmt().registerOutParameter(number_, sqlType, scale);
-			});
-			return this;
-		}
-
-
-		@Override public OutParams as(SQLType sqlType, String typeName) throws JdbxException
-		{
-			Unchecked.run(() -> {
-				if (name_ != null)
-					getJdbcStmt().registerOutParameter(name_, sqlType, typeName);
-				else
-					getJdbcStmt().registerOutParameter(number_, sqlType, typeName);
+				{
+					if (typeName_ != null)
+						cs.registerOutParameter(number_, sqlType, typeName_);
+					else if (scale_ != null)
+						cs.registerOutParameter(number_, sqlType, scale_.intValue());
+					else
+						cs.registerOutParameter(number_, sqlType);
+				}
 			});
 			return this;
 		}
@@ -276,6 +294,8 @@ public class CallStmt extends Stmt
 
 		private int number_;
 		private String name_;
+		private Integer scale_;
+		private String typeName_;
 	}
 
 
