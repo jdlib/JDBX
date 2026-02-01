@@ -65,7 +65,7 @@ public class StaticStmtDemo
 			.setCloseOnCompletion()
 			.setFetchDirection(FetchDirection.REVERSE)
 			.setQueryTimeoutSeconds(15)
-			.setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
+			.setResultConcurrency(Concurrency.UPDATABLE);
 
 		int queryTimeOut = stmt.options().getQueryTimeoutSeconds();
 	}

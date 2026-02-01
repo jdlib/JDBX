@@ -90,12 +90,12 @@ public class QueryResultTest extends JdbxTest
 		stmt_.options()
 			.setResultType(ResultType.SCROLL_INSENSITIVE) // allow positioning
 			.setResultHoldability(Holdability.HOLD_OVER_COMMIT) // hold over commit
-			.setResultConcurrency(Concurrency.CONCUR_UPDATABLE) // allow updates
+			.setResultConcurrency(Concurrency.UPDATABLE) // allow updates
 			;
 		try (QueryResult result = stmt_.query("SELECT name FROM qrupdate").result()) // can't have a ORDER BY clause to be updateable
 		{
 			assertSame(ResultType.SCROLL_INSENSITIVE, result.getType());
-			assertSame(Concurrency.CONCUR_UPDATABLE, result.getConcurrency());
+			assertSame(Concurrency.UPDATABLE, result.getConcurrency());
 			assertSame(Holdability.HOLD_OVER_COMMIT, result.getHoldability());
 
 			assertTrue(result.move().absolute(1));

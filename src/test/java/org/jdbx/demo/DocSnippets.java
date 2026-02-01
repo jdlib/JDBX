@@ -276,7 +276,7 @@ public class DocSnippets
 		    // read the result row
 		}
 
-		stmt.options().setResultType(ResultType.SCROLL_SENSITIVE).setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
+		stmt.options().setResultType(ResultType.SCROLL_SENSITIVE).setResultConcurrency(Concurrency.UPDATABLE);
 
 		// qr is obtained from stmt
 		qr = stmt.query("sql").result();
@@ -296,7 +296,7 @@ public class DocSnippets
 
 	public void queryResultObtain() throws Exception
 	{
-		stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
+		stmt.options().setResultConcurrency(Concurrency.UPDATABLE);
 
 	   	qr.col("status").setString("ok");
 	    qr.row().update();

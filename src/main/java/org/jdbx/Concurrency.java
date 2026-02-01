@@ -38,7 +38,7 @@ public enum Concurrency implements JdbcEnum
 	/**
 	 * See {@link ResultSet#CONCUR_UPDATABLE}.
 	 */
-	CONCUR_UPDATABLE(ResultSet.CONCUR_UPDATABLE),
+	UPDATABLE(ResultSet.CONCUR_UPDATABLE),
 
 
 	INVALID(-1);

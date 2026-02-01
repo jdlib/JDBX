@@ -395,7 +395,7 @@ If your result is updatable, you can or update or delete the current row, or ins
 
     // configure the result to be updatable
     StaticStmt stmt = ....
-    stmt.options().setResultConcurrency(Concurrency.CONCUR_UPDATABLE);
+    stmt.options().setResultConcurrency(Concurrency.UPDATABLE);
     QueryResult qr = stmt.query(sql).result();
 	
     // position row
