@@ -161,8 +161,10 @@ public class CallStmtTest extends JdbxTest
 	@Test public void testReturnOutParam() throws JdbxException, SQLException
 	{
 		cstmt_.init("{call GetUserName(?,?,?)}")
-			.registerOutParam(2).as(java.sql.Types.VARCHAR) // by number
-			.registerOutParam("lastname").as(JDBCType.VARCHAR); // by name
+			.registerOutParam(2).as(java.sql.Types.VARCHAR) 	// by number + type int
+			.registerOutParam(2).as(JDBCType.VARCHAR) 			// by number + type enum
+			.registerOutParam("lastname").as(JDBCType.VARCHAR) 			// by name + type int
+			.registerOutParam("lastname").as(java.sql.Types.VARCHAR); 	// by name + type enum
 		cstmt_.param(1).setDouble(1.1);
 		cstmt_.clearParams(); // coverage
 		cstmt_.param(1, id_);

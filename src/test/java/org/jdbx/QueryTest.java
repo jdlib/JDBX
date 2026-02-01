@@ -79,7 +79,25 @@ public class QueryTest extends JdbxTest
 
 		List<String> asStringList = query().skip(2).rows().col("NAME").get(String.class);
 		assertEquals(List.of("C", "D"), asStringList);
+	}
 
+
+	@Test public void testRowCols()
+	{
+		Map<String,Object> map = query().row().cols().toMap();
+		assertEquals(2, map.size());
+		assertEquals(0, map.get("ID"));
+		assertEquals("A", map.get("NAME"));
+
+		Object[] array = query().row().cols(2, 1).toArray();
+		assertArrayEquals(new Object[] { "A", 0 }, array);
+
+		List<Object> list = query().row().cols("ID", "NAME").toList();
+		assertEquals(List.of(0, "A"), list);
+
+		assertThrows(JdbxException.class, () -> query().row().unique().col().getObject());
+
+		assertEquals("A", query().row().col("NAME").getObject(String.class));
 	}
 
 

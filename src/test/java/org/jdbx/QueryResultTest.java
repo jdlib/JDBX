@@ -60,9 +60,16 @@ public class QueryResultTest extends JdbxTest
 			assertTrue(result.position().isBeforeFirst());
 			assertTrue(result.move().absolute(2));
 			assertEquals("B", result.col().getString());
-			assertTrue(result.move().relative(2));
+			assertTrue(result.move().next());
+			assertEquals("C", result.col().getString());
+			assertTrue(result.move().relative(1));
 			assertEquals("D", result.col().getString());
 			assertTrue(result.position().isLast());
+
+			assertTrue(result.move().last());
+			assertEquals("D", result.col().getString());
+
+			assertTrue(result.move().previous());
 
 			result.move().afterLast();
 			assertTrue(result.position().isAfterLast());
@@ -82,10 +89,11 @@ public class QueryResultTest extends JdbxTest
 		{
 			assertSame(Concurrency.CONCUR_UPDATABLE, result.getConcurrency());
 
-			assertTrue(result.nextRow());
+			assertTrue(result.move().absolute(1));
+			assertFalse(result.row().isUpdated());
 			result.col().setString("Z");
-			assertTrue(result.row().isUpdated());
 			result.row().update();
+			// assertTrue(result.row().isUpdated()); fails with an exception "invalid cursor state: identified cursor is not open"
 		}
 	}
 

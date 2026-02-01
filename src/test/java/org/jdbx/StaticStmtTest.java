@@ -110,6 +110,15 @@ public class StaticStmtTest extends JdbxTest
 		int idB = result.value().get(1).intValue();
 		assertEquals(idA + 1, idB);
 
+		sql = "INSERT INTO STest (name) VALUES ('C')";
+		result = stmt_.createUpdate(sql)
+			.returnCols(1)
+			.runGetCols(Integer.class);
+		assertEquals(1, result.count());
+		assertEquals(1, result.value().size());
+		int idC = result.value().get(0).intValue();
+		assertEquals(idA + 2, idC);
+
 		sql 	= "UPDATE STest SET name = 'BB' WHERE name = 'B'";
 		count	= stmt_.update(sql).count();
 		assertEquals(1, count);
@@ -118,8 +127,14 @@ public class StaticStmtTest extends JdbxTest
 
 	@Test public void testLargeUpdate() throws JdbxException
 	{
-		String sql = "INSERT INTO STest (name) VALUES ('D')";
-		UpdateResult<List<Integer>> result = stmt_.createUpdate(sql)
+		// -> call Statement.executeLargeUpdate(sql)
+		stmt_.createUpdate("INSERT INTO STest (name) VALUES ('D')")
+			.enableLargeCount()
+			.run()
+			.requireCount(1L);
+
+		// -> call Statement.executeLargeUpdate(sql, names)
+		UpdateResult<List<Integer>> result = stmt_.createUpdate("INSERT INTO STest (name) VALUES ('E')")
 			.enableLargeCount()
 			.returnCols("ID")
 			.runGetCols(Integer.class)
@@ -127,6 +142,22 @@ public class StaticStmtTest extends JdbxTest
 			.requireCount(1L, 2L);
 		assertEquals(1L, result.count());
 		assertEquals(1, result.value().size());
+
+		// -> call Statement.executeLargeUpdate(sql, numbers)
+		stmt_.createUpdate("INSERT INTO STest (name) VALUES ('F')")
+			.enableLargeCount()
+			.returnCols(1 /*=ID*/)
+			.runGetCols(Integer.class)
+			.requireCount(1L)
+			.requireCount(1L, 2L);
+
+		// -> call Statement.executeLargeUpdate(sql, generatedKeys)
+		stmt_.createUpdate("INSERT INTO STest (name) VALUES ('F')")
+			.enableLargeCount()
+			.returnAutoKeyCols()
+			.runGetCols(Integer.class)
+			.requireCount(1L)
+			.requireCount(1L, 2L);
 	}
 
 
