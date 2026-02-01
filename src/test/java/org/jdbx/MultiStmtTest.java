@@ -22,22 +22,27 @@ import org.junit.jupiter.api.Test;
 
 public class MultiStmtTest extends JdbxTest
 {
-	@Test public void test() throws JdbxException
+	@Test public void testCon() throws JdbxException
 	{
-		StaticStmt staticStmt;
+		StaticStmt stmt;
+		PrepStmt pstmt;
+		CallStmt cstmt;
 		try (MultiStmt mstmt = new MultiStmt(con()))
 		{
 			assertSame(mstmt.getConnection(), con());
 
 			assertEquals(0, mstmt.size());
-			staticStmt = mstmt.newStaticStmt();
-			assertEquals(1, mstmt.size());
+			stmt = mstmt.newStaticStmt();
+			pstmt = mstmt.newPrepStmt();
+			cstmt = mstmt.newCallStmt();
+			assertEquals(3, mstmt.size());
 			mstmt.closeStmts();
 			assertEquals(0, mstmt.size());
-
-			staticStmt = mstmt.newStaticStmt();
+			mstmt.closeStmts(); // no harm
 		}
 
-		assertTrue(staticStmt.isClosed());
+		assertTrue(stmt.isClosed());
+		assertTrue(pstmt.isClosed());
+		assertTrue(cstmt.isClosed());
 	}
 }

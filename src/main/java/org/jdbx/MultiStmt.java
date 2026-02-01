@@ -115,17 +115,6 @@ public class MultiStmt implements AutoCloseable
 
 
 	/**
-	 * Returns a new initialized PrepStmt.
-	 * @param sql a SQL command
-	 * @return the statement
-	 */
-	public PrepStmt newPrepStmt(String sql) throws JdbxException
-	{
-		return newPrepStmt().init(sql);
-	}
-
-
-	/**
 	 * Returns a new CallStmt.
 	 * @return the statement
 	 */

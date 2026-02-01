@@ -18,6 +18,8 @@ package org.jdbx;
 
 
 import java.sql.Connection;
+import javax.sql.DataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.Assertions;
 
 
@@ -26,5 +28,13 @@ public class JdbxTest extends Assertions
 	public static Connection con() throws JdbxException
 	{
 		return Globals.con();
+	}
+
+
+	public static DataSource dataSource(String name) throws JdbxException
+	{
+		JDBCDataSource ds = new JDBCDataSource();
+		ds.setURL("jdbc:hsqldb:mem:" + name);
+		return ds;
 	}
 }

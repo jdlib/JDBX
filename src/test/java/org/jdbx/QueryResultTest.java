@@ -91,6 +91,8 @@ public class QueryResultTest extends JdbxTest
 
 			assertTrue(result.move().absolute(1));
 			assertFalse(result.row().isUpdated());
+			assertFalse(result.row().isDeleted());
+			assertFalse(result.row().isInserted());
 			result.col().setString("Z");
 			result.row().update();
 			// assertTrue(result.row().isUpdated()); fails with an exception "invalid cursor state: identified cursor is not open"
