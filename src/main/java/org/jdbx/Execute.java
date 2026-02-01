@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2016 JDBX
- * 
+ *
  * https://github.com/jdlib/JDBX
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at 
+ * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -24,10 +24,13 @@ import org.jdbx.function.CheckedFunction;
 /**
  * Execute is the JDBC and JDBX term for executing a SQL or DDL command
  * whose result type (query or update) is not known or which can return
- * multiple (query or update) results. 
+ * multiple (query or update) results.
  * @see StaticStmt#createExecute(String)
+ * @see StaticStmt#execute(String)
  * @see PrepStmt#createExecute()
+ * @see PrepStmt#execute()
  * @see CallStmt#createExecute()
+ * @see CallStmt#execute()
  */
 public abstract class Execute extends StmtRunnable
 {
