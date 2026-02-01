@@ -44,8 +44,8 @@ public class Unchecked
 			throw JdbxException.of(e);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Passes the argument to the consumer and converts any exception into a JdbxException
 	 * @param consumer a consumer
@@ -66,7 +66,7 @@ public class Unchecked
 		}
 	}
 
-	
+
 	/**
 	 * Calls the function and converts any exception into a JdbxException
 	 * @param function a function
@@ -80,6 +80,29 @@ public class Unchecked
 		try
 		{
 			return function.apply(arg);
+		}
+		catch (Exception e)
+		{
+			throw JdbxException.of(e);
+		}
+	}
+
+
+	/**
+	 * Calls the bifunction and converts any exception into a JdbxException
+	 * @param function a bifunction
+	 * @param arg1 the first argument
+	 * @param arg2 the second argument
+	 * @param <T> the type of the first argument to the function
+	 * @param <U> the type of the second argument to the function
+	 * @param <R> the type of results supplied
+	 * @return the function result
+	 */
+	public static <T,U,R> R apply(CheckedBiFunction<T,U,R> function, T arg1, U arg2) throws JdbxException
+	{
+		try
+		{
+			return function.apply(arg1, arg2);
 		}
 		catch (Exception e)
 		{

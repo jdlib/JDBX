@@ -378,14 +378,7 @@ public class QueryResult implements AutoCloseable
 		@Override public Object getObject(Map<String,Class<?>> map) throws JdbxException
 		{
 			Check.notNull(map, "map");
-			try
-			{
-				return resultSet_.getObject(name_, map);
-			}
-			catch (SQLException e)
-			{
-				throw JdbxException.of(e);
-			}
+			return Unchecked.apply(resultSet_::getObject, name_, map);
 		}
 
 
