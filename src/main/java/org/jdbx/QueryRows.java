@@ -19,6 +19,7 @@ package org.jdbx;
 
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -304,7 +305,7 @@ public class QueryRows
 		/**
 		 * @return a list of Float objects.
 		 */
-		public List<Float> getFloatObject() throws JdbxException
+		public List<Float> getFloat() throws JdbxException
 		{
 			return get(GetAccessors.FLOAT);
 		}
@@ -433,6 +434,15 @@ public class QueryRows
 		public List<String> getString() throws JdbxException
 		{
 			return get(GetAccessors.STRING);
+		}
+
+
+		/**
+		 * @return a list of URL objects.
+		 */
+		public List<URL> getURL() throws JdbxException
+		{
+			return get(GetAccessors.URL);
 		}
 
 

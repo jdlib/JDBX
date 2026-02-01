@@ -124,10 +124,19 @@ public class QueryResultTest extends JdbxTest
 		{
 			assertTrue(result.nextRow());
 			assertEquals(0, result.col().getInt());
-			assertEquals("A", result.col(2).getString());
-			assertEquals("A", result.col(2).getObject(String.class));
-			assertEquals("A", result.col("name").getString());
-			assertEquals("A", result.col("name").getObject(String.class));
+			QueryResult.NumberedCol col2 = result.col(2);
+			assertEquals("A", col2.getString());
+			assertEquals("A", col2.getObject(Map.of()));
+			assertEquals("A", col2.getObject(String.class));
+			assertThrows(JdbxException.class, () -> col2.getObject(getClass()));
+			assertThrows(JdbxException.class, () -> col2.setString("X"));
+
+			QueryResult.NamedCol colName = result.col("name");
+			assertEquals("A", colName.getString());
+			assertEquals("A", colName.getObject(Map.of()));
+			assertEquals("A", colName.getObject(String.class));
+			assertThrows(JdbxException.class, () -> colName.getObject(getClass()));
+			assertThrows(JdbxException.class, () -> colName.setString("X"));
 		}
 	}
 

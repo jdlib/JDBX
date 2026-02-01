@@ -72,6 +72,69 @@ public class QueryTest extends JdbxTest
 	}
 
 
+	@Test public void testRowsCol()
+	{
+		assertEquals(List.of(0, 1, 2, 3), query().rows().col().getInteger());
+		assertEquals(List.of("0", "1", "2", "3"), query().rows().col().getString());
+	}
+
+
+	@Test public void testRowsColAccessors()
+	{
+		TestQueryRows rows = new TestQueryRows(query());
+		TestQueryRows.TestCol col = rows.new TestCol();
+		col.getBigDecimal();
+		col.getBlob();
+		col.getBooleanObject();
+		col.getByteObject();
+		col.getBytes();
+		col.getCharacterStream();
+		col.getClob();
+		col.getDouble();
+		col.getFloat();
+		col.getInteger();
+		col.getLong();
+		col.getNCharacterStream();
+		col.getNClob();
+		col.getNString();
+		col.getObject();
+		col.getRowId();
+		col.getShort();
+		col.getString();
+		col.getSqlArray();
+		col.getSqlDate();
+		col.getSqlRef();
+		col.getSqlTime();
+		col.getSqlTimestamp();
+		col.getSqlXml();
+		col.getURL();
+	}
+
+
+	private static class TestQueryRows extends QueryRows
+	{
+		TestQueryRows(Query query)
+		{
+			super(query);
+		}
+
+		private class TestCol extends QueryRows.Column
+		{
+			@Override public <T> List<T> get(Class<T> type) throws JdbxException
+			{
+				throw new UnsupportedOperationException("Not implemented");
+			}
+
+			@Override protected <T> List<T> get(GetAccessors<T> accessor) throws JdbxException
+			{
+				return List.of();
+			}
+		}
+	}
+
+
+
+
 	@Test public void testRowsColByName()
 	{
 		List<String> stringList = query().rows().col("NAME").getString();
