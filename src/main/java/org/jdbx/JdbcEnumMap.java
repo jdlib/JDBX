@@ -25,7 +25,7 @@ class JdbcEnumMap<E extends Enum<E> & JdbcEnum>
 	@SuppressWarnings("unchecked")
 	public JdbcEnumMap(E invalid)
 	{
-		values_ 		= ((Class<E>)invalid.getClass()).getEnumConstants();
+		values_ 	= ((Class<E>)invalid.getClass()).getEnumConstants();
 		invalid_ 	= invalid;
 	}
 
