@@ -531,32 +531,6 @@ public class PrepStmt extends Stmt
 	public class PrepBatch extends BatchGetCols
 	{
 		/**
-		 * Sets the parameters. Calls {@link PrepStmt#params(Object...)}
-		 * @param values the parameter values
-		 * @return this
-		 */
-		public PrepBatch params(Object... values) throws JdbxException
-		{
-			stmt().params(values);
-			return this;
-		}
-
-
-		/**
-		 * Sets the value of the parameter with the given number.
-		 * Calls {@link PrepStmt#param(int, Object)}
-		 * @param number a parameter number, starting at 1.
-		 * @param value a parameter value
-		 * @return this
-		 */
-		public PrepBatch param(int number, Object value) throws JdbxException
-		{
-			stmt().param(number, value);
-			return this;
-		}
-
-
-		/**
 		 * Adds a statement to the batch using the current parameters.
 		 * @return this
 		 */
